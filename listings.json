@@ -1,7 +1,10 @@
 [
   {
     "listing": "/projects/index.html",
-    "items": []
+    "items": [
+      "/projects/connect4.html",
+      "/projects/spatial-spike-neural-networks-it.html"
+    ]
   },
   {
     "listing": "/index.html",
