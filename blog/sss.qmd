@@ -1,0 +1,181 @@
+---
+title: "Shamir's Secret Sharing"
+author: "Luca Simonetti"
+date: "2025-01-30"
+categories: [programming, web development]
+---
+# Shamir's Secret Sharing
+In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell'algoritmo Shamir's Secret Sharing, provando ad illustrare sia la parte più teorica che quella un po' più pratica con degli esempi concreti.
+Allacciamo le cinture. 
+
+First things first...
+
+Lo Shamir's Secret Sharing è innanzitutto un algoritmo di **secret sharing** crittografico ideato da Adi Shamir nel 1979. Permette di dividere un segreto $S$ (poi ci arriviamo a che cazpita si intende con *un segreto*) in $n$ parti, chiamate **shares** (parti?), in maniera tale che, per ricostruire il segreto (aridajela) originale, sia necessario un numero minimo $k$ (con $k \leq n$) di queste **shares**. Questo schema è anche conosciuto come **threshold scheme** $(k, n)$.
+
+
+**Quindi:**
+
+*   Un segreto viene *diviso* in $n$ **shares**.
+*   Almeno $k$ **shares** sono necessarie per ricostruire l'intero segreto (magia).
+*   Con meno di $k$ **shares**, il segreto non può essere ricostruito (volevi eh!?), e non si ottiene alcuna informazione su di esso (proprietà di **information-theoretically secure**).
+
+**A che serve:**
+
+*   **Key Management:** Distribuire una **master key** crittografica tra più attori, in modo che un numero sufficiente di essi debba cooperare per utilizzarla.
+*   **Access Control:** Dividere una **secret key** per l'accesso a un sistema o a dei dati tra più utenti.
+*   **Distributed Storage:** Distribuire i frammenti di un file criptato su più server, in modo che un certo numero di server debba essere accessibile per decriptare il file.
+*   **Secure Multi-Party Computation (MPC):** Come building block per protocolli più complessi.
+*   **Dividere i vocali della chat coi bro:** Così andiamo tutti in galera, non solo io.
+
+
+In sostanza: un segreto è qualcosa che vogliamo proteggere. Per esempio può essere una chiave privata (una password dai... senza fare tanto il fenomeno). Però vogliamo che non risieda in un unico punto bensì che risieda in tanti luoghi fisici diversi. Per esempio un pezzo lo nascondo a casa mia, un pezzo dal salumiere, un pezzo dal gommista eccetera eccetera eccetera.
+
+A sto punto però prima o poi la password mi serve e visto che io ho la memoria di un pesce rosso devo andare dal salumiere. Ma lo trovo chiuso. E adesso? sono fottuto.
+Mi serve la mia password per comprare i filmini con le donne nude, come faccio?
+
+Eh come faccio... Con lo schema di Shamir's non mi serve avere accesso a tutte le share, bensì solo a un gruppo di esse. Ed è qui appunto la magia.
+
+**Come funziona?**
+
+A livello puramente matematico, l'algoritmo si basa sull'**interpolation** polinomiale. L'idea chiave è che, dati $k$ punti in un piano, con ascisse distinte, esiste uno e un solo polinomio di grado *al più* $k-1$ che passa per tutti questi punti. Nel nostro caso, il grado del polinomio sarà esattamente $k-1$.
+
+**Esempio con polinomio di grado 2 (k=3):**
+
+Per ricostruire un polinomio di grado 2 (una parabola), sono necessari $k=3$ punti. Qui sotto puoi interagire con un grafico che mostra questo concetto. Muovi i punti e osserva come cambia la parabola. Il termine noto del polinomio (il punto in cui la parabola interseca l'asse y) rappresenta il segreto.
+
+```{python}
+#| label: parabola-interattiva
+#| fig-cap: "Muovi i punti per vedere come cambia la parabola. Il punto di intersezione con l'asse y è il segreto."
+#| code-fold: true
+
+import numpy as np
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display, clear_output
+
+import plotly.io as pio
+pio.renderers.default = "plotly_mimetype+notebook_connected"
+
+
+# Area di output per il grafico
+output = widgets.Output()
+
+# Funzione per aggiornare il plot
+def update_plot(x1, y1, x2, y2, x3, y3):
+    with output:
+        clear_output(wait=True)  # Cancella il vecchio plot
+
+        # Punti selezionati
+        x_points = np.array([x1, x2, x3])
+        y_points = np.array([y1, y2, y3])
+
+        # Interpolazione polinomiale (grado 2)
+        coeffs = np.polyfit(x_points, y_points, 2)  # ax² + bx + c
+
+        # Generazione della parabola
+        x = np.linspace(-5, 5, 200)
+        y = np.polyval(coeffs, x)
+
+        # Plot
+        plt.figure(figsize=(8, 6))
+        plt.plot(x, y, label=f"y = {coeffs[0]:.2f}x² + {coeffs[1]:.2f}x + {coeffs[2]:.2f}")
+        plt.scatter(x_points, y_points, color='red', s=100, label="Punti di interpolazione")
+        plt.axhline(0, color='black', linewidth=0.5)
+        plt.axvline(0, color='black', linewidth=0.5)
+        plt.grid(True)
+        
+        # Titolo con il valore segreto
+        plt.title(f"Segreto: {coeffs[2]:.2f}")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.legend()
+        plt.show()
+
+# Slider interattivi
+x1 = widgets.FloatSlider(min=-4, max=4, step=0.5, value=-2, description='x1')
+y1 = widgets.FloatSlider(min=-5, max=5, step=0.5, value=4, description='y1')
+x2 = widgets.FloatSlider(min=-4, max=4, step=0.5, value=2, description='x2')
+y2 = widgets.FloatSlider(min=-5, max=5, step=0.5, value=-4, description='y2')
+x3 = widgets.FloatSlider(min=-4, max=4, step=0.5, value=3, description='x3')
+y3 = widgets.FloatSlider(min=-5, max=5, step=0.5, value=4, description='y3')
+
+# # Collega gli slider alla funzione di aggiornamento
+ui = widgets.VBox([x1, y1, x2, y2, x3, y3])
+# interactive_plot = widgets.interactive(update_plot, x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3)
+
+# # Mostra UI e output
+display(ui, output)
+
+# Inizializza il grafico
+update_plot(x1.value, y1.value, x2.value, y2.value, x3.value, y3.value)
+```
+
+
+**Fasi dell'algoritmo:**
+
+1. **Setup:**
+    *   Sia $S$ il segreto da condividere, rappresentato come un numero intero.
+    *   Sia $n$ il numero di **shares** da generare.
+    *   Sia $k$ il **threshold**, ovvero il numero minimo di **shares** necessarie per ricostruire il segreto.
+    *   Scegli un numero primo $p$ maggiore di $S$ e di $n$. Tutte le operazioni aritmetiche saranno eseguite modulo $p$ (in $\mathbb{Z}_p$).
+
+2. **Share Generation:**
+    *   Scegli casualmente $k-1$ coefficienti $a_1, a_2, \dots, a_{k-1}$, dove ogni $a_i$ è un numero intero in $\mathbb{Z}_p$.
+    *   Costruisci il polinomio $P(x)$ di grado $k-1$:
+
+    $$P(x) = S + a_1x + a_2x^2 + \dots + a_{k-1}x^{k-1}$$
+
+    *   Notare che il termine noto del polinomio è il segreto $S$ ($P(0) = S$).
+    *   Genera $n$ **shares** calcolando il valore del polinomio in $n$ punti distinti non nulli. Ad esempio, si possono usare i punti $x = 1, 2, \dots, n$.
+    *   La **share** $i$-esima è la coppia $(x_i, y_i)$, dove $x_i = i$ e $y_i = P(i)$.
+
+3. **Secret Reconstruction:**
+    *   Per ricostruire il segreto, sono necessarie almeno $k$ **shares** $(x_i, y_i)$.
+    *   Utilizza l'**interpolation** di Lagrange per ricostruire il polinomio $P(x)$ a partire dai $k$ punti. La formula di Lagrange è:
+
+    $$P(x) = \sum_{i=1}^{k} y_i \prod_{j=1, j \neq i}^{k} \frac{x - x_j}{x_i - x_j}$$
+
+    *   Una volta ricostruito il polinomio $P(x)$, il segreto $S$ può essere ottenuto valutando il polinomio in $x=0$:
+
+    $$S = P(0)$$
+
+**Esempio (semplificato):**
+
+*   Segreto: $S = 1234$
+*   Numero di **shares**: $n = 5$
+*   **Threshold**: $k = 3$
+*   Numero primo: $p = 1613$ (maggiore di $S$ e $n$)
+
+**Share Generation:**
+
+*   Scegliamo casualmente $k-1 = 2$ coefficienti: $a_1 = 166$, $a_2 = 94$.
+*   Il polinomio è: $P(x) = 1234 + 166x + 94x^2$.
+*   Generiamo 5 **shares**:
+    *   $P(1) = 1234 + 166 \cdot 1 + 94 \cdot 1^2 = 1494 \pmod{1613}$  ->  $(1, 1494)$
+    *   $P(2) = 1234 + 166 \cdot 2 + 94 \cdot 2^2 = 1942 \equiv 329 \pmod{1613}$  ->  $(2, 329)$
+    *   $P(3) = 1234 + 166 \cdot 3 + 94 \cdot 3^2 = 2578 \equiv 965 \pmod{1613}$  ->  $(3, 965)$
+    *   $P(4) = 1234 + 166 \cdot 4 + 94 \cdot 4^2 = 3402 \equiv 176 \pmod{1613}$  ->  $(4, 176)$
+    *   $P(5) = 1234 + 166 \cdot 5 + 94 \cdot 5^2 = 4414 \equiv 1188 \pmod{1613}$ ->  $(5, 1188)$
+
+**Secret Reconstruction:**
+
+Supponiamo di avere le **shares**: $(1, 1494)$, $(3, 965)$, $(5, 1188)$.
+
+*   Usiamo l'**interpolation** di Lagrange per ricostruire il polinomio.
+*   Dopo aver eseguito i calcoli (omessi per brevità), otteniamo $P(x) = 1234 + 166x + 94x^2$.
+*   Il segreto è $S = P(0) = 1234$.
+
+**Proprietà di sicurezza:**
+
+*   **Information-Theoretically Secure:** Con meno di $k$ **shares**, non si ottiene alcuna informazione sul segreto. Questo perché qualsiasi valore del segreto è ugualmente probabile, dato un numero insufficiente di punti per determinare univocamente il polinomio.
+*   **Perfect Secret Sharing:** Ogni **share** è grande quanto il segreto originale.
+
+**Limitazioni:**
+
+*   **Share Size:** Ogni **share** ha la stessa dimensione del segreto. Questo può essere problematico se il segreto è molto grande, per esempio un file.
+*   **Dealer Trust:** Il **dealer** (chi genera le **shares**) conosce il segreto e deve essere fidato. E dunque potenzialmente rende questo inusabile in contesti come blockchain dove si potrebbe volere uno schema meno lasco dove la chiave privata (il segreto) non viene mai veramente materializzata completamente. 
+*   **Static Threshold:** Il valore di $k$ (il **threshold**) è fissato al momento della generazione delle **shares**. Ovvero se aumentano o diminuiscono i partecipanti bisogna rifare tutto sto giro da capo.
+
+**Conclusioni:**
+
+Wow. Che figata, loso. Lo Shamir's Secret Sharing è alla fine un algoritmo decisamente potent per la condivisione di segreti o chiavi private. Nonostante alcune limitazioni, rimane uno schema fondamentale nel campo della crittografia e della sicurezza informatica.

@@ -1,0 +1,10 @@
+---
+title: "Research Projects"
+listing:
+  contents: "*.qmd"
+  sort: "title asc"
+  type: table
+  categories: false
+page-layout: full
+title-block-banner: true
+---

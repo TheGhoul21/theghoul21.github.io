@@ -1,0 +1,29 @@
+project:
+  type: website
+
+website:
+  title: "L."  # Replace with your website title
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: Blog
+        menu:
+          - text: "Blog Posts"
+            href: blog/index.qmd
+          - text: "Categories"
+            href: blog/categories.qmd
+      - text: Projects
+        menu:
+          - text: "Research Projects"
+            href: projects/index.qmd
+    
+  page-footer: 
+    center: "Copyright 2025, Luca Simonetti"
+    background: light
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true

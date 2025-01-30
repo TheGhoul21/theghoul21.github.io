@@ -1,0 +1,13 @@
+{
+  "listingMap": {
+    "projects/index.qmd": [
+      "*.qmd"
+    ],
+    "index.qmd": [
+      "posts"
+    ],
+    "blog/index.qmd": [
+      "*.qmd"
+    ]
+  }
+}
