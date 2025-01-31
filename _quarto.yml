@@ -7,7 +7,8 @@ website:
   open-graph: 
     title: "L."
     description: "Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that."
-    site-name: "L."  
+    site-name: "L."
+    image: "/images/278270564_10159906873598664_2201636379743763738_n.jpg"
   navbar:
     left:
       - href: index.qmd
