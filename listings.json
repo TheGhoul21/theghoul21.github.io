@@ -8,7 +8,11 @@
   },
   {
     "listing": "/index.html",
-    "items": []
+    "items": [
+      "/blog/sss.html",
+      "/projects/connect4.html",
+      "/projects/spatial-spike-neural-networks-it.html"
+    ]
   },
   {
     "listing": "/blog/index.html",
