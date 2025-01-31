@@ -1,1 +1,1 @@
-Sitemap: git@github.com-TheGhoul21:TheGhoul21/theghoul21.github.io.git/sitemap.xml
+Sitemap: https://theghoul21.github.io/sitemap.xml
