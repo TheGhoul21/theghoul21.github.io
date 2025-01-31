@@ -180,7 +180,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#ricerca-e-sviluppo" id="toc-ricerca-e-sviluppo" class="nav-link active" data-scroll-target="#ricerca-e-sviluppo">Ricerca e Sviluppo</a></li>
+  <li><a href="#ricerca-e-sviluppo" id="toc-ricerca-e-sviluppo" class="nav-link active" data-scroll-target="#ricerca-e-sviluppo">Ricerca e Sviluppo</a>
+  <ul class="collapse">
+  <li><a href="#log" id="toc-log" class="nav-link" data-scroll-target="#log">Log</a>
+  <ul class="collapse">
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">2025-01-31</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -196,8 +202,16 @@ ul.task-list li input[type="checkbox"] {
 <p>Voglio provare a studiare un tipo di rete neurale di cui non ho trovato citazioni in ambito di ricerca. Di base Una rete neurale spiking (SNN) è un tipo di Neural Network che si avvicina maggiormente al funzionamento dei neuroni biologici. A differenza delle reti neurali tradizionali che trasmettono valori continui (ovvero fanno le moltiplicazioni direttamente), le SNN elaborano le informazioni attraverso “spike”, ovvero eventi discreti nel tempo, rendendole computazionalmente più efficienti. Queste reti codificano le informazioni nella temporizzazione e nella frequenza degli spike, consentendo loro di catturare dinamiche temporali complesse e potenzialmente imitare la capacità di apprendimento del cervello.</p>
 <p>L’elemento che voglio introdurre è quello di strutture (basate su grafi) che includano all’interno della rete anche il concetto di <em>vicinanza</em> dei neuroni della rete. Voglio inoltre provare a comprendere se i neuroni possono spostarsi all’interno della struttura a grafo.</p>
 <p>In altre parole: do una struttura alla rete, come ad esempio delle strutture simili a quelle cristalline, e posiziono i neuroni. Man mano che apprendono pattern all’interno dei dati, li faccio <em>muovere</em> seguendo la struttura data, seguendo l’apprendimento Hebbiano</p>
+<section id="log" class="level2">
+<h2 class="anchored" data-anchor-id="log">Log</h2>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section">2025-01-31</h3>
+<p><span class="emoji" data-emoji="it">🇮🇹</span> Mentre mi preparavo la camomilla con la melatonina ieri sera ho visualizzato per un istante la rete che ho in mente come una specie di struttura che si adatta all’input che riceve. Può essere realizzata una roba del genere? Può l’input guidare il movimento dei neuroni? Devo ancora capire bene cosa ho visto, ma quello che forse voglio realizzare è un grafo con i neuroni posizionati dove devono stare. Quando ricevono un input (che potrebbe essere un vettore latente) si riorganizzano seguendo i percorsi obbligati dalla struttura per far sì che neuroni che devono stare vicini restino vicini. Nulla vieta che i “neuroni” possano in realtà essere intere reti deep.</p>
+<p><span class="emoji" data-emoji="gb">🇬🇧</span> While I was preparing my chamomile with melatonin last night, I briefly visualized the network I have in mind as a kind of structure that adapts to the input it receives. Can such a thing be realized? Can the input guide the movement of the neurons? I still need to fully understand what I saw, but what I might want to create is a graph with neurons positioned where they need to be. When they receive an input (which could be a latent vector), they rearrange following the paths dictated by the structure to ensure that neurons that need to stay close remain close. Nothing prevents the “neurons” from actually being entire deep networks.</p>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
