@@ -22,5 +22,11 @@
   },
   "blog/sss.qmd": {
     "sss.html": "3df3e920"
+  },
+  "projects/spatial-spike-neural-networks-it.qmd": {
+    "spatial-spike-neural-networks-it.html": "75ea0446"
+  },
+  "projects/connect4.qmd": {
+    "connect4.html": "81deefef"
   }
 }
