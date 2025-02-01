@@ -1,5 +1,14 @@
 [
   {
+    "listing": "/index.html",
+    "items": [
+      "/blog/group-prime-order.html",
+      "/blog/sss.html",
+      "/projects/connect4.html",
+      "/projects/spatial-spike-neural-networks-it.html"
+    ]
+  },
+  {
     "listing": "/projects/index.html",
     "items": [
       "/projects/connect4.html",
@@ -7,16 +16,9 @@
     ]
   },
   {
-    "listing": "/index.html",
-    "items": [
-      "/blog/sss.html",
-      "/projects/connect4.html",
-      "/projects/spatial-spike-neural-networks-it.html"
-    ]
-  },
-  {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/group-prime-order.html",
       "/blog/sss.html"
     ]
   }
