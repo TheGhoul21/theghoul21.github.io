@@ -1,7 +1,10 @@
 ---
 title: "L's blog"
 listing:
-  contents: "*.qmd"
+  contents: 
+  - "/*.qmd"
+  - "!/blog/index.qmd"  # Exclude index.qmd from the listing
+
   sort: "date desc"
   type: default
   categories: true

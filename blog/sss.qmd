@@ -3,6 +3,7 @@ title: "Shamir's Secret Sharing"
 author: "Luca Simonetti"
 date: "2025-01-30"
 categories: [programming, web development]
+image: /images/sss.png
 ---
 # Shamir's Secret Sharing
 In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell'algoritmo Shamir's Secret Sharing, provando ad illustrare sia la parte più teorica che quella un po' più pratica con degli esempi concreti.

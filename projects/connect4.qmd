@@ -3,6 +3,7 @@ title: "Connect 4"
 author: "Luca Simonetti"
 date: "2025-01-30"
 categories: [programming, web development, research, diary, R&D]
+image: /images/connect4-2.webp
 ---
 
 # Research & Development Diary

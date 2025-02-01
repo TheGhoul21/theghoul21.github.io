@@ -2,6 +2,16 @@
   "listingMap": {
     "projects/index.qmd": [
       "*.qmd"
+    ],
+    "index.qmd": [
+      "blog/*.qmd",
+      "!blog/index.qmd",
+      "projects/*.qmd",
+      "!projects/index.qmd"
+    ],
+    "blog/index.qmd": [
+      "/*.qmd",
+      "!/blog/index.qmd"
     ]
   }
 }

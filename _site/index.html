@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Luca’s Blog – L.</title>
+<title>Luca Simonetti, yet another idiot – L.</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,20 +71,48 @@ ul.task-list li input[type="checkbox"] {
 <script>
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    const listingTargetEl = window.document.querySelector('#listing-blog .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return; 
     }
 
     const options = {
-      valueNames: ['listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-categories"],
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+    window['quarto-listings']['listing-blog'] = new List('listing-blog', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-projects .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-projects'] = new List('listing-projects', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -156,29 +184,34 @@ window.Quarto = {
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-blog" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Blog</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-blog">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
         <li>
-    <a class="dropdown-item" href="./blog/index.html">
- <span class="dropdown-text">Blog Posts</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./blog/categories.qmd">
- <span class="dropdown-text">Categories</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Projects</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
         <li>
-    <a class="dropdown-item" href="./projects/index.html">
- <span class="dropdown-text">Research Projects</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks</span></a>
   </li>  
     </ul>
   </li>
@@ -193,7 +226,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">Luca’s Blog</h1>
+      <h1 class="title">Luca Simonetti, yet another idiot</h1>
                       </div>
   </div>
     
@@ -210,8 +243,15 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(0)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#blog" id="toc-blog" class="nav-link active" data-scroll-target="#blog">Blog</a></li>
+  <li><a href="#projects" id="toc-projects" class="nav-link" data-scroll-target="#projects">Projects</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -219,18 +259,131 @@ window.Quarto = {
 
 
 
-
-
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-
+<section id="blog" class="level2">
+<h2 class="anchored" data-anchor-id="blog">Blog</h2>
+<div id="listing-blog" class="quarto-listing quarto-listing-container-grid">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="bWF0aCUyQ2NyeXB0b2dyYXBoeSUyQ2FsZ2VicmE=" data-listing-date-sort="1738364400000" data-listing-file-modified-sort="1738392826219" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3770">
+<a href="./blog/group-prime-order.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./images/group-prime-order.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Gruppi di Ordine Primo
+</h5>
+<div class="card-text listing-description">
+Una volta parlavo con un mio amico di Algebra astratta e ricordo che mi chiese se davvero esistesse qualcosa come l’algebra astratta. Secondo lui l’aggettivo <em>astratta</em> era…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Luca Simonetti
+</div>
+<div class="listing-date">
+Feb 1, 2025
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738387405946" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1635">
+<a href="./blog/sss.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./images/sss.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Shamir’s Secret Sharing
+</h5>
+<div class="card-text listing-description">
+In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell’algoritmo Shamir’s Secret Sharing, provando ad illustrare sia la parte più teorica…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Luca Simonetti
+</div>
+<div class="listing-date">
+Jan 30, 2025
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
 </div>
 <div class="listing-no-matching d-none">
 No matching items
 </div>
-</div></main> <!-- /main -->
+</div>
+</section>
+<section id="projects" class="level2">
+<h2 class="anchored" data-anchor-id="projects">Projects</h2>
+<div id="listing-projects" class="quarto-listing quarto-listing-container-grid">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudCUyQ3Jlc2VhcmNoJTJDZGlhcnklMkNSJTI2RA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738303869178" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="71">
+<a href="./projects/connect4.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./images/connect4-2.webp" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Connect 4
+</h5>
+<div class="card-text listing-description">
+Voglio applicare il metodo DPO a una rete RNN. Creerò una struttura composta da tre elementi che interagiscono tra loro:
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Luca Simonetti
+</div>
+<div class="listing-date">
+Jan 30, 2025
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudCUyQ3Jlc2VhcmNoJTJDZGlhcnklMkNSJTI2RA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738391949733" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="594">
+<a href="./projects/spatial-spike-neural-networks-it.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./images/SSNN.jpeg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Spatial Spike Neural Networks
+</h5>
+<div class="card-text listing-description">
+Voglio provare a studiare un tipo di rete neurale di cui non ho trovato citazioni in ambito di ricerca. Di base Una rete neurale spiking (SNN) è un tipo di Neural Network…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Luca Simonetti
+</div>
+<div class="listing-date">
+Jan 30, 2025
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div>
+
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

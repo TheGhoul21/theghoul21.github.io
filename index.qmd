@@ -1,14 +1,25 @@
 ---
-title: "Luca's Blog"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
-page-layout: full
-title-block-banner: true
+title: "Luca Simonetti, yet another idiot"
+from: markdown+emoji
+listing: 
+  - id: blog
+    contents: 
+    - "blog/*.qmd"
+    - "!blog/index.qmd"
+    type: grid  
+  - id: projects
+    contents: 
+    - "projects/*.qmd"
+    - "!projects/index.qmd"
+    type: grid  
 ---
 
+## Blog
 
+:::{#blog}
+:::
+
+## Projects
+
+:::{#projects}
+:::

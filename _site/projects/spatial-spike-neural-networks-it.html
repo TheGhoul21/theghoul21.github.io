@@ -73,13 +73,14 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../styles.css">
 <meta property="og:title" content="L.">
 <meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
+<meta property="og:image" content="https://theghoul21.github.io//images/SSNN.jpeg">
 <meta property="og:site_name" content="L.">
 </head>
 
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -97,29 +98,34 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-blog" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Blog</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-blog">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
         <li>
-    <a class="dropdown-item" href="../blog/index.html">
- <span class="dropdown-text">Blog Posts</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../blog/categories.qmd">
- <span class="dropdown-text">Categories</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Projects</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
         <li>
-    <a class="dropdown-item" href="../projects/index.html">
- <span class="dropdown-text">Research Projects</span></a>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks</span></a>
   </li>  
     </ul>
   </li>
@@ -131,7 +137,42 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Spatial Spike Neural Networks</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">programming</div>
+                <div class="quarto-category">web development</div>
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">diary</div>
+                <div class="quarto-category">R&amp;D</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 30, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -139,49 +180,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#ricerca-e-sviluppo" id="toc-ricerca-e-sviluppo" class="nav-link active" data-scroll-target="#ricerca-e-sviluppo">Ricerca e Sviluppo</a></li>
+  <li><a href="#ricerca-e-sviluppo" id="toc-ricerca-e-sviluppo" class="nav-link active" data-scroll-target="#ricerca-e-sviluppo">Ricerca e Sviluppo</a>
+  <ul class="collapse">
+  <li><a href="#log" id="toc-log" class="nav-link" data-scroll-target="#log">Log</a>
+  <ul class="collapse">
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">2025-01-31</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">2025-02-01</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Spatial Spike Neural Networks</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">programming</div>
-    <div class="quarto-category">web development</div>
-    <div class="quarto-category">research</div>
-    <div class="quarto-category">diary</div>
-    <div class="quarto-category">R&amp;D</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Luca Simonetti </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">January 30, 2025</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <section id="ricerca-e-sviluppo" class="level1">
@@ -189,8 +203,21 @@ ul.task-list li input[type="checkbox"] {
 <p>Voglio provare a studiare un tipo di rete neurale di cui non ho trovato citazioni in ambito di ricerca. Di base Una rete neurale spiking (SNN) è un tipo di Neural Network che si avvicina maggiormente al funzionamento dei neuroni biologici. A differenza delle reti neurali tradizionali che trasmettono valori continui (ovvero fanno le moltiplicazioni direttamente), le SNN elaborano le informazioni attraverso “spike”, ovvero eventi discreti nel tempo, rendendole computazionalmente più efficienti. Queste reti codificano le informazioni nella temporizzazione e nella frequenza degli spike, consentendo loro di catturare dinamiche temporali complesse e potenzialmente imitare la capacità di apprendimento del cervello.</p>
 <p>L’elemento che voglio introdurre è quello di strutture (basate su grafi) che includano all’interno della rete anche il concetto di <em>vicinanza</em> dei neuroni della rete. Voglio inoltre provare a comprendere se i neuroni possono spostarsi all’interno della struttura a grafo.</p>
 <p>In altre parole: do una struttura alla rete, come ad esempio delle strutture simili a quelle cristalline, e posiziono i neuroni. Man mano che apprendono pattern all’interno dei dati, li faccio <em>muovere</em> seguendo la struttura data, seguendo l’apprendimento Hebbiano</p>
+<section id="log" class="level2">
+<h2 class="anchored" data-anchor-id="log">Log</h2>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section">2025-01-31</h3>
+<p><span class="emoji" data-emoji="it">🇮🇹</span> Mentre mi preparavo la camomilla con la melatonina ieri sera ho visualizzato per un istante la rete che ho in mente come una specie di struttura che si adatta all’input che riceve. Può essere realizzata una roba del genere? Può l’input guidare il movimento dei neuroni? Devo ancora capire bene cosa ho visto, ma quello che forse voglio realizzare è un grafo con i neuroni posizionati dove devono stare. Quando ricevono un input (che potrebbe essere un vettore latente) si riorganizzano seguendo i percorsi obbligati dalla struttura per far sì che neuroni che devono stare vicini restino vicini. Nulla vieta che i “neuroni” possano in realtà essere intere reti deep.</p>
+<p><span class="emoji" data-emoji="gb">🇬🇧</span> While I was preparing my chamomile with melatonin last night, I briefly visualized the network I have in mind as a kind of structure that adapts to the input it receives. Can such a thing be realized? Can the input guide the movement of the neurons? I still need to fully understand what I saw, but what I might want to create is a graph with neurons positioned where they need to be. When they receive an input (which could be a latent vector), they rearrange following the paths dictated by the structure to ensure that neurons that need to stay close remain close. Nothing prevents the “neurons” from actually being entire deep networks.</p>
+</section>
+<section id="section-1" class="level3">
+<h3 class="anchored" data-anchor-id="section-1">2025-02-01</h3>
+<p><span class="emoji" data-emoji="it">🇮🇹</span> a colazione ho mangiato latte e cereali. Ho scaldato il latte nella pentolino, versato sui cereali caldo. Mangiato. Finto, metto nel lavandino la pentola e la ciotola dentro la pentola e butto un po’ d’acqua così, come mi ha insegnato la mamma, è più facile lavare. Se metto la ciotola dentro la pentola, all’interno della pentola l’acqua raggiunge prima il bordo superiore perché c’è la ciotola a fare volume, così posso usare meno acqua. Ovvero: avere qualcosa che riempe il volume permette di usare meno risorse. Può essere utile? boh.</p>
+<p><span class="emoji" data-emoji="gb">🇬🇧</span> for breakfast I had milk and cereal. I heated the milk in the saucepan, poured it hot over the cereal. Ate. Finished, I put the saucepan in the sink and the bowl inside the saucepan and I put a bit of water in so that, like my mum taught me, it’s easier to wash up. If I put the bowl inside the saucepan, inside the saucepan the water reaches the top edge sooner because the bowl is taking up volume, so I can use less water. Basically: having something that fills the volume means you can use fewer resources. Could that be useful? Dunno.</p>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->

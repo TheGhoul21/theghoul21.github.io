@@ -13,16 +13,25 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - text: Blog
+      - href: blog/index.qmd
+        text: Blog
+      - href: projects/index.qmd
+        text: Projects
+      - text: Lecture notes
         menu:
-          - text: "Blog Posts"
-            href: blog/index.qmd
-          - text: "Categories"
-            href: blog/categories.qmd
-      - text: Projects
-        menu:
-          - text: "Research Projects"
-            href: projects/index.qmd
+          - text: "Complexity and Information Theory"
+            href: https://theghoul21.github.io/CIT-2024-2025/
+            target: _blank
+          - text: "Deep Learning"
+            href: https://theghoul21.github.io/DL-2024-2025/
+            target: _blank
+          - text: "Ricerca Operativa"
+            href: https://theghoul21.github.io/RO-2024-2025/
+            target: _blank
+          - text: "Foundations of Neural Networks"
+            href: https://theghoul21.github.io/FNN-2024-2025/
+            target: _blank
+
     
   page-footer: 
     center: "Copyright 2025, Luca Simonetti"
@@ -33,3 +42,6 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+
+page-layout: full
+title-block-banner: true

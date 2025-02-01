@@ -1,8 +1,10 @@
 ---
 title: "Spatial Spike Neural Networks"
+from: markdown+emoji
 author: "Luca Simonetti"
 date: "2025-01-30"
 categories: [programming, web development, research, diary, R&D]
+image: /images/SSNN.jpeg
 ---
 
 # Ricerca e Sviluppo
@@ -15,4 +17,22 @@ Voglio inoltre provare a comprendere se i neuroni possono spostarsi all'interno 
 
 In altre parole: do una struttura alla rete, come ad esempio delle strutture simili a quelle cristalline, e posiziono i neuroni.
 Man mano che apprendono pattern all'interno dei dati, li faccio *muovere* seguendo la struttura data, seguendo l'apprendimento Hebbiano
+
+
+
+## Log
+
+### 2025-01-31
+:it: Mentre mi preparavo la camomilla con la melatonina ieri sera ho visualizzato per un istante la rete che ho in mente come una specie di struttura che si adatta all'input che riceve. Può essere realizzata una roba del genere? Può l'input guidare il movimento dei neuroni? Devo ancora capire bene cosa ho visto, ma quello che forse voglio realizzare è un grafo con i neuroni posizionati dove devono stare. Quando ricevono un input (che potrebbe essere un vettore latente) si riorganizzano seguendo i percorsi obbligati dalla struttura per far sì che neuroni che devono stare vicini restino vicini. Nulla vieta che i "neuroni" possano in realtà essere intere reti deep. 
+
+:gb: While I was preparing my chamomile with melatonin last night, I briefly visualized the network I have in mind as a kind of structure that adapts to the input it receives. Can such a thing be realized? Can the input guide the movement of the neurons? I still need to fully understand what I saw, but what I might want to create is a graph with neurons positioned where they need to be. When they receive an input (which could be a latent vector), they rearrange following the paths dictated by the structure to ensure that neurons that need to stay close remain close. Nothing prevents the "neurons" from actually being entire deep networks.
+
+### 2025-02-01
+:it: a colazione ho mangiato latte e cereali. Ho scaldato il latte nella pentolino, versato sui cereali caldo. Mangiato. Finto, metto nel lavandino la pentola e la ciotola dentro la pentola e butto un po' d'acqua così, come mi ha insegnato la mamma, è più facile lavare. 
+Se metto la ciotola dentro la pentola, all'interno della pentola l'acqua raggiunge prima il bordo superiore perché c'è la ciotola a fare volume, così posso usare meno acqua. Ovvero: avere qualcosa che riempe il volume permette di usare meno risorse. Può essere utile? boh.
+
+:gb: for breakfast I had milk and cereal. I heated the milk in the saucepan, poured it hot over the cereal. Ate. Finished, I put the saucepan in the sink and the bowl inside the saucepan and I put a bit of water in so that, like my mum taught me, it's easier to wash up.
+If I put the bowl inside the saucepan, inside the saucepan the water reaches the top edge sooner because the bowl is taking up volume, so I can use less water.
+Basically: having something that fills the volume means you can use fewer resources.
+Could that be useful? Dunno.
 

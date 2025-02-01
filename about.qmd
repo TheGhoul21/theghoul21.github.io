@@ -6,14 +6,47 @@ about:
   links:
     - icon: twitter
       text: Twitter
-      href: https://twitter.com
+      href: https://x.com/21stGhoul 
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: http://linkedin.com/in/luca-simonetti/
     - icon: github
       text: Github
-      href: https://github.com
+      href: https://github.com/TheGhoul21
+    - icon: facebook
+      text: Facebook
+      href: https://www.facebook.com/theGhoul21/
+    - icon: instagram
+      text: Instagram
+      href: https://www.instagram.com/thesleeplesscook/
+    - icon: threads
+      text: Threads
+      href: https://www.threads.net/@thesleeplesscook?hl=en
 
 ---
 
-About this blog
+## About me  
+
+### Italiano 🇮🇹  
+Sono Luca, e come dico spesso: solo un povero cog**one. Scherzi a parte, sono un programmatore con 16 anni di esperienza. Ho iniziato a sviluppare piccoli siti per privati nel novembre 2009, poi ho lavorato per cinque anni come full stack developer presso Digitalfun S.r.l.  
+
+Nel novembre 2014, mentre lavoravo ancora in DF, ho co-fondato una startup con mio cugino e un terzo socio. Due mesi dopo mi sono trasferito a Londra in cerca di opportunità, dove ho lavorato per un anno come backend developer in SaveWaterSaveMoney Ltd, utilizzando Symfony.  
+
+Nel luglio 2016 sono tornato in Italia e ho iniziato a lavorare in Nohup S.r.l. come full stack developer, ricoprendo il ruolo di R&D Team Leader nell'ultimo anno.  
+
+Mi sono laureato presso l’Università degli Studi Guglielmo Marconi, un’università telematica. Attualmente, sono uno studente part-time del corso magistrale in Artificial Intelligence all’Università degli Studi di Udine. Dopo la mia esperienza alla Marconi, ho deciso di affrontare il percorso magistrale con un ritmo più sostenibile.  
+
+Sono appassionato di tecnologia, scienza e insegnamento. Il mio più grande sogno nel cassetto è diventare insegnante di materie scientifiche.  
+
+---  
+
+### English 🇬🇧  
+I'm Luca, and as I often say: just a poor dum**ss. Jokes aside, I’ve been a programmer for 16 years. I started developing small websites for private clients in November 2009, then spent five years as a full stack developer at Digitalfun S.r.l.  
+
+In November 2014, while still working at DF, I co-founded a startup with my cousin and a third partner. Two months later, I moved to London to seek new opportunities and worked for a year as a backend developer at SaveWaterSaveMoney Ltd, using Symfony.  
+
+In July 2016, I returned to Italy and joined Nohup S.r.l. as a full stack developer, eventually becoming the R&D Team Leader in my final year.  
+
+I earned my degree from Università degli Studi Guglielmo Marconi, an online university. Currently, I’m a part-time Master's student in Artificial Intelligence at the University of Udine. After my experience at Marconi, I decided to take the Master’s program at a more sustainable pace.  
+
+I'm passionate about technology, science, and teaching. My biggest dream is to become a teacher in scientific subjects.  

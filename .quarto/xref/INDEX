@@ -28,5 +28,8 @@
   },
   "projects/connect4.qmd": {
     "connect4.html": "81deefef"
+  },
+  "blog/group-prime-order.qmd": {
+    "group-prime-order.html": "1770972d"
   }
 }

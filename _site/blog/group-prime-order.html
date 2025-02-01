@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luca Simonetti">
+<meta name="dcterms.date" content="2025-02-01">
+
+<title>Gruppi di Ordine Primo – L.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a973770d809960bcbda85a0f6824f60f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Gruppi di Ordine Primo">
+<meta property="og:description" content="Algebra Astratta (ma Spiegata Potabile!): Unisciti a me in un approfondimento dei gruppi di ordine primo, perché sono ciclici, e il loro ruolo nella crittografia moderna. La matematica è una cosa seria, io no.">
+<meta property="og:image" content="https://theghoul21.github.io//images/group-prime-order.jpg">
+<meta property="og:site_name" content="L.">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">L.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Gruppi di Ordine Primo</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">math</div>
+                <div class="quarto-category">cryptography</div>
+                <div class="quarto-category">algebra</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 1, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduzione-ai-gruppi-le-fondamenta-dellalgebra-astratta" id="toc-introduzione-ai-gruppi-le-fondamenta-dellalgebra-astratta" class="nav-link active" data-scroll-target="#introduzione-ai-gruppi-le-fondamenta-dellalgebra-astratta">Introduzione ai Gruppi: Le Fondamenta dell’Algebra Astratta</a>
+  <ul class="collapse">
+  <li><a href="#esempi-pratici-di-gruppi" id="toc-esempi-pratici-di-gruppi" class="nav-link" data-scroll-target="#esempi-pratici-di-gruppi">Esempi Pratici di Gruppi</a></li>
+  <li><a href="#ordine-di-un-gruppo-e-di-un-elemento" id="toc-ordine-di-un-gruppo-e-di-un-elemento" class="nav-link" data-scroll-target="#ordine-di-un-gruppo-e-di-un-elemento">Ordine di un Gruppo e di un Elemento</a></li>
+  </ul></li>
+  <li><a href="#gruppi-ciclici-e-generatori-la-chiave-per-i-gruppi-di-ordine-primo" id="toc-gruppi-ciclici-e-generatori-la-chiave-per-i-gruppi-di-ordine-primo" class="nav-link" data-scroll-target="#gruppi-ciclici-e-generatori-la-chiave-per-i-gruppi-di-ordine-primo">Gruppi Ciclici e Generatori: La Chiave per i Gruppi di Ordine Primo</a></li>
+  <li><a href="#gruppi-di-ordine-primo-un-risultato-fondamentale" id="toc-gruppi-di-ordine-primo-un-risultato-fondamentale" class="nav-link" data-scroll-target="#gruppi-di-ordine-primo-un-risultato-fondamentale">Gruppi di Ordine Primo: Un Risultato Fondamentale</a></li>
+  <li><a href="#conclusione-la-bellezza-e-la-potenza-dei-gruppi-di-ordine-primo" id="toc-conclusione-la-bellezza-e-la-potenza-dei-gruppi-di-ordine-primo" class="nav-link" data-scroll-target="#conclusione-la-bellezza-e-la-potenza-dei-gruppi-di-ordine-primo">Conclusione: La Bellezza e la Potenza dei Gruppi di Ordine Primo**</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
+
+
+
+
+<section id="introduzione-ai-gruppi-le-fondamenta-dellalgebra-astratta" class="level2">
+<h2 class="anchored" data-anchor-id="introduzione-ai-gruppi-le-fondamenta-dellalgebra-astratta">Introduzione ai Gruppi: Le Fondamenta dell’Algebra Astratta</h2>
+<p>Una volta parlavo con un mio amico di Algebra astratta e ricordo che mi chiese se davvero esistesse qualcosa come l’algebra astratta. Secondo lui l’aggettivo <em>astratta</em> era ridondante, visto che considerava l’algebra di per sé già astratta. No.&nbsp;Non è così. Dovete sapere che ai matematici piace astrarre qualsiasi cosa. Ma c’è un motivo se è così ed è per dare delle definizioni formali, non assiomatiche di operazioni comuni per permettere (in algebre diverse da quelle che usiamo comunemente) di poter definire operazioni diverse ma con proprietà simili.</p>
+<blockquote class="blockquote">
+<p>“Cazzo vuol dire? Parla potabile Luca.”</p>
+</blockquote>
+<p>C’hai ragione, calmati.</p>
+<p>A volte fa comodo sapere che gli oggeti matematici con cui lavoriamo hanno delle proprietà definite, dimostrate da teoremi.</p>
+<p>Perché? Perché così si possono creare approcci nuovi, algoritmi, schemi e compagnia cantante senza dover dimostrare la loro fondatezza dalle basi, ma assumendo per esempio di partire con oggetti matematici noti.</p>
+<p>Un esempio di questo genere di <em>oggetti matematici</em> sono i gruppi. Esiste tutto un filone di matematica chiamato <em>Teoria dei gruppi</em> che si occupa di dimostrare, scoprire e studiare tutto ciò che riguarda i <em>Gruppi</em>.</p>
+<p>Ok ma che caz sono ’sti benedetti gruppi? E perché ci servono?</p>
+<p>Calmati, di nuovo.</p>
+<p>Prima di arrivare al cuore dell’argomento di questo post, i gruppi di ordine primo, conviene costruire prima una base, partendo dalla definizione stessa di <strong>gruppo</strong>.</p>
+<p>Un <strong>gruppo</strong> è un insieme non vuoto, che possiamo chiamare come ci pare, ma chiamaremo <span class="math inline">\(G\)</span> (che sta per <span class="math inline">\(Giancarlo\)</span>), dotato di un’operazione binaria, che spesso indicheremo con <span class="math inline">\(\cdot\)</span> (ma potrebbe essere +, *, o altro a seconda del contesto o di come vi svegliate la mattina. E i matematici lo fanno.). Per essere un <strong>gruppo</strong>, questa coppia <span class="math inline">\((G, \cdot)\)</span> deve soddisfare quattro proprietà fondamentali, i cosiddetti <strong>assiomi di gruppo</strong>:</p>
+<ol type="1">
+<li><p><strong>Chiusura:</strong> Per ogni coppia di elementi <span class="math inline">\(a\)</span> e <span class="math inline">\(b\)</span> appartenenti a <span class="math inline">\(G\)</span>, il risultato dell’operazione <span class="math inline">\(a \cdot b\)</span> deve essere ancora un elemento di <span class="math inline">\(G\)</span>. In simboli: se <span class="math inline">\(a, b \in G\)</span>, allora <span class="math inline">\(a \cdot b \in G\)</span>. Questo significa che l’operazione non ci “porta fuori” dall’insieme <span class="math inline">\(G\)</span>.</p></li>
+<li><p><strong>Associatività:</strong> L’operazione deve essere associativa. Questo significa che per ogni terna di elementi <span class="math inline">\(a, b, c\)</span> in <span class="math inline">\(G\)</span>, l’ordine in cui eseguiamo le operazioni non cambia il risultato: <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>.</p></li>
+<li><p><strong>Elemento Neutro (Identità):</strong> Esiste un elemento speciale in <span class="math inline">\(G\)</span>, che chiamiamo <strong>elemento neutro</strong> (o identità), solitamente indicato con <span class="math inline">\(e\)</span> (o <span class="math inline">\(1\)</span> in notazione moltiplicativa, <span class="math inline">\(0\)</span> in notazione additiva). Questo elemento ha la proprietà che, per ogni elemento <span class="math inline">\(a\)</span> in <span class="math inline">\(G\)</span>, <span class="math inline">\(a \cdot e = e \cdot a = a\)</span>. L’<strong>elemento neutro</strong> si comporta come un “non-operazione”.</p></li>
+<li><p><strong>Elemento Inverso:</strong> Per ogni elemento <span class="math inline">\(a\)</span> in <span class="math inline">\(G\)</span>, esiste un altro elemento in <span class="math inline">\(G\)</span>, chiamato <strong>inverso</strong> di <span class="math inline">\(a\)</span>, che indicheremo con <span class="math inline">\(a^{-1}\)</span> (o <span class="math inline">\(-a\)</span> in notazione additiva). L’<strong>elemento inverso</strong> ha la proprietà che quando operato con <span class="math inline">\(a\)</span> dà come risultato l’<strong>elemento neutro</strong>: <span class="math inline">\(a \cdot a^{-1} = a^{-1} \cdot a = e\)</span>.</p></li>
+</ol>
+<p>Se un gruppo soddisfa anche la proprietà commutativa, cioè se per ogni coppia di elementi <span class="math inline">\(a, b \in G\)</span>, <span class="math inline">\(a \cdot b = b \cdot a\)</span>, allora il gruppo è detto <strong>gruppo abeliano</strong> (o commutativo). Se la proprietà commutativa non vale per tutti gli elementi, il gruppo è detto <strong>non-abeliano</strong>.</p>
+<section id="esempi-pratici-di-gruppi" class="level3">
+<h3 class="anchored" data-anchor-id="esempi-pratici-di-gruppi">Esempi Pratici di Gruppi</h3>
+<p>Io ho già perso per strada metà dei lettori. Dico metà perché sono un inguaribile ottimista. In realtà se stai ancora leggendo forse sei l’unico che ha avuto il fegato di farlo. Quindi bravo.</p>
+<p>Come ricompnensa, vediamo alcuni esempi un po’ più concreti:</p>
+<ul>
+<li><strong>I numeri interi con l’addizione (<span class="math inline">\((\mathbb{Z}, +)\)</span>):</strong> L’insieme dei numeri interi <span class="math inline">\(\mathbb{Z} = \{..., -2, -1, 0, 1, 2, ...\}\)</span> con l’operazione di addizione usuale (+) forma un <strong>gruppo abeliano</strong>.
+<ul>
+<li><strong>Chiusura:</strong> La somma di due numeri interi è sempre un numero intero. 3 + 19 = 21 dove 3, 19 e 21 <span class="math inline">\(\in \mathbb{Z}\)</span></li>
+<li><strong>Associatività:</strong> L’addizione è associativa: <span class="math inline">\((a + b) + c = a + (b + c)\)</span>. Roba da seconda elementare, forza, su.</li>
+<li><strong>Elemento Neutro:</strong> L’elemento neutro è lo zero (0), poiché <span class="math inline">\(a + 0 = 0 + a = a\)</span> per ogni intero <span class="math inline">\(a\)</span>.</li>
+<li><strong>Elemento Inverso:</strong> L’inverso di un intero <span class="math inline">\(a\)</span> è <span class="math inline">\(-a\)</span>, poiché <span class="math inline">\(a + (-a) = (-a) + a = 0\)</span>.</li>
+<li><strong>Abeliano:</strong> L’addizione è commutativa: <span class="math inline">\(a + b = b + a\)</span>.</li>
+</ul></li>
+<li><strong>I numeri razionali non nulli con la moltiplicazione (<span class="math inline">\((\mathbb{Q} \setminus \{0\}, \cdot)\)</span>):</strong> L’insieme dei numeri razionali escluso lo zero, con l’operazione di moltiplicazione usuale (<span class="math inline">\(\cdot\)</span>), forma un <strong>gruppo abeliano</strong>.
+<ul>
+<li><strong>Chiusura:</strong> Il prodotto di due numeri razionali non nulli è ancora un numero razionale non nullo.</li>
+<li><strong>Associatività:</strong> La moltiplicazione è associativa: <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>.</li>
+<li><strong>Elemento Neutro:</strong> L’elemento neutro è uno (1), poiché <span class="math inline">\(a \cdot 1 = 1 \cdot a = a\)</span> per ogni razionale non nullo <span class="math inline">\(a\)</span>.</li>
+<li><strong>Elemento Inverso:</strong> L’inverso di un razionale non nullo <span class="math inline">\(a = \frac{p}{q}\)</span> (con <span class="math inline">\(p, q \neq 0\)</span>) è <span class="math inline">\(a^{-1} = \frac{q}{p}\)</span>.</li>
+<li><strong>Abeliano:</strong> La moltiplicazione è commutativa: <span class="math inline">\(a \cdot b = b \cdot a\)</span>.</li>
+</ul></li>
+<li><strong>Il gruppo simmetrico <span class="math inline">\(S_n\)</span> (per <span class="math inline">\(n \ge 3\)</span>):</strong> Questo è un esempio di <strong>gruppo non-abeliano</strong>. <span class="math inline">\(S_n\)</span> è il gruppo delle permutazioni di <span class="math inline">\(n\)</span> oggetti, con l’operazione di composizione di funzioni. Per <span class="math inline">\(n \ge 3\)</span>, la composizione di permutazioni non è commutativa in generale.</li>
+</ul>
+<p>Quindi, riassumendo un pochino: un gruppo è semplicemente l’astrazione di quello che noi usiamo ogni giorno per contare quanti soldi ci sono rimasti sul conto e scoprire di essere molto povery. Per essere definito un gruppo ha bisogno di due elementi: un insieme (non vuoto altrimenti grazie al cazzo) e un’operazione binaria (operazione binaria=<em>tra due operandi</em>). Facile no? Ecco, adesso complichiamo le cose.</p>
+</section>
+<section id="ordine-di-un-gruppo-e-di-un-elemento" class="level3">
+<h3 class="anchored" data-anchor-id="ordine-di-un-gruppo-e-di-un-elemento">Ordine di un Gruppo e di un Elemento</h3>
+<p>Innanzitutto introduciamo un nuovo termine: l’<strong>ordine</strong>. L’ordine può essere definito sia sul gruppo nella sua interezza, sia solo sull’elemento.</p>
+<ul>
+<li><p>L’<strong>ordine di un gruppo</strong> <span class="math inline">\(G\)</span>, indicato con <span class="math inline">\(|G|\)</span>, non è altro che il numero di elementi contenuti nell’insieme <span class="math inline">\(G\)</span>. Se il numero di elementi è finito, si dice che il gruppo è <strong>finito</strong>, altrimenti è <strong>infinito</strong> (minchia, la fantasia dei matematici eh!?). Gli esempi <span class="math inline">\((\mathbb{Z}, +)\)</span> e <span class="math inline">\((\mathbb{Q} \setminus \{0\}, \cdot)\)</span> sono gruppi infiniti, mentre il gruppo simmetrico <span class="math inline">\(S_n\)</span> è un gruppo finito di ordine <span class="math inline">\(n!\)</span>.</p></li>
+<li><p>L’<strong>ordine di un elemento</strong> <span class="math inline">\(g\)</span> in un gruppo <span class="math inline">\(G\)</span> è il più piccolo intero positivo <span class="math inline">\(k\)</span> tale che <span class="math inline">\(g^k = e\)</span>, dove <span class="math inline">\(e\)</span> è l’elemento neutro del gruppo e <span class="math inline">\(g^k\)</span> indica l’operazione di <span class="math inline">\(g\)</span> con se stesso <span class="math inline">\(k\)</span> volte (ad esempio, in notazione moltiplicativa, <span class="math inline">\(g^k = g \cdot g \cdot ... \cdot g\)</span> (<span class="math inline">\(k\)</span> volte); in notazione additiva, <span class="math inline">\(kg = g + g + ... + g\)</span> (<span class="math inline">\(k\)</span> volte)). Se tale intero positivo non esiste, si dice che l’elemento <span class="math inline">\(g\)</span> ha <strong>ordine infinito</strong>.</p></li>
+</ul>
+<p>Nah nah nah nah… ferma tutto. Il primo è chiaro e semplice. Il secondo non si capisce un tubo. Fammi un esempio.</p>
+<p>Consideriamo il gruppo <span class="math inline">\((\mathbb{Z}_4, +_4)\)</span>, che è il gruppo degli interi modulo 4 sotto l’operazione di addizione modulo 4.</p>
+<p>Eh!?</p>
+<p>L’<strong>elemento neutro</strong> in <span class="math inline">\((\mathbb{Z}_4, +_4)\)</span> è lo <strong>0</strong>, perché per ogni elemento <span class="math inline">\(a \in \mathbb{Z}_4\)</span>, si ha <span class="math inline">\(a +_4 0 = 0 +_4 a = a\)</span>. Eh vabbè fin qua.</p>
+<ul>
+<li><strong>Cos’è <span class="math inline">\(\mathbb{Z}_4\)</span>?</strong> È l’insieme <span class="math inline">\(\{0, 1, 2, 3\}\)</span>. Facile, ok.</li>
+<li><strong>Cos’è <span class="math inline">\(+_4\)</span>?</strong> È l’addizione modulo 4. Ad esempio, <span class="math inline">\(2 +_4 3 = 5 \pmod{4} = 1\)</span>. Eh!?</li>
+</ul>
+<p>L’adidzione modulo 4 è semplicemente una addizione che quando “sfora” il 4 ricomincia da zero. Che uno può immaginare sia una roba incasinatissima e invece no, perché volendo è concettualmente simila a quello che fai dalla terza elementare quando fai le somme ma alle elementari lo chiamavi “riporto”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. <span class="math inline">\(8+4\)</span> quanto fa? <span class="math inline">\(12\)</span>, embé?</p>
+<p>Sì, ma come ci siamo arrivati a far comparire una seconda cifra lì? Arriviamoci passo passo: <span class="math inline">\(8 + 1 = 9\)</span>.</p>
+<p>Ok e fin qua…</p>
+<p><span class="math inline">\(9 + 1\)</span>? Non ho più numeri a <em>una cifra</em>, allora cosa faccio? Ricomincio dallo zero, aggiungo uno davanti e continuo. Quindi: <span class="math inline">\(9 + 1 = 10\)</span>.</p>
+<p><span class="math inline">\(10 + 1 = 11\)</span>.</p>
+<p><span class="math inline">\(11 + 1 = 12\)</span></p>
+<p>L’addizione modulo <span class="math inline">\(n\)</span> la facciamo dalla seconda elementare senza manco saperlo</p>
+<p>Nell’esempio di sopra il <span class="math inline">\(2\)</span> di <span class="math inline">\(12\)</span> si ottiene in termini di addizione modulo 10 con: <span class="math display">\[8 +_{10} 4 = 12 \pmod{10} = 2\]</span></p>
+<p>Ok, andiamo avanti.</p>
+<p>Ora, prendiamo un elemento a caso da <span class="math inline">\(\mathbb{Z}_4\)</span>, ad esempio <strong>l’elemento 2</strong>. Vogliamo trovare l’ordine dell’elemento 2. Dobbiamo trovare il più piccolo intero positivo <span class="math inline">\(k\)</span> tale che <span class="math inline">\(k \cdot 2 = 0\)</span> (ricorda che in notazione additiva, <span class="math inline">\(g^k\)</span> diventa <span class="math inline">\(k \cdot g\)</span>). Qui, l’operazione è l’addizione modulo 4, quindi stiamo cercando il più piccolo <span class="math inline">\(k\)</span> tale che:</p>
+<p><span class="math inline">\(2 +_4 2 +_4 \ldots +_4 2\)</span> (<span class="math inline">\(k\)</span> volte) <span class="math inline">\(= 0 \pmod{4}\)</span></p>
+<p>In altre parole, stiamo cercando il più piccolo intero positivo <span class="math inline">\(k\)</span> tale che <span class="math inline">\(k \times 2\)</span> sia un multiplo di 4. Vediamo un po’:</p>
+<ul>
+<li>Per <span class="math inline">\(k = 1\)</span>: <span class="math inline">\(1 \cdot 2 = 2 \pmod{4} = 2 \neq 0\)</span>.</li>
+<li>Per <span class="math inline">\(k = 2\)</span>: <span class="math inline">\(2 \cdot 2 = 2 +_4 2 = 4 \pmod{4} = 0\)</span>.</li>
+</ul>
+<p>VAMOS! L’abbiamo trovato! Il più piccolo intero positivo <span class="math inline">\(k\)</span> per cui <span class="math inline">\(k \cdot 2 = 0 \pmod{4}\)</span> è <span class="math inline">\(k = 2\)</span>.</p>
+<p><strong>Quindi, l’ordine dell’elemento 2 nel gruppo <span class="math inline">\((\mathbb{Z}_4, +_4)\)</span> è 2.</strong></p>
+<p>Proviamo con un altro elemento, ad esempio <strong>l’elemento 1</strong>. Vogliamo trovare il più piccolo intero positivo <span class="math inline">\(k\)</span> tale che <span class="math inline">\(k \cdot 1 = 0 \pmod{4}\)</span>.</p>
+<ul>
+<li>Per <span class="math inline">\(k = 1\)</span>: <span class="math inline">\(1 \cdot 1 = 1 \pmod{4} = 1 \neq 0\)</span>.</li>
+<li>Per <span class="math inline">\(k = 2\)</span>: <span class="math inline">\(2 \cdot 1 = 1 +_4 1 = 2 \pmod{4} = 2 \neq 0\)</span>.</li>
+<li>Per <span class="math inline">\(k = 3\)</span>: <span class="math inline">\(3 \cdot 1 = 1 +_4 1 +_4 1 = 3 \pmod{4} = 3 \neq 0\)</span>.</li>
+<li>Per <span class="math inline">\(k = 4\)</span>: <span class="math inline">\(4 \cdot 1 = 1 +_4 1 +_4 1 +_4 1 = 4 \pmod{4} = 0\)</span>.</li>
+</ul>
+<p>Il più piccolo intero positivo <span class="math inline">\(k\)</span> per cui <span class="math inline">\(k \cdot 1 = 0 \pmod{4}\)</span> è <span class="math inline">\(k = 4\)</span>.</p>
+<p><strong>Quindi, l’ordine dell’elemento 1 nel gruppo <span class="math inline">\((\mathbb{Z}_4, +_4)\)</span> è 4.</strong></p>
+<p>Fantastico. Finora era tutto bello e semplice. Ora scendiamo un po’ nell’abisso.</p>
+</section>
+</section>
+<section id="gruppi-ciclici-e-generatori-la-chiave-per-i-gruppi-di-ordine-primo" class="level2">
+<h2 class="anchored" data-anchor-id="gruppi-ciclici-e-generatori-la-chiave-per-i-gruppi-di-ordine-primo">Gruppi Ciclici e Generatori: La Chiave per i Gruppi di Ordine Primo</h2>
+<p>Un tipo <em>speciale</em> di gruppo, che poi è l’argomento per cui siamo qui tutti riuniti quest’oggi, è il <strong>gruppo ciclico</strong>.</p>
+<p>Un <strong>gruppo ciclico</strong> è (formalmente) un gruppo che può essere generato da un singolo elemento. Ovvero, un gruppo <span class="math inline">\(G\)</span> è <strong>ciclico</strong> se esiste un elemento <span class="math inline">\(g \in G\)</span> tale che ogni elemento di <span class="math inline">\(G\)</span> può essere espresso come una “potenza” di <span class="math inline">\(g\)</span> (dove “potenza” significa ripetere l’operazione di gruppo). Questo elemento <span class="math inline">\(g\)</span> è chiamato <strong>generatore</strong> del gruppo <span class="math inline">\(G\)</span>.</p>
+<p>Ora: avete notato una cosa importante? Abbiamo usato il termini “potenza” ma specificando che vuol dire “ripere l’operazione di gruppo”. Intendevo questo quando parlavo di <strong>Algebra astratta</strong>. Non è altro che prendere l’algebra che usiamo tutti i giorni e semplicemente astrarre dei concetti e dimostrare le proprietà di quell’oggetto a prescindere che l’operazione sia l’addizione o la moltiplicazione.</p>
+<p>Formalmente, un gruppo <span class="math inline">\(G\)</span> è <strong>ciclico</strong> se esiste un elemento <span class="math inline">\(g \in G\)</span> tale che:</p>
+<p><span class="math inline">\(G = \{g^k \mid k \in \mathbb{Z} \}\)</span> (in notazione moltiplicativa)</p>
+<p>oppure</p>
+<p><span class="math inline">\(G = \{kg \mid k \in \mathbb{Z} \}\)</span> (in notazione additiva)</p>
+<p>dove <span class="math inline">\(\mathbb{Z}\)</span> rappresenta l’insieme dei numeri interi.</p>
+<p>Conviene fare un esempio, che sento già la puzza di bruciato. Consideriamo il gruppo degli interi modulo 5 (perché se facciamo sempre con quel cazzo di 4 pensate che funziona solo col 4) con l’addizione, <span class="math inline">\((\mathbb{Z}_5, +) = \{[0], [1], [2], [3], [4]\}\)</span>. Questo è un <strong>gruppo ciclico</strong> di ordine 5. L’elemento [1] è un <strong>generatore</strong> di <span class="math inline">\(\mathbb{Z}_5\)</span>, poiché:</p>
+<ul>
+<li><span class="math inline">\([1]^1 = [1]\)</span></li>
+<li><span class="math inline">\([1]^2 = [1] + [1] = [2]\)</span></li>
+<li><span class="math inline">\([1]^3 = [1] + [1] + [1] = [3]\)</span></li>
+<li><span class="math inline">\([1]^4 = [1] + [1] + [1] + [1] = [4]\)</span></li>
+<li><span class="math inline">\([1]^5 = [1] + [1] + [1] + [1] + [1] = [5] \equiv [0] \pmod{5}\)</span> (elemento neutro)</li>
+<li><span class="math inline">\([1]^6 = [1] + [1] + [1] + [1] + [1] + [1] = [6] \equiv [1] \pmod{5}\)</span>, e così via.</li>
+</ul>
+<p>Quindi, tornando a <span class="math inline">\(\mathbb{Z}_5 = \{[0], [1], [2], [3], [4]\}\)</span>, è chiaro che partendo da [1] e sommandolo a se stesso un po’ di volte, possiamo ottenere tutti gli altri elementi. Infatti: [1], [1]+[1]=[2], [1]+[1]+[1]=[3], [1]+[1]+[1]+[1]=[4], e [1] sommato 5 volte ci ridà [0] (cioè [5] che modulo 5 fa [0]). Figo no? Questo significa che [1] è un <strong>generatore</strong> di <span class="math inline">\(\mathbb{Z}_5\)</span>.</p>
+<p>Ma non solo [1]! Anche [2] è un generatore di <span class="math inline">\(\mathbb{Z}_5\)</span>. Proviamo: [2], [2]+[2]=[4], [2]+[2]+[2]=[6]=[1] (modulo 5), [2]+[2]+[2]+[2]=[8]=[3] (modulo 5), e [2] sommato 5 volte fa [10]=[0] (modulo 5). Anche con [2] abbiamo generato tutti gli elementi di <span class="math inline">\(\mathbb{Z}_5\)</span>!</p>
+<p>Ora, uno potrebbe chiedersi: ma vale sempre? È vero che [2] è un generatore di <span class="math inline">\(\mathbb{Z}_n\)</span> per <strong>ogni</strong> <span class="math inline">\(n\)</span> dispari? Si lascia la dimostrazione come esercizio al lettore.</p>
+<p>Naaah! Scherzo. In realtà lo schema della dimostrazione potrebbe essere abbastanza intuitivo.</p>
+<p>L’idea è che se <span class="math inline">\(n\)</span> è dispari, allora 2 e <span class="math inline">\(n\)</span> sono <strong>coprimi</strong>, cioè non hanno fattori comuni (a parte 1, ovviamente). E questo è un dettaglio <strong>FONDAMENTALE</strong>.</p>
+<p>Cerchiamo di capirlo meglio. Quando sommiamo [2] a se stesso un po’ di volte in <span class="math inline">\(\mathbb{Z}_n\)</span>, otteniamo i multipli di [2]: [2], [4], [6], [8], [10], e così via, sempre modulo <span class="math inline">\(n\)</span>. Se 2 e <span class="math inline">\(n\)</span> fossero “amici” e avessero un fattore comune, diciamo <span class="math inline">\(d &gt; 1\)</span>, allora i multipli di 2 “modulo <span class="math inline">\(n\)</span>” si ripeterebbero prima di coprire tutti gli elementi di <span class="math inline">\(\mathbb{Z}_n\)</span>. Ma se 2 e <span class="math inline">\(n\)</span> sono coprimi, allora i multipli di 2 “modulo <span class="math inline">\(n\)</span>” continuano a sforare e a dare resti diversi fino a quando non abbiamo generato tutti gli elementi da [0] a <span class="math inline">\([n-1]\)</span>.</p>
+<p>Per esempio, prendiamo <span class="math inline">\(n=9\)</span> (dispari). Partiamo da [2]: [2], [4], [6], [8], [10]=[1] (modulo 9), [12]=[3] (modulo 9), [14]=[5] (modulo 9), [16]=[7] (modulo 9), [18]=[0] (modulo 9). E voilà! Abbiamo ottenuto [0], [1], [2], [3], [4], [5], [6], [7], [8], cioè tutti gli elementi di <span class="math inline">\(\mathbb{Z}_9\)</span>.</p>
+<p>Se invece prendessimo un <span class="math inline">\(n\)</span> pari, tipo <span class="math inline">\(n=6\)</span>, e provassimo con [2] in <span class="math inline">\(\mathbb{Z}_6\)</span>: [2], [4], [6]=[0] (modulo 6), [8]=[2] (modulo 6)… Vediamo che otteniamo solo [0], [2], [4]. Non generiamo tutto <span class="math inline">\(\mathbb{Z}_6\)</span>. Questo succede perché 2 e 6 non sono coprimi (hanno il fattore comune 2).</p>
+<p><span class="math display">\[\blacksquare\]</span></p>
+</section>
+<section id="gruppi-di-ordine-primo-un-risultato-fondamentale" class="level2">
+<h2 class="anchored" data-anchor-id="gruppi-di-ordine-primo-un-risultato-fondamentale">Gruppi di Ordine Primo: Un Risultato Fondamentale</h2>
+<p>Ora arriviamo al cuore del nostro articolo: i <strong>gruppi di ordine primo</strong>. Tutti sapete cos’è un numero primo, altrimenti vi vengo a cercare e a strappare la licenza media di persona.</p>
+<p>Comunque.</p>
+<p>Formalmente (perché un po’ di formalità ci vuole, sennò sembra il bar dello sport): Un numero <strong>primo</strong> è un intero positivo maggiore di 1 che ha solo due divisori positivi: 1 e se stesso. Esempi di numeri primi sono 2, 3, 5, 7, 11, 13, ecc.</p>
+<p>Un risultato fondamentale e notevole in teoria dei gruppi afferma (e rieccoci alla questione algebra astratta!):</p>
+<p><strong>Teorema:</strong> <em>Ogni gruppo di ordine primo è ciclico.</em></p>
+<p><strong>Cazzo vuol dire?</strong> (Cit.)</p>
+<p>Questo teorema ci dice che se prendiamo un gruppo <span class="math inline">\(G\)</span> il cui <strong>ordine</strong> <span class="math inline">\(|G|\)</span> è un numero primo <span class="math inline">\(q\)</span>, allora <span class="math inline">\(G\)</span> è necessariamente un <strong>gruppo ciclico</strong>. Questo significa che esiste almeno un elemento <span class="math inline">\(g \in G\)</span> che <strong>genera</strong> tutto il gruppo <span class="math inline">\(G\)</span>.</p>
+<p>Il che è notevole. Vuol dire che possiamo prendere un gruppo <span class="math inline">\(G\)</span> di pordine <span class="math inline">\(q\)</span> (ricordate? prima per esempio avevamo ordine <span class="math inline">\(4\)</span> oppure <span class="math inline">\(5\)</span>) e possiamo avere un elemento all’interno del gruppo che <em>genera</em> tutti gli altri, dato un numero <span class="math inline">\(k\)</span>.</p>
+<blockquote class="blockquote">
+<p>Non riesco a capire perché sei così eccitato Luca. Spiegamelo, prima che ti faccio male</p>
+</blockquote>
+<p>Calma e sangue freddo.</p>
+<p>Riprendiamo l’esempio di <span class="math inline">\(\mathbb{Z}_5\)</span> e del generatore [1]. Se io vi dico che un certo elemento nel gruppo è [3], e vi dico che il generatore è [1], voi sapete subito che per ottenere [3] da [1] devo fare:</p>
+<p><span class="math display">\[
+[1] + [1] + [1] = [3] \qquad \text{oppure} \qquad 3 \cdot [1] = [3]
+\]</span></p>
+<p>Ma potrei averlo ottenuto anche facendo molte più operazioni, tipo:</p>
+<p><span class="math display">\[
+8 \cdot [1] = [1] + [1] + [1] + [1] + [1] + [1] + [1] + [1] = [8] = [3] \pmod{5}
+\]</span></p>
+<p>o anche</p>
+<p><span class="math display">\[
+90901291213 \cdot [1] = [90901291213] = [3] \pmod{5}
+\]</span></p>
+<p>Ci sono <strong>infiniti modi</strong> per descrivere lo stesso elemento [3] usando il generatore [1]! Se io vi dico solo che il risultato è [3], che l’ordine del gruppo ciclico è 5 e il generatore è [1], voi <strong>non potete sapere</strong> quante volte ho applicato l’operazione, cioè <strong>quale esponente</strong> <span class="math inline">\(k\)</span> ho usato tra gli infiniti possibili. Ed è proprio su questa “ignoranza” che si basa una valanga di algoritmi di crittografia moderni!</p>
+<p><strong>“Cose semplici da verificare, ma difficili da calcolare”</strong>: Verificare che <span class="math inline">\(90901291213 \cdot [1] = [3] \pmod{5}\)</span> è <strong>facilissimo</strong>. Basta fare la divisione e vedere il resto. Ma se io vi dessi solo [3], [1] e 5, e vi chiedessi di trovare quel numero enorme <span class="math inline">\(k=90901291213\)</span> (o uno simile), sarebbe <strong>praticamente impossibile</strong> farlo in tempi ragionevoli, soprattutto se l’ordine del gruppo fosse un numero primo enorme di centinaia di cifre!</p>
+<p>Ecco perché questo teorema sui gruppi di ordine primo, che all’inizio sembrava solo un giochino matematico, è in realtà <strong>fondamentale per la sicurezza delle nostre comunicazioni online</strong>, delle nostre transazioni bancarie, e di un sacco di altre cose che usiamo tutti i giorni. <strong>La matematica astratta che salva il mondo, ragazzi!</strong> Chi l’avrebbe mai detto? Come? Banalmente, l’idea è che se io uso un numero segreto <span class="math inline">\(k\)</span> per “criptare” in un certo modo con un certo algoritmo, anche se vi mostro il risultato “criptato”, indovinare <span class="math inline">\(k\)</span> sarebbe un disastro.</p>
+<p>Detto questo: ora dimostrazione formale del teorema e tutti a nanna.</p>
+<p><strong>Dimostrazione (Schema):</strong></p>
+<p>Sia <span class="math inline">\(G\)</span> un gruppo di ordine primo <span class="math inline">\(q\)</span>. Consideriamo un elemento <span class="math inline">\(g \in G\)</span> diverso dall’elemento neutro <span class="math inline">\(e\)</span>. Consideriamo il sottogruppo ciclico generato da <span class="math inline">\(g\)</span>, che indichiamo con <span class="math inline">\(\langle g \rangle = \{g^k \mid k \in \mathbb{Z} \}\)</span>. Per il teorema di Lagrange, l’ordine di un sottogruppo deve dividere l’ordine del gruppo. Quindi, l’ordine di <span class="math inline">\(\langle g \rangle\)</span>, cioè <span class="math inline">\(|\langle g \rangle|\)</span>, deve dividere l’ordine di <span class="math inline">\(G\)</span>, che è <span class="math inline">\(q\)</span>. Poiché <span class="math inline">\(q\)</span> è primo, i divisori positivi di <span class="math inline">\(q\)</span> sono solo 1 e <span class="math inline">\(q\)</span>.</p>
+<p>L’ordine di <span class="math inline">\(\langle g \rangle\)</span> non può essere 1, perché <span class="math inline">\(g \neq e\)</span>, quindi <span class="math inline">\(\langle g \rangle\)</span> contiene almeno due elementi (<span class="math inline">\(e\)</span> e <span class="math inline">\(g\)</span>). Pertanto, l’unica possibilità è che <span class="math inline">\(|\langle g \rangle| = q\)</span>. Ma se l’ordine del sottogruppo generato da <span class="math inline">\(g\)</span> è uguale all’ordine del gruppo <span class="math inline">\(G\)</span>, e <span class="math inline">\(\langle g \rangle\)</span> è un sottogruppo di <span class="math inline">\(G\)</span>, allora deve essere che <span class="math inline">\(\langle g \rangle = G\)</span>. Questo significa che <span class="math inline">\(G\)</span> è generato dall’elemento <span class="math inline">\(g\)</span>, e quindi <span class="math inline">\(G\)</span> è <strong>ciclico</strong>.</p>
+<p><strong>Altre Conseguenze e Implicazioni:</strong></p>
+<p>Questo teorema ha importanti conseguenze. Se sappiamo che un gruppo ha ordine primo <span class="math inline">\(q\)</span>, sappiamo immediatamente che:</p>
+<ol type="1">
+<li><strong>È ciclico:</strong> Esiste un <strong>generatore</strong> <span class="math inline">\(g \in G\)</span> tale che ogni elemento di <span class="math inline">\(G\)</span> è una potenza di <span class="math inline">\(g\)</span>.</li>
+<li><strong>È abeliano:</strong> Tutti i gruppi ciclici sono abeliani. Quindi, ogni gruppo di ordine primo è abeliano.</li>
+<li><strong>Struttura semplice:</strong> I gruppi ciclici sono tra i gruppi più semplici da comprendere e studiare. Il teorema ci dice che i gruppi di ordine primo, nonostante la loro apparente “rarità” (ci sono infiniti numeri primi), hanno una struttura algebrica molto ben definita e semplice.</li>
+</ol>
+<p><strong>Generatore <span class="math inline">\(g\)</span>:</strong></p>
+<p>Abbiamo visto che un gruppo <span class="math inline">\(G\)</span> di ordine primo <span class="math inline">\(q\)</span> è ciclico e ha un <strong>generatore</strong> <span class="math inline">\(g\)</span>. Questo <strong>generatore</strong> <span class="math inline">\(g\)</span> è un elemento di <span class="math inline">\(G\)</span> tale che “ripetendo” l’operazione di gruppo con <span class="math inline">\(g\)</span> (con se stesso), possiamo ottenere tutti gli elementi di <span class="math inline">\(G\)</span>.</p>
+<p>Ad esempio, se <span class="math inline">\(G\)</span> è un gruppo di ordine 7 (7 è primo), allora esiste un elemento <span class="math inline">\(g \in G\)</span> tale che:</p>
+<p><span class="math inline">\(G = \{e, g, g^2, g^3, g^4, g^5, g^6\}\)</span></p>
+<p>dove <span class="math inline">\(e\)</span> è l’elemento neutro e <span class="math inline">\(g^7 = e\)</span>. Gli esponenti sono presi modulo 7.</p>
+<p><strong>Unicità (a meno di isomorfismo):</strong></p>
+<p>Un altro risultato importante (che non dimostreremo qui perché oggettivamente mi sono scassato le balle pure io) è che <em>esiste, a meno di isomorfismo, un solo gruppo ciclico di ordine <span class="math inline">\(n\)</span> per ogni intero positivo <span class="math inline">\(n\)</span></em>. In particolare, per ogni numero primo <span class="math inline">\(q\)</span>, esiste un solo gruppo di ordine <span class="math inline">\(q\)</span>, a meno di isomorfismo. Questo gruppo è isomorfo al gruppo ciclico <span class="math inline">\(\mathbb{Z}_q = (\mathbb{Z}/q\mathbb{Z}, +)\)</span>, cioè gli interi modulo <span class="math inline">\(q\)</span> con l’addizione.</p>
+<p><strong>Esempio:</strong></p>
+<p>Se consideriamo un gruppo <span class="math inline">\(G\)</span> di ordine 3. Poiché 3 è un numero primo, sappiamo che <span class="math inline">\(G\)</span> è ciclico e abeliano. Esiste un elemento <span class="math inline">\(g \in G\)</span> tale che <span class="math inline">\(G = \{e, g, g^2\}\)</span> e <span class="math inline">\(g^3 = e\)</span>. La struttura di <span class="math inline">\(G\)</span> è completamente determinata da questa proprietà. Ogni gruppo di ordine 3 è “essenzialmente lo stesso” (isomorfo) a <span class="math inline">\(\mathbb{Z}_3 = \{[0], [1], [2]\}\)</span> con l’addizione modulo 3.</p>
+</section>
+<section id="conclusione-la-bellezza-e-la-potenza-dei-gruppi-di-ordine-primo" class="level2">
+<h2 class="anchored" data-anchor-id="conclusione-la-bellezza-e-la-potenza-dei-gruppi-di-ordine-primo">Conclusione: La Bellezza e la Potenza dei Gruppi di Ordine Primo**</h2>
+<p>E con questo, siamo arrivati alla fine di questo viaggione nell’abisso dell’algebra astratta. Spero che abbiate capito perché questo teorema, all’apparenza così semplice, è in realtà un risultato <strong>fondamentale</strong> e <strong>potente</strong>. Ci dice che i gruppi con un numero primo di elementi non sono solo un’astrazione matematica, ma hanno una struttura incredibilmente ordinata e prevedibile: sono <strong>ciclici</strong>, sono <strong>abeliani</strong>, e sono, in un certo senso, i gruppi più “semplici” che possiamo immaginare.</p>
+<p>Ma non è tanto la loro semplicità che deve entusiasmare. Come abbiamo visto, proprio questa struttura “semplice” e ben definita dei gruppi ciclici di ordine primo è alla base di tecnologie complesse come la crittografia moderna. La prossima volta che fate un pagamento online su onlyfans o che inviate un messaggio criptato che tanto la vostra fidanzata scoprirà comunque, pensateci: dietro le quinte, c’è l’algebra astratta, ci sono i gruppi di ordine primo, e c’è un sacco di matematica <strong>fighissima</strong> al servizio della vostra sicureza.</p>
+<p>La teoria dei gruppi è piena di altri risultati sorprendenti e connessioni inaspettate. Questo teorema sui gruppi di ordine primo è solo un piccolo assaggio della bellezza e della potenza di questa branca della matematica. Se siete arrivati fin qui, complimenti, sinceramente!</p>
+<div style="text-align: center; font-size: 2.5em; font-weight: bold; margin-top: 3em; margin-bottom: 1em;">
+FIN
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>in realtà l’analogia è un po’ azzardata e pericolante, visto che nelle operazioni modulo <span class="math inline">\(n\)</span> si resta sempre all’interno dell’insieme iniziale. Il “riporto” nelle somme in base 10 è legato alle potenze di 10 (unità, decine, centinaia, ecc.), mentre l’addizione modulo 4 è legata ai resti della divisione per 4. Non sono esattamente la stessa cosa, anche se condividono un’idea di “superamento di una soglia” e di “ripartenza”.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/theghoul21\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Luca Simonetti</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
