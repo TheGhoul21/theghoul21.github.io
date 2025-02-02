@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Luca Simonetti">
+<meta name="dcterms.date" content="2025-02-02">
 
-<title>L’s blog – L.</title>
+<title>Blockchain: Non Solo Criptovalute – L.</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +32,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -129,9 +100,9 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="L.">
-<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
-<meta property="og:image" content="https://theghoul21.github.io//images/278270564_10159906873598664_2201636379743763738_n.jpg">
+<meta property="og:title" content="Blockchain: Non Solo Criptovalute">
+<meta property="og:description" content="La blockchain spiegata, spero, facile.">
+<meta property="og:image" content="https://theghoul21.github.io//images/blockchain.jpeg">
 <meta property="og:site_name" content="L.">
 </head>
 
@@ -157,7 +128,7 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -198,14 +169,29 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">L’s blog</h1>
-                      </div>
+      <h1 class="title">Blockchain: Non Solo Criptovalute</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">computer science</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta column-page-left">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 2, 2025</p>
+      </div>
+    </div>
     
       
     </div>
@@ -215,8 +201,20 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="YWxnZWJyYQ==">algebra <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29tcHV0ZXIlMjBzY2llbmNl">computer science <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y3J5cHRvZ3JhcGh5">cryptography <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWF0aA==">math <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHJvZ3JhbW1pbmc=">programming <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2ViJTIwZGV2ZWxvcG1lbnQ=">web development <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#blockchain-non-solo-criptovalute" id="toc-blockchain-non-solo-criptovalute" class="nav-link active" data-scroll-target="#blockchain-non-solo-criptovalute">Blockchain: Non Solo Criptovalute</a>
+  <ul class="collapse">
+  <li><a href="#che-cosè-in-parole-semplici-una-blockchain" id="toc-che-cosè-in-parole-semplici-una-blockchain" class="nav-link" data-scroll-target="#che-cosè-in-parole-semplici-una-blockchain">Che Cos’è, in Parole Semplici, una Blockchain?</a></li>
+  <li><a href="#blockchain-non-solo-criptovalute-1" id="toc-blockchain-non-solo-criptovalute-1" class="nav-link" data-scroll-target="#blockchain-non-solo-criptovalute-1">Blockchain: Non Solo Criptovalute!</a></li>
+  <li><a href="#non-è-tutto-oro-ciò-che-luccica." id="toc-non-è-tutto-oro-ciò-che-luccica." class="nav-link" data-scroll-target="#non-è-tutto-oro-ciò-che-luccica.">Non è tutto oro ciò che luccica.</a></li>
+  <li><a href="#quindi" id="toc-quindi" class="nav-link" data-scroll-target="#quindi">Quindi</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -224,125 +222,98 @@ window.Quarto = {
 
 
 
+<section id="blockchain-non-solo-criptovalute" class="level1">
+<h1>Blockchain: Non Solo Criptovalute</h1>
+<p>Se non hai sentito parlare di Bitcoin e altre criptovalute vuol dire che fino ad oggi hai vissuto in una caverna, perché i media ormai hanno scartavetrato con questo argomento. Ecco, le criptovalute, spesso, si nascondono dietro a una tecnologia chiamata <strong>blockchain</strong>. Ma che cavolo è veramente una blockchain? E serve solo alle valute virtuali? In questo articolo voglio addentrarmi un po’ alla materia, scoprendo anche i suoi lati più oscuri e magari meno noti (spero) in modo semplice e chiaro, senza bisogno di essere esperti di informatica o finanza.</p>
+<section id="che-cosè-in-parole-semplici-una-blockchain" class="level2">
+<h2 class="anchored" data-anchor-id="che-cosè-in-parole-semplici-una-blockchain">Che Cos’è, in Parole Semplici, una Blockchain?</h2>
+<p>First things first…</p>
+<p>Immaginiamo di avere un <strong>registro pubblico</strong>, come un grande quaderno condiviso tra tantissime persone. Per esempio uno di questi registri potrebbe essere il vostro conto in banca, o il registro del catasto, o il registro delle nascite di un comune o il vostro personalissimo e dettagliatissimo resoconto delle maleducate che incontrate nei vostri felicissimi sabati sera.</p>
+<p>Normalmente, un registro è gestito da una sola entità, una banca, un governo, voi, ecc. La blockchain invece è diversa: è un registro <strong>distribuito</strong>.</p>
+<blockquote class="blockquote">
+<p>Ecco che comincia: che cazzo vuol dire <em>distribuito</em>??</p>
+</blockquote>
+<p>Calma.</p>
+<p>Significa che questo “quaderno” non è in un unico posto (la banca, il comune, un server ecc.), ma è <strong>copiato e tenuto aggiornato contemporaneamente da migliaia o milioni di computer</strong> in tutto il mondo.</p>
+<blockquote class="blockquote">
+<p>Eh vabbè capirai, non è già così? Eh? Facebook non ha milioni di computer? EHH??</p>
+</blockquote>
+<p>Non è la stessa cosa. Nel caso di aziende come google, facebook ecc il fatto di avere una copia distribuita dei dati su tanti server fa comunque sempre capo ad un’unica autorità che è appunto la multinazionale. In questo caso parliamo di persone comuni: io, te, la maleducata di venerdì scorso.</p>
+<blockquote class="blockquote">
+<p>Scusa, COSA? Tu vorresti distribuire i conti correnti della gente sui computer di tutta la gente? Ma sei rincoglionito?</p>
+</blockquote>
+<p>No.&nbsp;Calmati. Ci arriviamo.</p>
+<p>Intanto… un altro po’ di nomenclatura.</p>
+<p>Ogni “pagina” di questo quaderno è chiamata <strong>blocco</strong>. In ogni blocco vengono scritte delle <strong>transazioni</strong>, ovvero delle informazioni. Una volta che una pagina (un blocco) è piena, viene <strong>sigillata</strong> in modo speciale, usando una specie di “impronta digitale” matematica. Questa impronta digitale è collegata alla pagina precedente, formando una <strong>catena</strong> (in inglese “chain”) di blocchi: ecco perché si chiama <em>blockchain</em>, “catena di blocchi”.</p>
+<blockquote class="blockquote">
+<p>Sì ma perché?</p>
+</blockquote>
+<p>Eh perché… Perché se è su tutti i server del mondo, di gente comune, bisogna trovare una maniera per far sì che sia impossibile alterarla. Se qualche malintenzionato avesse il documento sul proprio computer e lo alterasse, comunicando agli altri la modifica potrebbe rubare i soldi della gente per esempio, o appropriarsi della casa di qualcuno. Ma se la <em>pagina</em> è firmata allora è impossibile farlo, perché nessuno riconoscerebbe la nuova firma (la firma non può essere alterata da un solo partecipante, visto che viene <em>generata</em> da tutti).</p>
+<p><strong>Riassunto intermedio:</strong></p>
+<p>Dunque, ricapitolandolo:</p>
+<ul>
+<li><strong>Distribuita:</strong> Non controllata da uno solo, ma da tanti, tutti.</li>
+<li><strong>Trasparente (ma non sempre, ci arriviamo):</strong> Tutti i partecipanti (o chi ha accesso alla blockchain, che può essere pubblica o privata) possono vedere le “pagine” (i blocchi) e le transazioni.</li>
+<li><strong>Immutabile:</strong> Una volta scritta una “pagina” (blocco) e sigillata, è quasi impossibile modificarla o cancellarla. Questo è dovuto all’uso dell’“impronta digitale” e alla catena di blocchi. Dico quasi impossibile, perché se uno ha una botta di fortuna terrificante potrebbe alterare una pagina. Ma con botta di fortuna, intendo che è più probabile che Salvini diventi comunista.</li>
+</ul>
+<p>Facciamo un esempio pratico, che altrimenti vi perdete…</p>
+<p>Pensiamo ad un gruppo di amici che vogliono tenere traccia di chi presta soldi a chi. Invece di usare foglietti volanti che si possono perdere o modificare di nascosto, decidono di usare un quaderno pubblico.</p>
+<ol type="1">
+<li><strong>Quaderno Pubblico:</strong> Mettono un quaderno al centro del tavolo, a disposizione di tutti.</li>
+<li><strong>Nuova Transazione (Blocco):</strong> Se Mariangela presta 10 euro a Gianfranco, tutti gli amici vedono Mariangela scrivere nel quaderno: “Blocco 1: Mariangela presta 10€ a Gianfranco”. Questo è il primo “blocco”.</li>
+<li><strong>Blocco Successivo:</strong> Poi, se Gianfranco restituisce 5 euro a Mariangela, scrivono un nuovo “blocco” sotto il precedente: “Blocco 2: Gianfranco restituisce 5€ a Mariangela”.</li>
+<li><strong>Catena e Impronta Digitale (Semplificata):</strong> Immagina che ogni volta che scrivono un blocco, oltre al contenuto della transazione, scrivono anche un breve riassunto del blocco precedente (l’impronta digitale semplificata). Così, il Blocco 2 riassumerebbe il Blocco 1. Se qualcuno volesse modificare il Blocco 1 dopo, dovrebbe cambiare anche il riassunto nel Blocco 2, e poi in tutti i blocchi successivi. Diventa complicatissimo e evidente che c’è stato un tentativo di manipolazione.</li>
+</ol>
+<p>In una blockchain vera, questo “riassunto” (l’“impronta digitale”, tecnicamente chiamata <em>hash</em>) è molto complesso e generato da calcoli matematici avanzati, rendendo le modifiche praticamente impossibili senza essere scoperti.</p>
+<p>L’osservatore più attento (nessuno…) avrà notato una cosa particolare &gt; Ma Luca, perché cazzo dici “praticamente impossibile”? Vuol dire che è possibile?</p>
+<p>Sì. Come detto prima la probabilità di riuscirci è talmente bassa che si può dormire sonni molto tranquilli. Nel senso che: è più probabile avere un incidente d’auto, ma vedo che la gente non si barrica in casa per questo motivo.</p>
+</section>
+<section id="blockchain-non-solo-criptovalute-1" class="level2">
+<h2 class="anchored" data-anchor-id="blockchain-non-solo-criptovalute-1">Blockchain: Non Solo Criptovalute!</h2>
+<p>Ok, le criptovalute come Bitcoin <em>usano</em> la blockchain. Ma la blockchain è <strong>solo</strong> criptovaluta o c’è altro? Beh che domanda del cavolo… è scritto nel titolo Luca.</p>
+<p>Un paio di esempi pratici e concreti:</p>
+<ol type="1">
+<li><p><strong>Tracciamento della Filiera Alimentare e Prodotti:</strong> Immagina di comprare una bottiglia d’olio d’oliva. Grazie alla blockchain, potresti scansionare un codice sulla bottiglia e vedere <em>tutta</em> la storia di quell’olio: da quale uliveto provengono le olive, in quale frantoio sono state lavorate, quando è stata imbottigliata, quando è arrivata al supermercato. Questo rende la filiera più trasparente e aiuta a combattere frodi e prodotti contraffatti. Funziona per il cibo, ma anche per vestiti, medicine, pezzi di ricambio per auto… qualsiasi cosa compriate per soddisfare i vostri desideri animali. Putridi bestie.</p></li>
+<li><p><strong>Gestione dell’Identità Digitale:</strong> Oggi abbiamo tantissime password e identità digitali sparse ovunque (social media, banche, siti web…). La blockchain potrebbe permettere di creare un’unica identità digitale sicura e controllata da noi stessi. Invece di dare i nostri dati a ogni sito, potremmo usare la nostra “identità blockchain” per autenticarci, scegliendo quali informazioni condividere e con chi.</p></li>
+<li><p><strong>Contratti Intelligenti (Smart Contracts):</strong> Sono programmi che si attivano automaticamente quando si verificano certe condizioni. Immagina per esempio che l’olivaio di prima si accorda con il frantumaio. Gli dice: “ascolta capo, quando mi arrivano i prossimi 3 quintali di olive te li mando per 200 euro, fatta?” E il frantumaio che sa che l’olivaio è un gran raccontaballe gli dice “eh no capo… che l’ultima volta non mi hai mandato un bel niente”. Allora stipulano uno smart contract che si attiva in automatico, non appena arrivano le olive vengono consegnate. Nello smart contract potrebbe per esempio essere inclusa una penalità per cui se l’olivaio si rifiuta di consegnare le olive paga in automatico una multa. Non una multa che dice “sì vabbè sticazzi hai capito tutto, non pago niente” bensì una multa che viene prelevata in automatico dal conto del signor olivaio.</p></li>
+</ol>
+<p>Questi sono solo alcuni esempi. Le applicazioni della blockchain sono potenzialmente infinite e ne vengono fuori ogni giorno come i funghi.</p>
+</section>
+<section id="non-è-tutto-oro-ciò-che-luccica." class="level2">
+<h2 class="anchored" data-anchor-id="non-è-tutto-oro-ciò-che-luccica.">Non è tutto oro ciò che luccica.</h2>
+<p>Come ogni tecnologia potente, ahimé, anche la blockchain ha i suoi lati negativi e presenta delle sfide. È importante conoscerli per avere un quadro completo e non farsi abbagliare solo dai vantaggi.</p>
+<ol type="1">
+<li><p><strong>Decentralizzazione e Attività Illegali:</strong> Uno dei punti di forza della blockchain, la decentralizzazione, può anche essere un punto debole. Se non c’è un’autorità centrale di controllo, diventa più difficile intervenire contro attività illegali. Per esempio:</p>
+<ul>
+<li><strong>Crimine Organizzato:</strong> Organizzazioni criminali potrebbero usare blockchain e criptovalute per riciclare denaro sporco, finanziare attività illegali, o condurre transazioni non tracciabili. Nessuno saprebbe mai chi ha fatto che cosa.</li>
+<li><strong>Evasione Fiscale:</strong> È più complicato per le autorità fiscali monitorare transazioni che avvengono al di fuori dei sistemi bancari tradizionali. Ma se l’intero sistema fosse gestito da blockchain sarebbe impossibile evadere le tasse visto che ogni transazione sarebbe tracciata e avrebbe delle fee.</li>
+<li><strong>Mercati Neri Online:</strong> Le blockchain possono facilitare la creazione di mercati online per beni e servizi illegali, come droghe o armi, rendendo più difficile per le forze dell’ordine smantellarli.</li>
+</ul>
+<p><strong>OVVIAMENTE:</strong> Questo <strong>non</strong> significa che la blockchain <em>è fatta per</em> il crimine. Significa che, come qualsiasi strumento, può essere usata per scopi positivi e negativi. È come internet: è una risorsa fantastica se vi mandate le foto di gattini e i reel della gente che fa incidenti stradali. Ma può essere fonte di disinformazione oltre che dei reel di Salvini che mangia le ciliegie (oggi ce l’ho con Salvini perdonatemi).</p></li>
+<li><p><strong>Mancanza di Regolamentazione:</strong> Essendo una tecnologia decentralizzata, la blockchain e le criptovalute non sono regolate. Questo può creare problemi:</p>
+<ul>
+<li><strong>Protezione dei Consumatori:</strong> Se investi in criptovalute e perdi tutto, spesso non c’è un’autorità a cui puoi rivolgerti per essere risarcito. Mancano le tutele che esistono nel sistema finanziario tradizionale.</li>
+<li><strong>Instabilità e Speculazione:</strong> Il valore delle criptovalute è estremamente volatile, con forti oscillazioni di prezzo. Questo le rende rischiose per gli investimenti e può creare bolle speculative.</li>
+</ul></li>
+<li><p><strong>Scalabilità e Consumo Energetico:</strong> Alcune blockchain, come quella di Bitcoin, hanno problemi di <strong>scalabilità</strong>. Significa che possono gestire un numero limitato di transazioni al secondo. Se troppe persone vogliono usare la blockchain nello stesso momento, le transazioni possono diventare lente e costose. Inoltre, alcune blockchain (come ancora Bitcoin, anche se ci sono alternative più efficienti) consumano <strong>molta energia elettrica</strong> per funzionare, il che ha un impatto ambientale negativo. Ovviamente questo non vale per <em>tutte</em> le blockchain: sono nati nel tempo metodi decisamente più economici e meno dispendiosi in termini di energia consumata che risolvono parzialmente o totalmente questi problemi.</p></li>
+<li><p><strong>Rischi per la Sicurezza:</strong> Anche se la blockchain è progettata per essere sicura, non è immune da attacchi.</p>
+<ul>
+<li><strong>Attacchi “51%”:</strong> In alcune blockchain, se un singolo soggetto riuscisse a controllare più del 50% della potenza di calcolo della rete, potrebbe teoricamente manipolare le transazioni. Anche se molto difficile, questo tipo di attacco è un rischio teorico che deve sempre e comunque essere preso in considerazione. Ad esempio una soluzione è garantirsi di avere il controllo sul 51% fitantoché la diffusione della blockchain è alta a sufficienza da mitigare i rischi.</li>
+<li><strong>Sicurezza dei “Portafogli” Digitali (Wallet):</strong> Per usare criptovalute e interagire con la blockchain, si usano dei “portafogli” digitali. Se questi portafogli non sono protetti adeguatamente (es. password deboli, phishing), si rischia di perdere i propri fondi. O anche (ed è capitato… ) non essendoci un’autorità centrale a cui fare riferimento se perdete la vostra “password” siete fotttuti. Se vi dimenticate la password dell’account facebook dove chattate cone le escort, chiedete a facebook il reset della password e facebook gestisce tutto. Nel mondo blockchain se perdete la vostra chiave privata (<span class="math inline">\(\approx\)</span> password), basta, that’s it, siete tagliati fuori dal vostro portafoglio. Anche per questo punto ci sono soluzioni come i portafogli gestiti da autorità centrali. Il che però fa perdere un po’ di senso alla blokchain.</li>
+</ul></li>
+</ol>
+</section>
+<section id="quindi" class="level2">
+<h2 class="anchored" data-anchor-id="quindi">Quindi</h2>
+<p>La blockchain è una tecnologia potenzialmente <strong>rivoluzionaria</strong>. Non è assolutamente sinonimo di “criptovalute” e potrebbe trasformare molti settori attualmente gestiti in maniera tradizionale, dalla finanza alla logistica, dalla sanità alla pubblica amministrazione. Offre vantaggi importanti come la trasparenza, la sicurezza, la decentralizzazione e l’immutabilità dei dati.</p>
+<p>Però, è fondamentale essere consapevoli anche dei <strong>rischi</strong> che comporta. La decentralizzazione, che è un punto di forza, può anche essere usata per attività illegali. La mancanza di regolamentazione e la complessità tecnica sono ostacoli da superare. Come per ogni innovazione, è importante un approccio equilibrato: sfruttare le potenzialità della blockchain, affrontando i rischi con consapevolezza e lavorando per creare un futuro digitale più sicuro e trasparente per tutti.</p>
+<p>La blockchain è ancora in fase di sviluppo. Il futuro dipenderà da come sapremo guidare questa tecnologia e farla evolvere in modo responsabile e sostenibile, massimizzando i benefici e minimizzando i rischi.</p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1738450800000" data-listing-file-modified-sort="1738483564541" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2018">
-<div class="thumbnail">
-<p><a href="../blog/blockchain.html" class="no-external"></a></p><a href="../blog/blockchain.html" class="no-external">
-<p><img loading="lazy" src="../images/blockchain.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/blockchain.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/blockchain.html" class="no-external">Blockchain: Non Solo Criptovalute</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/blockchain.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/blockchain.html" class="no-external">Se non hai sentito parlare di Bitcoin e altre criptovalute vuol dire che fino ad oggi hai vissuto in una caverna, perché i media ormai hanno scartavetrato con questo…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/blockchain.html" class="no-external">
-<div class="listing-date">
-Feb 2, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWF0aCUyQ2NyeXB0b2dyYXBoeSUyQ2FsZ2VicmE=" data-listing-date-sort="1738364400000" data-listing-file-modified-sort="1738392826219" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3770">
-<div class="thumbnail">
-<p><a href="../blog/group-prime-order.html" class="no-external"></a></p><a href="../blog/group-prime-order.html" class="no-external">
-<p><img loading="lazy" src="../images/group-prime-order.jpg" class="thumbnail-image"></p>
-</a><p><a href="../blog/group-prime-order.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/group-prime-order.html" class="no-external">Gruppi di Ordine Primo</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/group-prime-order.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('bWF0aA=='); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Y3J5cHRvZ3JhcGh5'); return false;">
-cryptography
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YWxnZWJyYQ=='); return false;">
-algebra
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/group-prime-order.html" class="no-external">Una volta parlavo con un mio amico di Algebra astratta e ricordo che mi chiese se davvero esistesse qualcosa come l’algebra astratta. Secondo lui l’aggettivo <em>astratta</em> era…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/group-prime-order.html" class="no-external">
-<div class="listing-date">
-Feb 1, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738387405946" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1635">
-<div class="thumbnail">
-<p><a href="../blog/sss.html" class="no-external"></a></p><a href="../blog/sss.html" class="no-external">
-<p><img loading="lazy" src="../images/sss.png" class="thumbnail-image"></p>
-</a><p><a href="../blog/sss.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/sss.html" class="no-external">Shamir’s Secret Sharing</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/sss.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">
-programming
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('d2ViJTIwZGV2ZWxvcG1lbnQ='); return false;">
-web development
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/sss.html" class="no-external">In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell’algoritmo Shamir’s Secret Sharing, provando ad illustrare sia la parte più teorica…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/sss.html" class="no-external">
-<div class="listing-date">
-Jan 30, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
