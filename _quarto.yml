@@ -19,17 +19,20 @@ website:
         text: Projects
       - text: Lecture notes
         menu:
-          - text: "Complexity and Information Theory"
+          - text: "Complexity and Information Theory 2024/2025"
             href: https://theghoul21.github.io/CIT-2024-2025/
             target: _blank
-          - text: "Deep Learning"
+          - text: "Deep Learning 2024/2025"
             href: https://theghoul21.github.io/DL-2024-2025/
             target: _blank
-          - text: "Ricerca Operativa"
+          - text: "Ricerca Operativa 2024/2025"
             href: https://theghoul21.github.io/RO-2024-2025/
             target: _blank
-          - text: "Foundations of Neural Networks"
+          - text: "Foundations of Neural Networks 2024/2025"
             href: https://theghoul21.github.io/FNN-2024-2025/
+            target: _blank
+          - text: "Quantum Computing 2023/2024"
+            href: https://theghoul21.github.io/QC-2023-2024/
             target: _blank
 
     
