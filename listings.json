@@ -11,6 +11,8 @@
     "listing": "/projects/index.html",
     "items": [
       "/projects/connect4.html",
+      "/projects/hopfield.html",
+      "/projects/prese-rnn.html",
       "/projects/spatial-spike-neural-networks-it.html"
     ]
   },
@@ -21,6 +23,8 @@
       "/blog/group-prime-order.html",
       "/blog/sss.html",
       "/projects/connect4.html",
+      "/projects/hopfield.html",
+      "/projects/prese-rnn.html",
       "/projects/spatial-spike-neural-networks-it.html"
     ]
   }
