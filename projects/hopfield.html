@@ -239,39 +239,39 @@ function createPatternWithCanvas(context, letter) {
 }
 
 const patterns = [
-    // // X shape
-    // createPattern((p) => {
-    //     for (let y = 0; y < HEIGHT; y++) {
-    //         for (let x = 0; x < WIDTH; x++) {
-    //             if (Math.abs(x - y) < WIDTH/8 || Math.abs(x + y - WIDTH) < WIDTH/8) {
-    //                 p[y * WIDTH + x] = 1;
-    //             }
-    //         }
-    //     }
-    // }),
-    // // Concentric circles
-    // createPattern((p) => {
-    //     const centerX = WIDTH/2;
-    //     const centerY = HEIGHT/2;
-    //     for (let y = 0; y < HEIGHT; y++) {
-    //         for (let x = 0; x < WIDTH; x++) {
-    //             const dist = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-    //             if (Math.floor(dist / 4) % 2 === 0) {
-    //                 p[y * WIDTH + x] = 1;
-    //             }
-    //         }
-    //     }
-    // }),
-    // // Checkerboard
-    // createPattern((p) => {
-    //     for (let y = 0; y < HEIGHT; y++) {
-    //         for (let x = 0; x < WIDTH; x++) {
-    //             if ((Math.floor(x/4) + Math.floor(y/4)) % 2 === 0) {
-    //                 p[y * WIDTH + x] = 1;
-    //             }
-    //         }
-    //     }
-    // }),
+    // X shape
+    createPattern((p) => {
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
+                if (Math.abs(x - y) < WIDTH/8 || Math.abs(x + y - WIDTH) < WIDTH/8) {
+                    p[y * WIDTH + x] = 1;
+                }
+            }
+        }
+    }),
+    // Concentric circles
+    createPattern((p) => {
+        const centerX = WIDTH/2;
+        const centerY = HEIGHT/2;
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
+                const dist = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                if (Math.floor(dist / 4) % 2 === 0) {
+                    p[y * WIDTH + x] = 1;
+                }
+            }
+        }
+    }),
+    // Checkerboard
+    createPattern((p) => {
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
+                if ((Math.floor(x/4) + Math.floor(y/4)) % 2 === 0) {
+                    p[y * WIDTH + x] = 1;
+                }
+            }
+        }
+    }),
     
 ];
 
@@ -298,9 +298,9 @@ function initializeVisualization() {
 
     const context = canvasNode.getContext('2d')
 
-    patterns.push(createPatternWithCanvas(context, 'L'));
-    patterns.push(createPatternWithCanvas(context, '9'));
-    patterns.push(createPatternWithCanvas(context, '0'));
+    // patterns.push(createPatternWithCanvas(context, 'L'));
+    // patterns.push(createPatternWithCanvas(context, '★'));
+    // patterns.push(createPatternWithCanvas(context, '□'));
 
     
     const network = new HopfieldNetwork(WIDTH, HEIGHT, patterns);
