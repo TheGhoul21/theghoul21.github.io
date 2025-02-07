@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Luca Simonetti (fittizio, ovviamente)">
+<meta name="dcterms.date" content="2025-02-07">
 
-<title>L’s blog – L.</title>
+<title>Hashing: Che Cos’è ’sto Hashing? – L.</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +32,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,70 +68,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="L.">
-<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
-<meta property="og:image" content="https://theghoul21.github.io//images/278270564_10159906873598664_2201636379743763738_n.jpg">
+<meta property="og:title" content="Hashing: Che Cazzo È ’Sto Hashing?">
+<meta property="og:description" content="L’hashing spiegato, spero, senza farvi venire il mal di testa.">
+<meta property="og:image" content="https://theghoul21.github.io//images/hashing.jpeg">
 <meta property="og:site_name" content="L.">
 </head>
 
@@ -157,7 +99,7 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -218,14 +160,29 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">L’s blog</h1>
-                      </div>
+      <h1 class="title">Hashing: Che Cos’è ’sto Hashing?</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">computer science</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta column-page-left">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti (fittizio, ovviamente) </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 7, 2025</p>
+      </div>
+    </div>
     
       
     </div>
@@ -235,8 +192,21 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="YWxnZWJyYQ==">algebra <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29tcHV0ZXIlMjBzY2llbmNl">computer science <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y3J5cHRvZ3JhcGh5">cryptography <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWF0aA==">math <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHJvZ3JhbW1pbmc=">programming <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2ViJTIwZGV2ZWxvcG1lbnQ=">web development <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hashing-che-cazzo-è-sto-hashing" id="toc-hashing-che-cazzo-è-sto-hashing" class="nav-link active" data-scroll-target="#hashing-che-cazzo-è-sto-hashing">Hashing: Che Cazzo È ’sto Hashing?</a>
+  <ul class="collapse">
+  <li><a href="#che-cosè-in-parole-povere-lhashing" id="toc-che-cosè-in-parole-povere-lhashing" class="nav-link" data-scroll-target="#che-cosè-in-parole-povere-lhashing">Che Cos’è, in Parole Povere, l’Hashing?</a></li>
+  <li><a href="#ma-a-che-cazzo-serve-veramente-lhashing" id="toc-ma-a-che-cazzo-serve-veramente-lhashing" class="nav-link" data-scroll-target="#ma-a-che-cazzo-serve-veramente-lhashing">Ma a Che Cazzo Serve Veramente l’Hashing?</a></li>
+  <li><a href="#non-è-tutto-rose-e-fiori-o-hash-e-fiori-in-questo-caso" id="toc-non-è-tutto-rose-e-fiori-o-hash-e-fiori-in-questo-caso" class="nav-link" data-scroll-target="#non-è-tutto-rose-e-fiori-o-hash-e-fiori-in-questo-caso">Non è Tutto Rose e Fiori (o Hash e Fiori, in Questo Caso)</a></li>
+  <li><a href="#quindi" id="toc-quindi" class="nav-link" data-scroll-target="#quindi">Quindi</a></li>
+  <li><a href="#post-scriptum-hash-di-sto-articolo" id="toc-post-scriptum-hash-di-sto-articolo" class="nav-link" data-scroll-target="#post-scriptum-hash-di-sto-articolo">Post Scriptum: Hash di ’Sto Articolo</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -244,158 +214,82 @@ window.Quarto = {
 
 
 
+<section id="hashing-che-cazzo-è-sto-hashing" class="level1">
+<h1>Hashing: Che Cazzo È ’sto Hashing?</h1>
+<p>Se hai mai sentito parlare di password, sicurezza informatica o anche solo di blockchain (di cui abbiamo parlato la settimana scorsa, se te lo sei perso sei un pirla), probabilmente ti sei imbattuto in questa parola: <strong>hashing</strong>. Ma che cavolo è sta roba? Sembra il nome di una nuova droga sintetica o di un ballo di gruppo degli anni ’80. In realtà, è una figata (nel senso buono, non come quando ti dicono “che figata le tue Crocs 😐”). In questo articolo voglio spiegare (spero) in parole semplici cosa è l’hashing, perché è importante e perché conviene smettere di usare password di merda come “password123”.</p>
+<section id="che-cosè-in-parole-povere-lhashing" class="level2">
+<h2 class="anchored" data-anchor-id="che-cosè-in-parole-povere-lhashing">Che Cos’è, in Parole Povere, l’Hashing?</h2>
+<p>Partiamo dalle basi, come quando a scuola di cucina ti spiegano come si le uova fritte (eppure, ahimé, anche riesce a fare un disastro…).</p>
+<p>Immagina di avere una di quelle macchinette per fare la carne trita, hai presente? Ci metti dentro un pezzo di carne, giri la manovella e dall’altra parte esce carne trita. Ecco, <strong>l’hashing è un po’ come quella macchinetta, ma per i dati</strong>.</p>
+<blockquote class="blockquote">
+<p>Ah, figo, quindi se ci metto dentro un PDF esce… un PDF tritato?</p>
+</blockquote>
+<p>Minchia, sei simpatico, ti ucciderò per ultimo. No, non proprio. Non trita i dati nel senso che li spezzetta. Ma in un certo senso li trasforma. La macchinetta dell’hashing prende qualsiasi tipo di dato (un testo, un’immagine, un video, un file intero, la tua lista di maleducate) e lo trasforma in una stringa (una sequnza, ma in gergo si chiama stringa) di caratteri di lunghezza fissa, che all’apparenza è completamente casuale. Questa stringa (sequenza) di caratteri è chiamata <strong>hash</strong> (o “valore hash”, o “digest”, insomma, chiamala come cazzo ti pare, basta che ci capiamo).</p>
+<blockquote class="blockquote">
+<p>Ok, ok, ci sono quasi. Ma perché dovrebbe servirmi trasformare i miei dati in una stringa di caratteri a caso? Che me ne faccio? Ci tappezzo il cesso?</p>
+</blockquote>
+<p>Calma, non fare il fenomeno, che cazzo hai mangiato a colazione?! L’hash ha delle proprietà molto particolari che lo rendono decisamente utile. In ordine (o no?):</p>
+<ol type="1">
+<li><p><strong>È Deterministico:</strong> Se prendi lo stesso dato e lo passi alla stessa “macchinetta” (funzione di hash), otterrai <strong>sempre</strong> lo stesso identico hash. Sempre. Non importa quante volte lo fai, il risultato sarà sempre lo stesso. È come se la macchinetta avesse una memoria di ferro.</p>
+<blockquote class="blockquote">
+<p>Quindi se faccio l’hash della parola “ciao” ottengo sempre lo stesso hash?</p>
+</blockquote>
+<p>Esatto. Prova. Ci sono un sacco di siti online che fanno hash. Cerca “online hash calculator”, mettici “ciao” e usa l’algoritmo SHA-256 (uno dei più comuni). Vedrai che ti uscirà sempre la stessa stringa di caratteri (tipo <code>b133a0c0e9bee3be20163d2ad31d6248db292aa6dcb1ee087a2aa50e0fc75ae2</code>, ma non ti fissare con questa stringa, è solo un esempio).</p></li>
+<li><p><strong>È One-Way (A Senso Unico):</strong> Questa è la parte <strong>veramente</strong> interessante e importante. È <strong>praticamente impossibile</strong> (e dico <em>praticamente</em> perché nella vita nulla è impossibile al 100%, tranne forse te che te ne stai a casa il sabato sera invece di andare a far baldoria con Salvini) <strong>tornare indietro dall’hash al dato originale</strong>. Cioè, se hai l’hash, non puoi in alcun modo (se non per forza bruta) ricostruire il dato di partenza. È come la macchinetta della carne trita: puoi fare la carne trita dalla carne, ma non puoi rifare il pezzo di carne dalla carne trita. Chiaro no?</p>
+<blockquote class="blockquote">
+<p>Sì, sì, ho capito. Quindi se io faccio l’hash della mia password “password123”, anche se qualcuno ruba l’hash, non può risalire alla mia password?</p>
+</blockquote>
+<p>YES! Finalmente hai detto una roba giusta, porca troia. Ed è proprio per questo che l’hashing è fondamentale per la sicurezza delle password. Quando ti registri su un sito web e scegli una password, il sito non salva la tua password <em>originale</em> (sarebbe da cretini, se lo fanno prendi un martello). Bensì, salva <strong>solo l’hash della tua password</strong>. Quando poi fai il login e inserisci la tua password, il sito calcola l’hash della password che hai inserito e lo confronta con l’hash che ha salvato. Se i due hash coincidono, significa che hai inserito la password giusta, senza che il sito abbia mai dovuto conoscere la tua password in chiaro. Così l’unico che in teoria sa la tua password sei tu (e la tua morosa…).</p></li>
+<li><p><strong>È Resistente alle Collisioni (Idealmente, come sempre):</strong> Questa è un po’ più complicata, ma cercherò di semplificare al massimo. Idealmente (ovvero nei mondi con le fate, le lucine eccetera), è <strong>estremamente improbabile</strong> che due dati diversi producano lo stesso hash. Si chiama “collisione” quando due dati diversi producono lo stesso hash. Una buona funzione di hash è progettata per rendere le collisioni <strong>praticamente impossibili</strong> (di nuovo, <em>praticamente</em>). È come dire che è quasi impossibile che due pezzi di carne diversi, messi nella stessa macchinetta, producano esattamente la stessa carne trita. Capito no? Più o meno dai…</p>
+<blockquote class="blockquote">
+<p>Più o meno… Ma quindi le collisioni possono succedere?</p>
+</blockquote>
+<p>Sì, in teoria (e badate, che le cose che possono succedere in teoria anche con probabilità infime sono tante. Tipo che morite in un incidente d’auto, così, per dire.) possono succedere, ma con le funzioni di hash moderne e robuste, la probabilità è talmente bassa che è come vincere la lotteria 10 volte di fila mentre ti cade un meteorite in testa e Salvini dice una roba sensata. Insomma, per scopi pratici, possiamo dire che le collisioni sono <strong>trascurabili</strong>. Esistono però funzioni di hash più vecchie e meno sicure che sono più vulnerabili alle collisioni, ma c’è già troppa carne al fuoco (pun intended).</p></li>
+</ol>
+<p><strong>Ricapitolandolo:</strong></p>
+<p>Quindi, ricapitolando, l’hashing è:</p>
+<ul>
+<li><strong>Una macchinetta per i dati:</strong> Prende qualsiasi dato e lo trasforma in una stringa di caratteri di lunghezza fissa (hash).</li>
+<li><strong>Deterministico:</strong> Stesso dato, stesso hash, sempre.</li>
+<li><strong>One-Way:</strong> Impossibile (praticamente) tornare indietro dall’hash al dato originale.</li>
+<li><strong>Resistente alle Collisioni:</strong> Improbabile (molto improbabile) che due dati diversi producano lo stesso hash.</li>
+</ul>
+</section>
+<section id="ma-a-che-cazzo-serve-veramente-lhashing" class="level2">
+<h2 class="anchored" data-anchor-id="ma-a-che-cazzo-serve-veramente-lhashing">Ma a Che Cazzo Serve Veramente l’Hashing?</h2>
+<p>Ok, abbiamo capito che cos’è l’hashing e le sue proprietà magiche. Ma in pratica, a cosa serve? Oltre a proteggere le password (che è già una figata non da poco), l’hashing ha un sacco di altre applicazioni. Eccone alcune:</p>
+<ol type="1">
+<li><p><strong>Verifica dell’Integrità dei Dati:</strong> Immagina di scaricare un file enorme da internet, tipo un film in HD o un videogioco. Come fai a essere sicuro che il file che hai scaricato sia integro e non sia stato corrotto durante il download? Semplice: il sito web da cui hai scaricato il file di solito fornisce anche l’<strong>hash del file</strong>. Tu, dopo aver scaricato il file, puoi calcolare l’hash del file scaricato e confrontarlo con l’hash fornito dal sito. Se i due hash coincidono, significa che il file è integro al 100%. Se non coincidono, significa che c’è stato un problema durante il download e il file è corrotto (o peggio, potrebbe essere stato manomesso da qualcuno). È come avere un sigillo di garanzia digitale sul file. Figata, no?</p></li>
+<li><p><strong>Blockchain e Criptovalute:</strong> Se hai letto l’articolo sulla blockchain (e se non l’hai fatto, vergognati, tanto.), sai che l’hashing è un ingrediente fondamentale della blockchain. Viene usato per creare l’“impronta digitale” di ogni blocco e per collegare i blocchi in una catena immutabile. Senza l’hashing, la blockchain non esisterebbe. Quindi, se ti piacciono le criptovalute (o se le odi, non importa), sappi che devi ringraziare (o maledire) l’hashing.</p></li>
+<li><p><strong>Firme Digitali:</strong> L’hashing è anche usato nelle firme digitali per garantire l’autenticità e l’integrità dei documenti digitali. Quando firmi digitalmente un documento, in realtà stai firmando l’hash del documento, non il documento intero. Questo rende la firma molto più efficiente e sicura.</p></li>
+<li><p><strong>Ricerca Efficiente di Dati:</strong> L’hashing può essere usato per creare delle “tabelle hash” (o “hash map”), che sono delle strutture dati che permettono di cercare dati in modo molto veloce. È un po’ come avere un indice di un libro: invece di dover sfogliare tutto il libro per trovare un’informazione, puoi consultare l’indice e trovarla subito.</p></li>
+</ol>
+</section>
+<section id="non-è-tutto-rose-e-fiori-o-hash-e-fiori-in-questo-caso" class="level2">
+<h2 class="anchored" data-anchor-id="non-è-tutto-rose-e-fiori-o-hash-e-fiori-in-questo-caso">Non è Tutto Rose e Fiori (o Hash e Fiori, in Questo Caso)</h2>
+<p>Anche l’hashing, come tutte le cose belle della vita, tipo me, ha i suoi limiti:</p>
+<ol type="1">
+<li><p><strong>Collisioni (anche se improbabili):</strong> Abbiamo detto che le collisioni sono <em>molto</em> improbabili, ma <em>non</em> impossibili. In teoria, un attaccante potrebbe cercare di trovare due dati diversi che producono lo stesso hash (un “attacco di collisione”). Se ci riuscisse, potrebbe usare questa collisione per scopi malevoli, tipo sostituire un file legittimo con uno fasullo che ha lo stesso hash. Per fortuna, trovare collisioni per le funzioni di hash moderne e robuste è estremamente difficile e costoso, ma è un rischio teorico da tenere presente.</p></li>
+<li><p><strong>Attacchi di “Rainbow Table” e “Brute Force” alle Password:</strong> Anche se l’hashing rende difficile risalire alla password originale dall’hash, non è una protezione infallibile al 100%. Esistono tecniche come gli attacchi di “rainbow table” e “brute force” che possono essere usate per cercare di “indovinare” le password a partire dagli hash. Le “rainbow table” sono delle tabelle precalcolate che contengono gli hash di milioni di password comuni. Gli attacchi “brute force” invece consistono nel provare a calcolare l’hash di tutte le possibili password finché non si trova una corrispondenza con l’hash rubato. Per difendersi da questi attacchi, è fondamentale usare password <strong>lunghe, complesse e diverse per ogni sito</strong>. E smettetela di usare “password123”, che cazzo!</p></li>
+<li><p><strong>Non è Crittografia:</strong> È importante capire che l’hashing <strong>non è crittografia</strong>. La crittografia serve per <em>nascondere</em> i dati, rendendoli illeggibili a chi non ha la chiave giusta. L’hashing serve per creare un’impronta digitale dei dati, per verificarne l’integrità e l’autenticità. E’ importante non confondere le due cose. È come confondere un lucchetto (crittografia) con un sigillo di ceralacca (hashing). Entrambi servono per la sicurezza, ma in modi diversi.</p></li>
+</ol>
+</section>
+<section id="quindi" class="level2">
+<h2 class="anchored" data-anchor-id="quindi">Quindi</h2>
+<p>L’hashing è una tecnologia che sta alla base nel mondo digitale di oggi e di un sacco di cose che usiamo tutti i giorni, dalle password alla blockchain, dalla verifica dell’integrità dei file alle firme digitali. È una tecnologia potente e versatile, ma è importante conoscerne anche i limiti e le potenziali vulnerabilità.</p>
+<p>La prossima volta che sentirai parlare di hashing pensa alla macchinetta per la carne trita dei dati, alla one-way, e alla sicurezza che può garantire. E soprattutto, smettila di usare password di merda! Grazie per l’attenzione e alla prossima settimana con un altro argomento nerd e (spero) interessante.</p>
+</section>
+<section id="post-scriptum-hash-di-sto-articolo" class="level2">
+<h2 class="anchored" data-anchor-id="post-scriptum-hash-di-sto-articolo">Post Scriptum: Hash di ’Sto Articolo</h2>
+<p>Giusto per fare i fighi e per farti capire ancora meglio la potenza dell’hashing, ho calcolato l’hash SHA-256 di questo articolo (in formato testo semplice, senza HTML o altre formattazioni). Ecco l’hash:</p>
+<p><code>239e9608a73c08784aeaae13cc9b3de3e32e3cde3b8b111b3a766d3ed878a5db</code></p>
+<p>Ora, se io modificassi anche solo una virgola di questo articolo, anche solo uno spazio bianco, anche solo una lettera, l’hash <strong>cambierebbe completamente</strong>. Questo dimostra quanto anche una piccola modifica al dato originale cambi radicalmente l’hash. È proprio questa proprietà che rende l’hashing così utile per la verifica dell’integrità dei dati. E anche per farmi sentire un grande (imbecille) a scrivere un post scriptum del genere. Ciao belli!</p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1738882800000" data-listing-file-modified-sort="1738956820434" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1882">
-<div class="thumbnail">
-<p><a href="../blog/hashing.html" class="no-external"></a></p><a href="../blog/hashing.html" class="no-external">
-<p><img loading="lazy" src="../images/hashing.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/hashing.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/hashing.html" class="no-external">Hashing: Che Cos’è ’sto Hashing?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/hashing.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/hashing.html" class="no-external">Se hai mai sentito parlare di password, sicurezza informatica o anche solo di blockchain (di cui abbiamo parlato la settimana scorsa, se te lo sei perso sei un pirla)…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/hashing.html" class="no-external">
-<div class="listing-date">
-Feb 7, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti (fittizio, ovviamente)
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1738450800000" data-listing-file-modified-sort="1738486154962" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2307">
-<div class="thumbnail">
-<p><a href="../blog/blockchain.html" class="no-external"></a></p><a href="../blog/blockchain.html" class="no-external">
-<p><img loading="lazy" src="../images/blockchain.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/blockchain.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/blockchain.html" class="no-external">Blockchain: Non Solo Criptovalute</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/blockchain.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/blockchain.html" class="no-external">Se non hai sentito parlare di Bitcoin e altre criptovalute vuol dire che fino ad oggi hai vissuto in una caverna, perché i media ormai hanno scartavetrato con questo…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/blockchain.html" class="no-external">
-<div class="listing-date">
-Feb 2, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWF0aCUyQ2NyeXB0b2dyYXBoeSUyQ2FsZ2VicmE=" data-listing-date-sort="1738364400000" data-listing-file-modified-sort="1738392826219" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3770">
-<div class="thumbnail">
-<p><a href="../blog/group-prime-order.html" class="no-external"></a></p><a href="../blog/group-prime-order.html" class="no-external">
-<p><img loading="lazy" src="../images/group-prime-order.jpg" class="thumbnail-image"></p>
-</a><p><a href="../blog/group-prime-order.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/group-prime-order.html" class="no-external">Gruppi di Ordine Primo</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/group-prime-order.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('bWF0aA=='); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Y3J5cHRvZ3JhcGh5'); return false;">
-cryptography
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YWxnZWJyYQ=='); return false;">
-algebra
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/group-prime-order.html" class="no-external">Una volta parlavo con un mio amico di Algebra astratta e ricordo che mi chiese se davvero esistesse qualcosa come l’algebra astratta. Secondo lui l’aggettivo <em>astratta</em> era…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/group-prime-order.html" class="no-external">
-<div class="listing-date">
-Feb 1, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738955099505" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2049">
-<div class="thumbnail">
-<p><a href="../blog/sss.html" class="no-external"></a></p><a href="../blog/sss.html" class="no-external">
-<p><img loading="lazy" src="../images/sss.png" class="thumbnail-image"></p>
-</a><p><a href="../blog/sss.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/sss.html" class="no-external">Shamir’s Secret Sharing</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/sss.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">
-programming
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('d2ViJTIwZGV2ZWxvcG1lbnQ='); return false;">
-web development
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/sss.html" class="no-external">In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell’algoritmo Shamir’s Secret Sharing, provando ad illustrare sia la parte più teorica…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/sss.html" class="no-external">
-<div class="listing-date">
-Jan 30, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
