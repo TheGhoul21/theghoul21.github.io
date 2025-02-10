@@ -9,12 +9,8 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/projects/index.html",
     "items": [
-      "/blog/blockchain.html",
-      "/blog/group-prime-order.html",
-      "/blog/hashing.html",
-      "/blog/sss.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",
@@ -22,8 +18,12 @@
     ]
   },
   {
-    "listing": "/projects/index.html",
+    "listing": "/index.html",
     "items": [
+      "/blog/blockchain.html",
+      "/blog/group-prime-order.html",
+      "/blog/hashing.html",
+      "/blog/sss.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",
