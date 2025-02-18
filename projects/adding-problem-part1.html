@@ -134,7 +134,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="L.">
+<meta property="og:title" content="Analyzing GRU Training Dynamics on the Adding Problem - Part 1">
 <meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
 <meta property="og:image" content="https://theghoul21.github.io//images/gru-sana-4.jpeg">
 <meta property="og:site_name" content="L.">
@@ -894,7 +894,7 @@ h_t &amp;= (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 <p>which is really close to the actual sum (<span class="math inline">\(37 + 21 = 58\)</span>)!!!!</p>
 <p><strong>Loaded Weights (from the last training epoch):</strong></p>
 <p>I used the weights from the <em>last</em> epoch of training, which I previously saved. This ensures that I’m using the fully trained model. Let’s get the weights:</p>
-<div id="f7d05ada" class="cell" data-execution_count="9">
+<div id="424bcb8b" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get weights from the last training epoch.  'all_weights' is populated by the loading/training section.</span></span>
@@ -912,7 +912,7 @@ h_t &amp;= (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 <p>Now, let’s walk through the GRU step-by-step for each element in our input sequence.</p>
 <p>For each element, I calculate the Update Gate (<span class="math inline">\(z_t\)</span>), Reset Gate (<span class="math inline">\(r_t\)</span>), New Gate (<span class="math inline">\(\tilde{h}_t\)</span>), and Hidden State (<span class="math inline">\(h_t\)</span>).</p>
 <p>I start by initializing the hidden state to zero:</p>
-<div id="59b4c7db" class="cell" data-execution_count="10">
+<div id="000170f9" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> torch.zeros(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>) <span class="co"># Initialize hidden state</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -930,7 +930,7 @@ x_1 = \begin{bmatrix} 0.12 &amp; 0 \end{bmatrix}
 <li><p><strong>Update Gate <span class="math inline">\(z_1\)</span></strong>: <span class="math display">\[
 z_1 = \sigma(x_1 W_{iz}^T + h_0 W_{hz}^T + b_{iz})
 \]</span></p>
-<div id="5cc3f281" class="cell" data-execution_count="11">
+<div id="856c1432" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x_1 <span class="op">=</span> input_sequence[:, <span class="dv">0</span>, :]</span>
@@ -985,7 +985,7 @@ x_2 = \begin{bmatrix} 0.37 &amp; 1 \end{bmatrix}
 <li><p><strong>Update Gate <span class="math inline">\(z_2\)</span></strong>: <span class="math display">\[
 z_2 = \sigma(x_2 W_{iz}^T + h_1 W_{hz}^T + b_{iz})
 \]</span></p>
-<div id="c0065c2a" class="cell" data-execution_count="12">
+<div id="781afe1d" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x_2 <span class="op">=</span> input_sequence[:, <span class="dv">1</span>, :]</span>
@@ -1039,7 +1039,7 @@ x_3 = \begin{bmatrix} 0.12 &amp; 0 \end{bmatrix}
 <li><p><strong>Update Gate <span class="math inline">\(z_3\)</span></strong>: <span class="math display">\[
 z_3 = \sigma(x_3 W_{iz}^T + h_2 W_{hz}^T + b_{iz})
 \]</span></p>
-<div id="e5dc5fc0" class="cell" data-execution_count="13">
+<div id="29a44fab" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x_3 <span class="op">=</span> input_sequence[:, <span class="dv">2</span>, :]</span>
@@ -1093,7 +1093,7 @@ x_4 = \begin{bmatrix} 0.21 &amp; 1 \end{bmatrix}
 <li><p><strong>Update Gate <span class="math inline">\(z_4\)</span></strong>: <span class="math display">\[
 z_4 = \sigma(x_4 W_{iz}^T + h_3 W_{hz}^T + b_{iz})
 \]</span></p>
-<div id="723fa98a" class="cell" data-execution_count="14">
+<div id="aa74331f" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x_4 <span class="op">=</span> input_sequence[:, <span class="dv">3</span>, :]</span>
@@ -1145,7 +1145,7 @@ h_4 = 0.07005205750465393
 <p><span class="math display">\[
 \text{output} = h_4 W_{\text{linear}}^T + b_{\text{linear}}
 \]</span></p>
-<div id="70f7c14c" class="cell" data-execution_count="15">
+<div id="9d7e1589" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> h_t <span class="op">@</span> W_linear.T <span class="op">+</span> b_linear</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
