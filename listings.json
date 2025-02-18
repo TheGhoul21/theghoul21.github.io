@@ -11,6 +11,7 @@
   {
     "listing": "/projects/index.html",
     "items": [
+      "/projects/adding-problem-part1.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",
@@ -24,6 +25,7 @@
       "/blog/group-prime-order.html",
       "/blog/hashing.html",
       "/blog/sss.html",
+      "/projects/adding-problem-part1.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",

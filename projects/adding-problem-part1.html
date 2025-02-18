@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Your Name">
+<meta name="dcterms.date" content="2025-02-18">
+
+<title>Analyzing GRU Training Dynamics on the Adding Problem - Part 1 – L.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9a528ce568208207557d4826b9a112ab.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="L.">
+<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
+<meta property="og:image" content="https://theghoul21.github.io//images/gru-sana-4.jpeg">
+<meta property="og:site_name" content="L.">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">L.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/QC-2023-2024/" target="_blank">
+ <span class="dropdown-text">Quantum Computing 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/MB-2024-2025/" target="_blank">
+ <span class="dropdown-text">Biologia Molecolare 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/VVT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Verification and Validation Techniques 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AR-2024-2025/" target="_blank">
+ <span class="dropdown-text">Automated Reasoning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AA-2023-2024/" target="_blank">
+ <span class="dropdown-text">Advanced Algorithms 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AI-2023-2024/" target="_blank">
+ <span class="dropdown-text">Artificial Intelligence 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/SA-2024-2025/" target="_blank">
+ <span class="dropdown-text">Applied Statistics 2024/2025</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Analyzing GRU Training Dynamics on the Adding Problem - Part 1</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">programming</div>
+                <div class="quarto-category">web development</div>
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">diary</div>
+                <div class="quarto-category">R&amp;D</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Your Name </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 18, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#setup-and-data-generation" id="toc-setup-and-data-generation" class="nav-link" data-scroll-target="#setup-and-data-generation"><span class="header-section-number">2</span> Setup and Data Generation</a></li>
+  <li><a href="#model-definition-and-training" id="toc-model-definition-and-training" class="nav-link" data-scroll-target="#model-definition-and-training"><span class="header-section-number">3</span> Model Definition and Training</a></li>
+  <li><a href="#training-metrics-visualization" id="toc-training-metrics-visualization" class="nav-link" data-scroll-target="#training-metrics-visualization"><span class="header-section-number">4</span> Training Metrics Visualization</a></li>
+  <li><a href="#weight-evolution-analysis" id="toc-weight-evolution-analysis" class="nav-link" data-scroll-target="#weight-evolution-analysis"><span class="header-section-number">5</span> Weight Evolution Analysis</a></li>
+  <li><a href="#weight-dynamics-and-learned-strategy" id="toc-weight-dynamics-and-learned-strategy" class="nav-link" data-scroll-target="#weight-dynamics-and-learned-strategy"><span class="header-section-number">6</span> Weight Dynamics and Learned Strategy</a></li>
+  <li><a href="#illustrative-example-forward-pass" id="toc-illustrative-example-forward-pass" class="nav-link" data-scroll-target="#illustrative-example-forward-pass"><span class="header-section-number">7</span> Illustrative Example: Forward Pass</a>
+  <ul class="collapse">
+  <li><a href="#step-1-input-12-0" id="toc-step-1-input-12-0" class="nav-link" data-scroll-target="#step-1-input-12-0"><span class="header-section-number">7.1</span> Step 1: Input <span class="math inline">\([12, 0]\)</span></a></li>
+  <li><a href="#step-2-input-37-1" id="toc-step-2-input-37-1" class="nav-link" data-scroll-target="#step-2-input-37-1"><span class="header-section-number">7.2</span> Step 2: Input <span class="math inline">\([37, 1]\)</span></a></li>
+  <li><a href="#step-3-input-12-0" id="toc-step-3-input-12-0" class="nav-link" data-scroll-target="#step-3-input-12-0"><span class="header-section-number">7.3</span> Step 3: Input <span class="math inline">\([12, 0]\)</span></a></li>
+  <li><a href="#step-4-input-21-1" id="toc-step-4-input-21-1" class="nav-link" data-scroll-target="#step-4-input-21-1"><span class="header-section-number">7.4</span> Step 4: Input <span class="math inline">\([21, 1]\)</span></a></li>
+  <li><a href="#step-5-linear-layer" id="toc-step-5-linear-layer" class="nav-link" data-scroll-target="#step-5-linear-layer"><span class="header-section-number">7.5</span> Step 5: Linear Layer</a></li>
+  </ul></li>
+  <li><a href="#coming-next" id="toc-coming-next" class="nav-link" data-scroll-target="#coming-next"><span class="header-section-number">8</span> Coming next…</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>In this blog post, I want to report on some insights I discovered about the training dynamics of a GRU network applied to a toy problem called the “Adding Problem.” This is a benchmark task for recurrent neural networks. The Adding Problem, introduced by Le, Jaitly, and Hinton, tests a model’s ability to selectively remember and sum relevant information over a sequence. I trained a small GRU model, visualized its training progress, and examined how its weights evolve during training. This low-dimensional weight space allowed me to observe unique insights about the learning process. This work is part of a larger research project where I aim to leverage training dynamics to create a lightweight network. This network will use a combination of meta-learning and Energy-Based Models (EBM) to adjust weights based on input sequences, allowing it to leverage generic pre-training and adapt to different situations.</p>
+</section>
+<section id="setup-and-data-generation" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="setup-and-data-generation"><span class="header-section-number">2</span> Setup and Data Generation</h2>
+<p>First, I import the necessary libraries and define the function to generate the Adding Problem dataset. The dataset consists of sequences of synthetic numbers and a binary mask. The model’s task is to sum the numbers indicated by the ’1’s in the mask. The sequence length, mask disposition, and even the number of masked elements are variable. I tried to introduce this variability as an additional source of randomness that will be fundamental in the final network trained for playing a table game.</p>
+<div id="setup-and-data" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, TensorDataset</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.notebook <span class="im">import</span> trange, tqdm</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproducibility</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>RANDOM_SEED <span class="op">=</span> <span class="dv">37</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>np.random.seed(RANDOM_SEED)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(RANDOM_SEED)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>torch.cuda.manual_seed_all(RANDOM_SEED)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>torch.backends.cudnn.deterministic <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>torch.backends.cudnn.benchmark <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyperparameters</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>DELTA <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>SEQ_LEN <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>HIGH <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>N_SAMPLES <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>TRAIN_SPLIT <span class="op">=</span> <span class="fl">0.8</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">256</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">1e-4</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>WEIGHT_DECAY <span class="op">=</span> <span class="fl">1e-5</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>CLIP_VALUE <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>NUM_EPOCHS <span class="op">=</span> <span class="dv">3000</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>HIDDEN_SIZE <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>OUTPUT_SIZE <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>INPUT_SIZE <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adding_problem_generator(N, seq_len<span class="op">=</span><span class="dv">6</span>, high<span class="op">=</span><span class="dv">1</span>, delta<span class="op">=</span><span class="fl">0.6</span>):</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    actual_seq_len <span class="op">=</span> np.random.randint(</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(seq_len <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> delta)), <span class="bu">int</span>(seq_len <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> delta))</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    ) <span class="cf">if</span> delta <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> seq_len</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    num_ones <span class="op">=</span> np.random.randint(<span class="dv">2</span>, <span class="bu">min</span>(actual_seq_len <span class="op">-</span> <span class="dv">1</span>, <span class="dv">4</span>))</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    X_num <span class="op">=</span> np.random.randint(low<span class="op">=</span><span class="dv">0</span>, high<span class="op">=</span>high, size<span class="op">=</span>(N, actual_seq_len, <span class="dv">1</span>))</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    X_mask <span class="op">=</span> np.zeros((N, actual_seq_len, <span class="dv">1</span>))</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> np.ones((N, <span class="dv">1</span>))</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N):</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        positions <span class="op">=</span> np.random.choice(actual_seq_len, size<span class="op">=</span>num_ones, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        X_mask[i, positions] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        Y[i, <span class="dv">0</span>] <span class="op">=</span> np.<span class="bu">sum</span>(X_num[i, positions])</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> np.append(X_num, X_mask, axis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X, Y</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>X, Y <span class="op">=</span> adding_problem_generator(N_SAMPLES, seq_len<span class="op">=</span>SEQ_LEN, high<span class="op">=</span>HIGH, delta<span class="op">=</span>DELTA)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>training_len <span class="op">=</span> <span class="bu">int</span>(TRAIN_SPLIT <span class="op">*</span> N_SAMPLES)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>train_X <span class="op">=</span> X[:training_len]</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>test_X <span class="op">=</span> X[training_len:]</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>train_Y <span class="op">=</span> Y[:training_len]</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>test_Y <span class="op">=</span> Y[training_len:]</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> TensorDataset(</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    torch.tensor(train_X).<span class="bu">float</span>(), torch.tensor(train_Y).<span class="bu">float</span>()</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> DataLoader(train_dataset, batch_size<span class="op">=</span>BATCH_SIZE, shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>test_dataset <span class="op">=</span> TensorDataset(</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    torch.tensor(test_X).<span class="bu">float</span>(), torch.tensor(test_Y).<span class="bu">float</span>()</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> DataLoader(test_dataset, batch_size<span class="op">=</span>BATCH_SIZE, shuffle<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="model-definition-and-training" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="model-definition-and-training"><span class="header-section-number">3</span> Model Definition and Training</h2>
+<p>I defined my GRU model, which consists of a single GRU layer followed by a linear layer. I used orthogonal weight initialization for the GRU and Xavier initialization for the linear layer, following best practices for RNN training. I also defined the evaluation function and the main training loop. Crucially, I added code to store the model’s weights at different epochs. This allows me to analyze their evolution later.</p>
+<div id="model-def" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AddingProblemGRU(nn.Module):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, input_size, hidden_size, output_size):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(AddingProblemGRU, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gru <span class="op">=</span> nn.GRU(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            input_size, hidden_size, num_layers<span class="op">=</span><span class="dv">1</span>, batch_first<span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear <span class="op">=</span> nn.Linear(hidden_size, output_size)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.init_weights()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> init_weights(<span class="va">self</span>):</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> name, param <span class="kw">in</span> <span class="va">self</span>.gru.named_parameters():</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">"weight"</span> <span class="kw">in</span> name:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                nn.init.orthogonal_(param)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">elif</span> <span class="st">"bias"</span> <span class="kw">in</span> name:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                nn.init.constant_(param, <span class="dv">0</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        nn.init.xavier_uniform_(<span class="va">self</span>.linear.weight)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        nn.init.zeros_(<span class="va">self</span>.linear.bias)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        out, hn <span class="op">=</span> <span class="va">self</span>.gru(x)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> <span class="va">self</span>.linear(out[:, <span class="op">-</span><span class="dv">1</span>, :])</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output, out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="load-or-train" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># File paths for saved data</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>train_losses_path <span class="op">=</span> <span class="st">"train_losses.json"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>test_losses_path <span class="op">=</span> <span class="st">"test_losses.json"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>all_weights_path <span class="op">=</span> <span class="st">"all_weights.json"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model_save_path <span class="op">=</span> (</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"gru_adding_problem_model_epochs_</span><span class="sc">{</span>NUM_EPOCHS<span class="sc">}</span><span class="ss">_hidden_</span><span class="sc">{</span>HIDDEN_SIZE<span class="sc">}</span><span class="ss">.pth"</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>FORCE_TRAIN <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> torch.device(<span class="st">"cuda"</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>criterion <span class="op">=</span> nn.MSELoss()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate(model, data_loader, criterion, high):</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> inputs, labels <span class="kw">in</span> data_loader:</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            inputs, labels <span class="op">=</span> inputs.to(device), labels.to(device)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            inputs[:, :, <span class="dv">0</span>] <span class="op">/=</span> high</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            outputs, _ <span class="op">=</span> model(inputs)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            outputs <span class="op">=</span> outputs <span class="op">*</span> high</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> criterion(outputs, labels)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>            total_loss <span class="op">+=</span> loss.item() <span class="op">*</span> inputs.size(<span class="dv">0</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_loss <span class="op">/</span> <span class="bu">len</span>(data_loader.dataset)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Try to load data from files</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> FORCE_TRAIN <span class="op">==</span> <span class="va">False</span> <span class="kw">and</span> os.path.exists(train_losses_path) <span class="kw">and</span> os.path.exists(test_losses_path) <span class="kw">and</span> os.path.exists(all_weights_path) <span class="kw">and</span> os.path.exists(model_save_path):</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(train_losses_path, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        train_losses <span class="op">=</span> json.load(f)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(test_losses_path, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        test_losses <span class="op">=</span> json.load(f)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(all_weights_path, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        all_weights_loaded <span class="op">=</span> json.load(f)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert loaded weights (which are lists) back to numpy arrays</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    all_weights <span class="op">=</span> []</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch_weights_list <span class="kw">in</span> all_weights_loaded:</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        epoch_weights_dict <span class="op">=</span> {}</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> name, weights_list <span class="kw">in</span> epoch_weights_list.items():</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>            epoch_weights_dict[name] <span class="op">=</span> np.array(weights_list)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        all_weights.append(epoch_weights_dict)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="co">#load model</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> AddingProblemGRU(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    input_size<span class="op">=</span>INPUT_SIZE, hidden_size<span class="op">=</span>HIDDEN_SIZE, output_size<span class="op">=</span>OUTPUT_SIZE)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    model.load_state_dict(torch.load(model_save_path))</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    model.to(device)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> AddingProblemGRU(</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        input_size<span class="op">=</span>INPUT_SIZE, hidden_size<span class="op">=</span>HIDDEN_SIZE, output_size<span class="op">=</span>OUTPUT_SIZE</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    model.to(device)</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    optimizer <span class="op">=</span> torch.optim.Adam(</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>        model.parameters(), lr<span class="op">=</span>LEARNING_RATE, weight_decay<span class="op">=</span>WEIGHT_DECAY</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    scheduler <span class="op">=</span> torch.optim.lr_scheduler.ReduceLROnPlateau(</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>        optimizer, mode<span class="op">=</span><span class="st">"min"</span>, factor<span class="op">=</span><span class="fl">0.5</span>, patience<span class="op">=</span><span class="dv">5</span>, min_lr<span class="op">=</span><span class="fl">1e-6</span>, verbose<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    train_losses <span class="op">=</span> []</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    test_losses <span class="op">=</span> []</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    all_weights <span class="op">=</span> []</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> trange(NUM_EPOCHS, desc<span class="op">=</span><span class="st">"Epoch"</span>):</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        running_loss <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> inputs, labels <span class="kw">in</span> train_loader:</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>            inputs, labels <span class="op">=</span> inputs.to(device), labels.to(device)</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>            inputs[:, :, <span class="dv">0</span>] <span class="op">/=</span> HIGH</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>            labels_scaled <span class="op">=</span> labels <span class="op">/</span> HIGH</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>            outputs, _ <span class="op">=</span> model(inputs)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> criterion(outputs, labels_scaled)</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>            torch.nn.utils.clip_grad_norm_(model.parameters(), CLIP_VALUE)</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>            running_loss <span class="op">+=</span> loss.item() <span class="op">*</span> inputs.size(<span class="dv">0</span>)</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>        epoch_loss <span class="op">=</span> running_loss <span class="op">/</span> <span class="bu">len</span>(train_loader.dataset)</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>        train_losses.append(epoch_loss)</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">49</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>            test_loss <span class="op">=</span> evaluate(model, test_loader, criterion, HIGH)</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>            test_losses.append(test_loss)</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>            scheduler.step(test_loss)</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>            weights_dict <span class="op">=</span> {}</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> name, param <span class="kw">in</span> model.named_parameters():</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>                weights_dict[name] <span class="op">=</span> param.data.cpu().numpy().copy()</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>            all_weights.append(weights_dict)</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>            test_losses.append(<span class="va">None</span>)</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save data to files</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(train_losses_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>        json.dump(train_losses, f)</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(test_losses_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>        json.dump(test_losses, f)</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert weights to lists for JSON serialization</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>    all_weights_serializable <span class="op">=</span> [</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>        {k: v.tolist() <span class="cf">for</span> k, v <span class="kw">in</span> epoch_weights.items()}</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> epoch_weights <span class="kw">in</span> all_weights</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(all_weights_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>        json.dump(all_weights_serializable, f)</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save Model</span></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>    model_save_path <span class="op">=</span> (</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"gru_adding_problem_model_epochs_</span><span class="sc">{</span>NUM_EPOCHS<span class="sc">}</span><span class="ss">_hidden_</span><span class="sc">{</span>HIDDEN_SIZE<span class="sc">}</span><span class="ss">.pth"</span></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    torch.save(model.state_dict(), model_save_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="training-metrics-visualization" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="training-metrics-visualization"><span class="header-section-number">4</span> Training Metrics Visualization</h2>
+<p>The following two plots show the training and validation loss curves. These provide a visual indication of how well the model is learning and whether it’s overfitting (which would be indicated by the training loss continuing to decrease while the validation loss starts to increase). In my case, the training loss closely follows the validation loss, suggesting that I likely reached a global minimum.</p>
+<div id="training-metrics-plot" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.plot(train_losses, label<span class="op">=</span><span class="st">"Training Loss"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.plot(range(0,NUM_EPOCHS,50), [x for x in test_losses if x is not None], label="Validation Loss") #plot only not none values</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Epoch"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"MSE Loss"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="bu">max</span>(train_losses)<span class="op">*</span><span class="fl">1.05</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Training and Validation Loss over Epochs"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.plot(train_losses, label="Training Loss")</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="dv">0</span>,NUM_EPOCHS<span class="op">+</span><span class="dv">1</span>,<span class="dv">50</span>), [x <span class="cf">for</span> x <span class="kw">in</span> test_losses <span class="cf">if</span> x <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>][<span class="dv">0</span>:<span class="bu">len</span>(<span class="bu">range</span>(<span class="dv">0</span>,NUM_EPOCHS<span class="op">+</span><span class="dv">1</span>,<span class="dv">50</span>))], label<span class="op">=</span><span class="st">"Validation Loss"</span>) <span class="co">#plot only not none values</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Epoch"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"MSE Loss"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Training and Validation Loss over Epochs"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="bu">max</span>([x <span class="cf">for</span> x <span class="kw">in</span> test_losses <span class="cf">if</span> x <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>])<span class="op">*</span><span class="fl">1.05</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="training-metrics-plot-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/training-metrics-plot-output-1.png" width="812" height="523" class="figure-img"></p>
+<figcaption>Training and Validation Loss</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/training-metrics-plot-output-2.png" id="training-metrics-plot-2" width="833" height="523" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It’s important to note that if the model had overfit the data, then the weight analysis would have been nearly useless.</p>
+</section>
+<section id="weight-evolution-analysis" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="weight-evolution-analysis"><span class="header-section-number">5</span> Weight Evolution Analysis</h2>
+<p>This is the core of my analysis. I examine how the model’s weights change over the course of training. Because my GRU has a small number of parameters, I can visualize this evolution effectively. The PyTorch documentation helps us understand the names of the involved parameters:</p>
+<ul>
+<li><p><strong>weight_ih_l[k]</strong> - the learnable input-hidden weights of the <span class="math inline">\(k^{th}\)</span> layer (<span class="math inline">\(W_{ir}\)</span>|<span class="math inline">\(W_{iz}\)</span>|<span class="math inline">\(W_{in}\)</span>), of shape <span class="math inline">\((3 * \text{hidden\_size}, \text{input\_size})\)</span> for <span class="math inline">\(k=0\)</span>. In my example, with <span class="math inline">\(\text{hidden\_size} = 1\)</span> and <span class="math inline">\(\text{input\_size} = 2\)</span>, this is <span class="math inline">\((3*1, 2)\)</span>, or <span class="math inline">\((3, 2)\)</span>.</p></li>
+<li><p><strong>weight_hh_l[k]</strong> - the learnable hidden-hidden weights of the <span class="math inline">\(k^{th}\)</span> layer (<span class="math inline">\(W_{hr}\)</span>|<span class="math inline">\(W_{hz}\)</span>|<span class="math inline">\(W_{hn}\)</span>), of shape <span class="math inline">\((3 * \text{hidden\_size}, \text{hidden\_size})\)</span>. In my example, with <span class="math inline">\(\text{hidden\_size} = 1\)</span>, this is <span class="math inline">\((3*1, 1)\)</span>, or <span class="math inline">\((3, 1)\)</span>.</p></li>
+<li><p><strong>bias_ih_l[k]</strong> - the learnable input-hidden bias of the <span class="math inline">\(k^{th}\)</span> layer (<span class="math inline">\(b_{ir}\)</span>|<span class="math inline">\(b_{iz}\)</span>|<span class="math inline">\(b_{in}\)</span>), of shape <span class="math inline">\((3 * \text{hidden\_size})\)</span>. In my example, with <span class="math inline">\(\text{hidden\_size} = 1\)</span>, this is <span class="math inline">\((3*1)\)</span>, or <span class="math inline">\((3)\)</span>.</p></li>
+<li><p><strong>bias_hh_l[k]</strong> - the learnable hidden-hidden bias of the <span class="math inline">\(k^{th}\)</span> layer (<span class="math inline">\(b_{hr}\)</span>|<span class="math inline">\(b_{hz}\)</span>|<span class="math inline">\(b_{hn}\)</span>), of shape <span class="math inline">\((3 * \text{hidden\_size})\)</span>. In my example, with <span class="math inline">\(\text{hidden\_size} = 1\)</span>, this is <span class="math inline">\((3*1)\)</span>, or <span class="math inline">\((3)\)</span>.</p></li>
+</ul>
+<p>I focused on the key weight matrices:</p>
+<ul>
+<li><code>gru.weight_ih_l0</code>: Input-to-hidden weights. In my example, this has size <span class="math inline">\((3 \times 2)\)</span>.</li>
+<li><code>gru.weight_hh_l0</code>: Hidden-to-hidden weights. In my example, this has size <span class="math inline">\((3 \times 1)\)</span>.</li>
+<li><code>linear.weight</code>: Weights of the final linear layer. In my example, with <span class="math inline">\(\text{hidden\_size} = 1\)</span> and <span class="math inline">\(\text{output\_size} = 1\)</span>, this has size <span class="math inline">\((1 \times 1)\)</span>. I included this to allow for potentially adding an additional dimension to the hidden layer later.</li>
+</ul>
+<p>Now, here’s how GRUs work (it might look a little intimidating at first, but it’s actually quite straightforward):</p>
+<p>Initially, for <span class="math inline">\(t = 0\)</span>, the output vector is <span class="math inline">\(h_0 = 0\)</span>.</p>
+<span class="math display">\[\begin{aligned}
+z_t &amp;= \sigma(W_z x_t + U_z h_{t-1} + b_z) \\
+r_t &amp;= \sigma(W_r x_t + U_r h_{t-1} + b_r) \\
+\hat{h}_t &amp;= \phi(W_h x_t + U_h (r_t \odot h_{t-1}) + b_h) \\
+h_t &amp;= (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
+\end{aligned}\]</span>
+<p>The <span class="math inline">\(W_{*}\)</span> weights are the first set of weights (i.e., <code>gru.weight_ih_l0</code>), while the <span class="math inline">\(U_{*}\)</span> weights are the second set of weights (i.e., <code>gru.weight_hh_l0</code>). The bias terms are straightforward, so I won’t go into detail.</p>
+<p>I created plots showing the values of these weights at different stages of training. This visualization helps understand <em>how</em> the GRU learns to solve the adding problem. I used a heatmap to represent the weight matrices, making it easy to spot patterns and changes.</p>
+<div id="cell-weight-evolution-analysis" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a subset of epochs for clearer visualization</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>epochs_to_plot <span class="op">=</span> [<span class="dv">0</span>, <span class="bu">len</span>(all_weights) <span class="op">//</span> <span class="dv">4</span>, <span class="bu">len</span>(all_weights) <span class="op">//</span> <span class="dv">2</span>, <span class="bu">len</span>(all_weights) <span class="op">-</span> <span class="dv">1</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>selected_weights <span class="op">=</span> [all_weights[i] <span class="cf">for</span> i <span class="kw">in</span> epochs_to_plot]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting function for a single weight matrix</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_weight_matrix(weight_matrix, title, ax):</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(weight_matrix, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".2f"</span>, cmap<span class="op">=</span><span class="st">"viridis"</span>, cbar<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="bu">len</span>(selected_weights), <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span> <span class="op">*</span> <span class="bu">len</span>(selected_weights)))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, epoch_weights <span class="kw">in</span> <span class="bu">enumerate</span>(selected_weights):</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  plot_weight_matrix(epoch_weights[<span class="st">'gru.weight_ih_l0'</span>], <span class="ss">f'Epoch </span><span class="sc">{</span>epochs_to_plot[i]<span class="op">*</span><span class="dv">50</span><span class="sc">}</span><span class="ss">: Input-to-Hidden'</span>, axes[i, <span class="dv">0</span>])</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  plot_weight_matrix(epoch_weights[<span class="st">'gru.weight_hh_l0'</span>], <span class="ss">f'Epoch </span><span class="sc">{</span>epochs_to_plot[i]<span class="op">*</span><span class="dv">50</span><span class="sc">}</span><span class="ss">: Hidden-to-Hidden'</span>, axes[i, <span class="dv">1</span>])</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  plot_weight_matrix(epoch_weights[<span class="st">'linear.weight'</span>], <span class="ss">f'Epoch </span><span class="sc">{</span>epochs_to_plot[i]<span class="op">*</span><span class="dv">50</span><span class="sc">}</span><span class="ss">: Linear Layer'</span>, axes[i, <span class="dv">2</span>])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="weight-evolution-analysis" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-evolution-analysis-output-1.png" width="1421" height="1910" class="figure-img"></p>
+<figcaption>Evolution of GRU + Linear Weights</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="weight-dynamics-and-learned-strategy" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="weight-dynamics-and-learned-strategy"><span class="header-section-number">6</span> Weight Dynamics and Learned Strategy</h2>
+<p>This section combines the detailed weight evolution visualizations (heatmaps and line plots) with the analysis of the GRU’s learned strategy. This provides a single, cohesive narrative.</p>
+<div id="weight-evolution-combined-heatmap" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming all_weights is already loaded</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>weight_types <span class="op">=</span> [<span class="st">'gru.weight_ih_l0'</span>, <span class="st">'gru.weight_hh_l0'</span>, <span class="st">'linear.weight'</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>weight_type_names <span class="op">=</span> [<span class="st">'Input-to-Hidden'</span>, <span class="st">'Hidden-to-Hidden'</span>, <span class="st">'Linear Layer'</span>]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, weight_type <span class="kw">in</span> <span class="bu">enumerate</span>(weight_types):</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    evolution_data <span class="op">=</span> []</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch_weights <span class="kw">in</span> all_weights:</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        weight_matrix <span class="op">=</span> epoch_weights[weight_type]</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> weight_type <span class="op">==</span> <span class="st">'gru.weight_ih_l0'</span>:</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            evolution_data.append(weight_matrix.flatten(order<span class="op">=</span><span class="st">'F'</span>))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            evolution_data.append(weight_matrix.flatten())</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    evolution_heatmap_data <span class="op">=</span> np.array(evolution_data)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(evolution_heatmap_data, cmap<span class="op">=</span><span class="st">"viridis"</span>, cbar<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax, xticklabels<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f'Heatmap of </span><span class="sc">{</span>weight_type_names[i]<span class="sc">}</span><span class="ss"> Weights Over Epochs'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">'Epoch (x49)'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    ax.axhline(<span class="dv">2</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    ax.axhline(<span class="dv">10</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    ax.axhline(<span class="dv">15</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> weight_type <span class="op">==</span> <span class="st">'gru.weight_ih_l0'</span>:</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        ax.axvline(<span class="dv">3</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        ax.text(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="dv">60</span>, s<span class="op">=</span><span class="st">"Input[0]"</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'bottom'</span>, bbox<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">'black'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>))</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        ax.text(x<span class="op">=</span><span class="fl">3.1</span>, y<span class="op">=</span><span class="dv">60</span>, s<span class="op">=</span><span class="st">"Input[1]"</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'bottom'</span>, bbox<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">'black'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>))</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    ax.text(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="dv">2</span><span class="op">-</span><span class="fl">.2</span>, s<span class="op">=</span><span class="st">"Epoch 100"</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'bottom'</span>)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    ax.text(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="dv">10</span><span class="op">-</span><span class="fl">.2</span>, s<span class="op">=</span><span class="st">"Epoch 500"</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'bottom'</span>)</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    ax.text(x<span class="op">=</span><span class="fl">0.1</span>, y<span class="op">=</span><span class="dv">15</span><span class="op">-</span><span class="fl">.2</span>, s<span class="op">=</span><span class="st">"Epoch 750"</span>, color<span class="op">=</span><span class="st">'#EE4B2B'</span>, fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'bottom'</span>)</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="weight-evolution-combined-heatmap-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-evolution-combined-heatmap-output-1.png" width="881" height="758" class="figure-img"></p>
+<figcaption>Combined Heatmap of Weight Evolution Over Epochs</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-evolution-combined-heatmap-output-2.png" id="weight-evolution-combined-heatmap-2" width="894" height="758" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-evolution-combined-heatmap-output-3.png" id="weight-evolution-combined-heatmap-3" width="894" height="758" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To visualize weight changes directly, I used line plots to show the evolution of individual weights across sampled epochs. These plots complement the heatmaps by providing a more detailed view of how each weight changes in magnitude and direction. Plotting signed values reveals symmetries and patterns that emerge during training, even in a simple network like mine.</p>
+<div id="weight-dynamics-lineplots" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np  <span class="co"># Make sure numpy is imported</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_gru_weight_evolution(all_weights, title_prefix):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Plots the evolution of GRU weight matrices (input-hidden, hidden-hidden)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">    separated by gate (Reset, Update, New).</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_single_gate_weights(weight_values, gate_name, title):</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Helper function to plot weights for a single gate."""</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.DataFrame(weight_values).T</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        df.columns <span class="op">=</span> [<span class="ss">f"Epoch </span><span class="sc">{</span>i<span class="op">*</span><span class="dv">49</span><span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(all_weights))]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(df.shape[<span class="dv">0</span>]):</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>            plt.plot(df.columns, df.iloc[i], label<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>gate_name<span class="sc">}</span><span class="ss"> Weight </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># Add weight index to label</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        plt.title(title)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">"Epoch"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">"Weight Value"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        plt.legend()</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        plt.grid(<span class="va">True</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        plt.axvline(x<span class="op">=</span><span class="st">"Epoch 98"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        plt.axvline(x<span class="op">=</span><span class="st">"Epoch 490"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        plt.axvline(x<span class="op">=</span><span class="st">"Epoch 735"</span>)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        plt.tight_layout()</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Input-to-Hidden Weights ---</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    ih_weights <span class="op">=</span> [all_weights[i][<span class="st">"gru.weight_ih_l0"</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(all_weights))]</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split into Reset, Update, and New gate weights (assuming standard GRU structure)</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    ih_reset_weights <span class="op">=</span> [w[<span class="dv">0</span>:w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> ih_weights]</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    ih_update_weights <span class="op">=</span> [w[w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>:<span class="dv">2</span><span class="op">*</span>w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> ih_weights]</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    ih_new_weights <span class="op">=</span> [w[<span class="dv">2</span><span class="op">*</span>w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>:, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> ih_weights]</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(ih_reset_weights, <span class="st">"Reset"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Input-Hidden (Reset Gate)"</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(ih_update_weights, <span class="st">"Update"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Input-Hidden (Update Gate)"</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(ih_new_weights, <span class="st">"New"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Input-Hidden (New Gate)"</span>)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Hidden-to-Hidden Weights ---</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    hh_weights <span class="op">=</span> [all_weights[i][<span class="st">"gru.weight_hh_l0"</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(all_weights))]</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split into Reset, Update, and New gate weights</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    hh_reset_weights <span class="op">=</span> [w[<span class="dv">0</span>:w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> hh_weights]</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    hh_update_weights <span class="op">=</span> [w[w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>:<span class="dv">2</span><span class="op">*</span>w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> hh_weights]</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    hh_new_weights <span class="op">=</span> [w[<span class="dv">2</span><span class="op">*</span>w.shape[<span class="dv">0</span>]<span class="op">//</span><span class="dv">3</span>:, :].flatten() <span class="cf">for</span> w <span class="kw">in</span> hh_weights]</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(hh_reset_weights, <span class="st">"Reset"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Hidden-Hidden (Reset Gate)"</span>)</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(hh_update_weights, <span class="st">"Update"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Hidden-Hidden (Update Gate)"</span>)</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    plot_single_gate_weights(hh_new_weights, <span class="st">"New"</span>, <span class="ss">f"</span><span class="sc">{</span>title_prefix<span class="sc">}</span><span class="ss"> - Hidden-Hidden (New Gate)"</span>)</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_linear_weight_evolution(all_weights, title):</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plots the evolution of the linear layer weights."""</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    weight_values <span class="op">=</span> [all_weights[i][<span class="st">"linear.weight"</span>].flatten() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(all_weights))]</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(weight_values).T</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    df.columns <span class="op">=</span> [<span class="ss">f"Epoch </span><span class="sc">{</span>i<span class="op">*</span><span class="dv">49</span><span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(all_weights))]</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(df.shape[<span class="dv">0</span>]):</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        plt.plot(df.columns, df.iloc[i], label<span class="op">=</span><span class="ss">f"Linear Weight </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    plt.title(title)</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Epoch"</span>)</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Weight Value"</span>)</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>    plt.axvline(x<span class="op">=</span><span class="st">"Epoch 98"</span>)</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    plt.axvline(x<span class="op">=</span><span class="st">"Epoch 490"</span>)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    plt.axvline(x<span class="op">=</span><span class="st">"Epoch 735"</span>)</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the plots</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>plot_gru_weight_evolution(all_weights, <span class="st">"GRU Weight Evolution"</span>)</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>plot_linear_weight_evolution(all_weights, <span class="st">"Linear Layer Weight Evolution"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="weight-dynamics-lineplots-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-1.png" width="1142" height="566" class="figure-img"></p>
+<figcaption>Weight Dynamics Over Training</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-2.png" id="weight-dynamics-lineplots-2" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-3.png" id="weight-dynamics-lineplots-3" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-4.png" id="weight-dynamics-lineplots-4" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-5.png" id="weight-dynamics-lineplots-5" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-6.png" id="weight-dynamics-lineplots-6" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part1_files/figure-html/weight-dynamics-lineplots-output-7.png" id="weight-dynamics-lineplots-7" width="1142" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="illustrative-example-forward-pass" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="illustrative-example-forward-pass"><span class="header-section-number">7</span> Illustrative Example: Forward Pass</h2>
+<p>To further clarify how the trained GRU operates, I’ll walk through a single forward pass with a concrete example. This will demonstrate the roles of the input-to-hidden weights, hidden-to-hidden weights, and the final linear layer, <em>as well as</em> how the binary mask selects the relevant input values.</p>
+<p><strong>Example Input:</strong></p>
+<p>The input sequence is represented as a tensor:</p>
+<p><span class="math display">\[
+\text{input\_sequence} =
+\begin{bmatrix}
+12 &amp; 0 \\
+37 &amp; 1 \\
+12 &amp; 0 \\
+21 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>The problem requires summing the values in the first dimension (column) only when the corresponding value in the second dimension (column) is 1 (the flag). In this example:</p>
+<ul>
+<li>The second element, <span class="math inline">\([37, 1]\)</span>, has a flag of 1, so 37 is included in the sum.</li>
+<li>The fourth element, <span class="math inline">\([21, 1]\)</span>, has a flag of 1, so 21 is included in the sum.</li>
+<li>The first and third elements have flags of 0, so their first-dimension values (12 and 12) are excluded.</li>
+</ul>
+<p>Therefore, the expected output is <span class="math inline">\(37 + 21 = 58\)</span>.</p>
+<div id="input-sequence-init" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>input_sequence <span class="op">=</span> torch.tensor([</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">12</span>,<span class="dv">0</span>],</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">37</span>,<span class="dv">1</span>],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">12</span>,<span class="dv">0</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">21</span>,<span class="dv">1</span>],</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>]).<span class="bu">float</span>().unsqueeze(<span class="dv">0</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>input_sequence[:, :, <span class="dv">0</span>] <span class="op">/=</span> HIGH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>And a quick sanity check applying my model. The result is: <span class="math inline">\(57.80980587005615\approx58\)</span></p>
+<p>which is really close to the actual sum (<span class="math inline">\(37 + 21 = 58\)</span>)!!!!</p>
+<p><strong>Loaded Weights (from the last training epoch):</strong></p>
+<p>I used the weights from the <em>last</em> epoch of training, which I previously saved. This ensures that I’m using the fully trained model. Let’s get the weights:</p>
+<div id="f7d05ada" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get weights from the last training epoch.  'all_weights' is populated by the loading/training section.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>last_epoch_weights <span class="op">=</span> model.state_dict() <span class="co">#all_weights[-1]</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the relevant weight matrices</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>W_ih <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'gru.weight_ih_l0'</span>]).<span class="bu">float</span>()  <span class="co"># Input-to-hidden</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>W_hh <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'gru.weight_hh_l0'</span>]).<span class="bu">float</span>()  <span class="co"># Hidden-to-hidden</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>b_ih <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'gru.bias_ih_l0'</span>]).<span class="bu">float</span>()  <span class="co"># Input-to-hidden bias</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>b_hh <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'gru.bias_hh_l0'</span>]).<span class="bu">float</span>()  <span class="co"># Hidden-to-hidden bias</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>W_linear <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'linear.weight'</span>]).<span class="bu">float</span>() <span class="co"># Linear layer weights</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>b_linear <span class="op">=</span> torch.tensor(last_epoch_weights[<span class="st">'linear.bias'</span>]).<span class="bu">float</span>()   <span class="co"># Linear layer bias</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now, let’s walk through the GRU step-by-step for each element in our input sequence.</p>
+<p>For each element, I calculate the Update Gate (<span class="math inline">\(z_t\)</span>), Reset Gate (<span class="math inline">\(r_t\)</span>), New Gate (<span class="math inline">\(\tilde{h}_t\)</span>), and Hidden State (<span class="math inline">\(h_t\)</span>).</p>
+<p>I start by initializing the hidden state to zero:</p>
+<div id="59b4c7db" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> torch.zeros(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>) <span class="co"># Initialize hidden state</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><span class="math display">\[
+h_t = 0.0
+\]</span></p>
+<section id="step-1-input-12-0" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="step-1-input-12-0"><span class="header-section-number">7.1</span> Step 1: Input <span class="math inline">\([12, 0]\)</span></h3>
+<p>Input for Step 1: <span class="math display">\[
+x_1 = \begin{bmatrix} 0.12 &amp; 0 \end{bmatrix}
+\]</span></p>
+<ol type="1">
+<li><p><strong>Update Gate <span class="math inline">\(z_1\)</span></strong>: <span class="math display">\[
+z_1 = \sigma(x_1 W_{iz}^T + h_0 W_{hz}^T + b_{iz})
+\]</span></p>
+<div id="5cc3f281" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x_1 <span class="op">=</span> input_sequence[:, <span class="dv">0</span>, :]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> torch.zeros(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Stable version (using torch.matmul)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>gi_stable <span class="op">=</span> torch.matmul(x_1, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>gh_stable <span class="op">=</span> torch.matmul(h, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Get gates</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>i_r, i_z, i_n <span class="op">=</span> gi_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>h_r, h_z, h_n <span class="op">=</span> gh_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply gate operations with controlled precision</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>resetgate <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>updategate <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>newgate <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate <span class="op">*</span> h_n))</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate) <span class="op">*</span> newgate <span class="op">+</span> updategate <span class="op">*</span> h</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> hy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Update Gate: <span class="math display">\[
+z_1 = 0.8275274634361267
+\]</span></p></li>
+<li><p><strong>Reset Gate <span class="math inline">\(r_1\)</span></strong>: <span class="math display">\[
+r_1 = \sigma(x_1 W_{ir}^T + h_0 W_{hr}^T + b_{ir})
+\]</span></p>
+<p>Reset Gate: <span class="math display">\[
+r_1 = 0.819507896900177
+\]</span></p></li>
+<li><p><strong>New Gate <span class="math inline">\(\tilde{h}_1\)</span></strong>: <span class="math display">\[
+\tilde{h}_1 = \tanh(x_1 W_{in}^T + (r_1 \odot h_0) W_{hn}^T + b_{in})
+\]</span></p>
+<p>New Gate: <span class="math display">\[
+\tilde{h}_1 = 0.639545738697052
+\]</span></p></li>
+<li><p><strong>Hidden State <span class="math inline">\(h_1\)</span></strong>: <span class="math display">\[
+h_1 = (1 - z_1) \odot h_0 + z_1 \odot \tilde{h}_1
+\]</span></p>
+<p>Hidden State: <span class="math display">\[
+h_1 = 0.11030407249927521
+\]</span></p></li>
+</ol>
+</section>
+<section id="step-2-input-37-1" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="step-2-input-37-1"><span class="header-section-number">7.2</span> Step 2: Input <span class="math inline">\([37, 1]\)</span></h3>
+<p>Input for Step 2: <span class="math display">\[
+x_2 = \begin{bmatrix} 0.37 &amp; 1 \end{bmatrix}
+\]</span></p>
+<ol type="1">
+<li><p><strong>Update Gate <span class="math inline">\(z_2\)</span></strong>: <span class="math display">\[
+z_2 = \sigma(x_2 W_{iz}^T + h_1 W_{hz}^T + b_{iz})
+\]</span></p>
+<div id="c0065c2a" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x_2 <span class="op">=</span> input_sequence[:, <span class="dv">1</span>, :]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Stable version (using torch.matmul)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>gi_stable <span class="op">=</span> torch.matmul(x_2, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>gh_stable <span class="op">=</span> torch.matmul(h_t, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get gates</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>i_r, i_z, i_n <span class="op">=</span> gi_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>h_r, h_z, h_n <span class="op">=</span> gh_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply gate operations</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>resetgate2 <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>updategate2 <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>newgate2 <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate2 <span class="op">*</span> h_n))</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate2) <span class="op">*</span> newgate2 <span class="op">+</span> updategate2 <span class="op">*</span> h_t</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> hy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Update Gate: <span class="math display">\[
+z_2 = 0.15969596803188324
+\]</span></p></li>
+<li><p><strong>Reset Gate <span class="math inline">\(r_2\)</span></strong>: <span class="math display">\[
+r_2 = \sigma(x_2 W_{ir}^T + h_1 W_{hr}^T + b_{ir})
+\]</span></p>
+<p>Reset Gate: <span class="math display">\[
+r_2 = 0.89918053150177
+\]</span></p></li>
+<li><p><strong>New Gate <span class="math inline">\(\tilde{h}_2\)</span></strong>: <span class="math display">\[
+\tilde{h}_2 = \tanh(x_2 W_{in}^T + (r_2 \odot h_1) W_{hn}^T + b_{in})
+\]</span></p>
+<p>New Gate: <span class="math display">\[
+\tilde{h}_2 = -0.001833615591749549
+\]</span></p></li>
+<li><p><strong>Hidden State <span class="math inline">\(h_2\)</span></strong>: <span class="math display">\[
+h_2 = (1 - z_2) \odot h_1 + z_2 \odot \tilde{h}_2
+\]</span></p>
+<p>Hidden State: <span class="math display">\[
+h_2 = 0.016074320301413536
+\]</span></p></li>
+</ol>
+</section>
+<section id="step-3-input-12-0" class="level3" data-number="7.3">
+<h3 data-number="7.3" class="anchored" data-anchor-id="step-3-input-12-0"><span class="header-section-number">7.3</span> Step 3: Input <span class="math inline">\([12, 0]\)</span></h3>
+<p>Input for Step 3: <span class="math display">\[
+x_3 = \begin{bmatrix} 0.12 &amp; 0 \end{bmatrix}
+\]</span></p>
+<ol type="1">
+<li><p><strong>Update Gate <span class="math inline">\(z_3\)</span></strong>: <span class="math display">\[
+z_3 = \sigma(x_3 W_{iz}^T + h_2 W_{hz}^T + b_{iz})
+\]</span></p>
+<div id="e5dc5fc0" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x_3 <span class="op">=</span> input_sequence[:, <span class="dv">2</span>, :]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Stable version (using torch.matmul)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>gi_stable <span class="op">=</span> torch.matmul(x_3, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>gh_stable <span class="op">=</span> torch.matmul(h_t, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get gates</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>i_r, i_z, i_n <span class="op">=</span> gi_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>h_r, h_z, h_n <span class="op">=</span> gh_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply gate operations</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>resetgate3 <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>updategate3 <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>newgate3 <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate3 <span class="op">*</span> h_n))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate3) <span class="op">*</span> newgate3 <span class="op">+</span> updategate3 <span class="op">*</span> h_t</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> hy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Update Gate: <span class="math display">\[
+z_3 = 0.8254608511924744
+\]</span></p></li>
+<li><p><strong>Reset Gate <span class="math inline">\(r_3\)</span></strong>: <span class="math display">\[
+r_3 = \sigma(x_3 W_{ir}^T + h_2 W_{hr}^T + b_{ir})
+\]</span></p>
+<p>Reset Gate: <span class="math display">\[
+r_3 = 0.8191711902618408
+\]</span></p></li>
+<li><p><strong>New Gate <span class="math inline">\(\tilde{h}_3\)</span></strong>: <span class="math display">\[
+\tilde{h}_3 = \tanh(x_3 W_{in}^T + (r_3 \odot h_2) W_{hn}^T + b_{in})
+\]</span></p>
+<p>New Gate: <span class="math display">\[
+\tilde{h}_3 = 0.648215115070343
+\]</span></p></li>
+<li><p><strong>Hidden State <span class="math inline">\(h_3\)</span></strong>: <span class="math display">\[
+h_3 = (1 - z_3) \odot h_2 + z_3 \odot \tilde{h}_3
+\]</span></p>
+<p>Hidden State: <span class="math display">\[
+h_3 = 0.12640763819217682
+\]</span></p></li>
+</ol>
+</section>
+<section id="step-4-input-21-1" class="level3" data-number="7.4">
+<h3 data-number="7.4" class="anchored" data-anchor-id="step-4-input-21-1"><span class="header-section-number">7.4</span> Step 4: Input <span class="math inline">\([21, 1]\)</span></h3>
+<p>Input for Step 4: <span class="math display">\[
+x_4 = \begin{bmatrix} 0.21 &amp; 1 \end{bmatrix}
+\]</span></p>
+<ol type="1">
+<li><p><strong>Update Gate <span class="math inline">\(z_4\)</span></strong>: <span class="math display">\[
+z_4 = \sigma(x_4 W_{iz}^T + h_3 W_{hz}^T + b_{iz})
+\]</span></p>
+<div id="723fa98a" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x_4 <span class="op">=</span> input_sequence[:, <span class="dv">3</span>, :]</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Stable version (using torch.matmul)</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>gi_stable <span class="op">=</span> torch.matmul(x_4, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>gh_stable <span class="op">=</span> torch.matmul(h_t, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Get gates</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>i_r, i_z, i_n <span class="op">=</span> gi_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>h_r, h_z, h_n <span class="op">=</span> gh_stable.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply gate operations</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>resetgate4 <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>updategate4 <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>newgate4 <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate4 <span class="op">*</span> h_n))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate4) <span class="op">*</span> newgate4 <span class="op">+</span> updategate4 <span class="op">*</span> h_t</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>h_t <span class="op">=</span> hy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Update Gate: <span class="math display">\[
+z_4 = 0.1668987274169922
+\]</span></p></li>
+<li><p><strong>Reset Gate <span class="math inline">\(r_4\)</span></strong>: <span class="math display">\[
+r_4 = \sigma(x_4 W_{ir}^T + h_3 W_{hr}^T + b_{ir})
+\]</span></p>
+<p>Reset Gate: <span class="math display">\[
+r_4 = 0.8955692052841187
+\]</span></p></li>
+<li><p><strong>New Gate <span class="math inline">\(\tilde{h}_4\)</span></strong>: <span class="math display">\[
+\tilde{h}_4 = \tanh(x_4 W_{in}^T + (r_4 \odot h_3) W_{hn}^T + b_{in})
+\]</span></p>
+<p>New Gate: <span class="math display">\[
+\tilde{h}_4 = 0.05876209959387779
+\]</span></p></li>
+<li><p><strong>Hidden State <span class="math inline">\(h_4\)</span></strong>: <span class="math display">\[
+h_4 = (1 - z_4) \odot h_3 + z_4 \odot \tilde{h}_4
+\]</span></p>
+<p>Hidden State: <span class="math display">\[
+h_4 = 0.07005205750465393
+\]</span></p></li>
+</ol>
+</section>
+<section id="step-5-linear-layer" class="level3" data-number="7.5">
+<h3 data-number="7.5" class="anchored" data-anchor-id="step-5-linear-layer"><span class="header-section-number">7.5</span> Step 5: Linear Layer</h3>
+<p>Finally, the hidden state <span class="math inline">\(h_4\)</span> is passed through the linear layer to produce the output.</p>
+<p><span class="math display">\[
+\text{output} = h_4 W_{\text{linear}}^T + b_{\text{linear}}
+\]</span></p>
+<div id="70f7c14c" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> h_t <span class="op">@</span> W_linear.T <span class="op">+</span> b_linear</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Linear Layer output: <span class="math display">\[
+\text{output} = 57.8097939491272
+\]</span></p>
+<p>The final result, as we can see, when approximated using the ceiling function, matches the expected result of 58.</p>
+</section>
+</section>
+<section id="coming-next" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="coming-next"><span class="header-section-number">8</span> Coming next…</h2>
+<p>This post set some ground work for a more thorough analysis of the model’s weights. I’ve trained a simple model, and now it’s time to crack it open and see what makes it tick. Think of it like this: usually these models are black boxes, and the weights that are inside and make them move or somwhat foggy to us. I’m going to be taking a close look at what those gears and levers look like after all the training is done – are they big or small? Are they organized in any particular way? What do they do?</p>
+<p>But it’s not enough just to look at them. I want to figure out what they actually do. Each weight contributes, in some way, to the final output of the model. I’ll be exploring how different weights, or groups of weights, affect the model’s predictions. I might even try tweaking them a bit to see what happens! This is like figuring out which lever controls which part of the machine.</p>
+<p>And finally, the really fun part: I’ll try to guess how they got that way. The training process is like a long and winding road, and the weights are constantly changing along the way. I’ll try to reconstruct that journey, piecing together clues from the final weights to understand the path the model took to learn. It’s a bit like detective work, trying to figure out the story behind the final result and I just love that! Get ready for some serious model investigation!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/theghoul21\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Luca Simonetti</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

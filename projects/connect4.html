@@ -209,6 +209,10 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#research-development-diary" id="toc-research-development-diary" class="nav-link active" data-scroll-target="#research-development-diary">Research &amp; Development Diary</a></li>
+  <li><a href="#research-development-diary-1" id="toc-research-development-diary-1" class="nav-link" data-scroll-target="#research-development-diary-1">Research &amp; Development Diary</a>
+  <ul class="collapse">
+  <li><a href="#february-16th-2025" id="toc-february-16th-2025" class="nav-link" data-scroll-target="#february-16th-2025">February 16th, 2025</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -227,8 +231,17 @@ ul.task-list li input[type="checkbox"] {
 <li>una rete che apprende tramite DPO a discernere tra una mossa giusta e una sbagliata</li>
 <li>una rete che apprende ad apprendere, che adatta i parametri della rete 1. in base alla situazione/stato corrente.</li>
 </ol>
+</section>
+<section id="research-development-diary-1" class="level1">
+<h1>Research &amp; Development Diary</h1>
+<section id="february-16th-2025" class="level2">
+<h2 class="anchored" data-anchor-id="february-16th-2025">February 16th, 2025</h2>
+<p>Progress: Successfully experimented with GRUs on the “adding problem” to understand RNN learning dynamics. Demonstrated that normalizing input/output to [0,1] significantly improves performance. Showed the model (with a hidden size of <em>one</em>) can learn to sum a variable number of masked inputs, even with variable sequence lengths (up to +/- 80% variation). This highlights the surprising capability of even tiny RNNs.</p>
+<p>Technical Notes: - GRUs were used for all experiments. - Input/output normalization to [0,1] is essential for learning. - The model architecture is extremely small: a single-layer GRU with hidden size 1, followed by a linear layer. - The model successfully learned with a variable number of masked elements and variable sequence length. - The sequence length has little to no effect on the ability to learn.</p>
+<p>Next Steps: - Begin investigating the incorporation of the DPO loss. - Define the structure of the meta-learning network. Consider the size constraint (meta-network should be smaller than the main network?). - Start thinking about how to design signals for “flag” and “value” to sum. - Explore whether an Energy-Based Model (EBM) is suitable for the meta-learning component (though stability could a concern).</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
