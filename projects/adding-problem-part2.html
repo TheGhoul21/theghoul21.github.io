@@ -389,7 +389,7 @@ z_4 = 0.1668987274169922 \\
 z_t = \sigma(W_z x_t + U_z h_{t-1} + b_z)
 \]</span></p>
 <p>where <span class="math inline">\(\sigma\)</span> is the sigmoid function. Recall that the sigmoid function squeezes its input in the range <span class="math inline">\([0,1]\)</span> In the plot below we map <span class="math inline">\(100\)</span> points to the sigmoid function (did you know that <em>function</em>, <em>map</em> and <em>application</em> are quite the same thing in math?)</p>
-<div id="9903ab61" class="cell" data-execution_count="1">
+<div id="4711eb6b" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -662,7 +662,7 @@ z_t = \sigma(W_z x_t + U_z h_{t-1} + b_z)
 \texttt{hy} = (1 - \texttt{updategate}) * \texttt{newgate} + \texttt{updategate} * \texttt{h}
 \]</span></p>
 <p>This means basically that the <em>higher</em> the value of <span class="math inline">\(\texttt{updategate}\)</span>, the more we should keep in memory our <em>previous value</em> (sum?) and <em>ignore</em> the newgate (the update in memory, the term to be added to the sum?). This sums up with our previous observation: with flag <span class="math inline">\(1\)</span>, update gate was pretty low and when flag was <span class="math inline">\(0\)</span> then <span class="math inline">\(z_t\)</span> was pretty high. But how much each component is involved in this behaviour?</p>
-<div id="0d7e761c" class="cell" data-execution_count="3">
+<div id="c24d412e" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x_1 <span class="op">=</span> input_sequence[:, <span class="dv">0</span>, :]</span>
@@ -734,7 +734,7 @@ b_{hh_z} &amp;= 0.8092878460884094 \cr
 \texttt{temp} = -0.05037130042910576 + 0 + 0.8092878460884094 + 0.8092878460884094;
 \]</span></p>
 <p>I’ve always believed that a plot tells more then hundred numbers, so let’s plot a cumulative sum of the four terms to check how much each of them accounts for the gran total:</p>
-<div id="ef138241" class="cell" data-execution_count="4">
+<div id="77b47345" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -808,7 +808,7 @@ b_{hh_z} &amp;= 0.8092878460884094 \cr
 <span id="lst-zt-activation-plot-23"><a href="#lst-zt-activation-plot-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-zt-activation-plot" class="quarto-float quarto-figure quarto-figure-center anchored" width="814" height="527">
+<div id="fig-zt-activation-plot" class="quarto-float quarto-figure quarto-figure-center anchored" height="527" width="814">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-zt-activation-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="adding-problem-part2_files/figure-html/fig-zt-activation-plot-output-1.png" id="fig-zt-activation-plot" width="814" height="527" class="figure-img">
@@ -831,7 +831,7 @@ r_t &amp;= \sigma(W_r x_t + U_r h_{t-1} + b_r) \\
 }
 \]</span></p>
 <p>First of all, you might have noticed already in the previous post that there was a different activation function in one step, which is <span class="math inline">\(\phi\)</span>. But what is <span class="math inline">\(\phi\)</span>? It is the <span class="math inline">\(\tanh\)</span>, which yields a plot like this:</p>
-<div id="f312ac08" class="cell" data-execution_count="6">
+<div id="1ce0e91d" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -945,7 +945,7 @@ W_{ih_z}^T &amp;=
 <span id="lst-rt-zt-activation-plot-26"><a href="#lst-rt-zt-activation-plot-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-rt-zt-activation-plot" class="quarto-float quarto-figure quarto-figure-center anchored" width="814" height="527">
+<div id="fig-rt-zt-activation-plot" class="quarto-float quarto-figure quarto-figure-center anchored" height="527" width="814">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rt-zt-activation-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="adding-problem-part2_files/figure-html/fig-rt-zt-activation-plot-output-1.png" id="fig-rt-zt-activation-plot" width="814" height="527" class="figure-img">
@@ -1102,7 +1102,7 @@ First Step Insights: What Have We Learned?
 </section>
 <section id="coming-next" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="coming-next"><span class="header-section-number">7</span> Coming next…</h2>
-<p>In this part, we took a thorough investagion into the inner workings of our GRU cell, dissecting its very first iteration piece by piece. We carefully traced how the input and weights influenced the ** <span class="math inline">\(z_t\)</span>, <span class="math inline">\(r_t\)</span>, and <span class="math inline">\(\hat{h}\)</span> gates**, step by step, uncovering how activations evolved and what they actually meant. Along the way, we stumbled upon three key insights about what the network had learned.</p>
+<p>In this part, we took a thorough investagion into the inner workings of our GRU cell, dissecting its very first iteration piece by piece. We carefully traced how the input and weights influenced the <strong><span class="math inline">\(z_t\)</span>, <span class="math inline">\(r_t\)</span>, and <span class="math inline">\(\hat{h}\)</span> gates</strong>, step by step, uncovering how activations evolved and what they actually meant. Along the way, we stumbled upon three key insights about what the network had learned.</p>
 <p>But that is still just the <strong>what</strong>—now it’s time to ask <strong>why</strong>.</p>
 <p>Why did the model learn to do this seemingly strange thing? Was it always heading in this direction, or did it explore different strategies earlier in training? Were the weights trying to do something entirely different at first?</p>
 <p>To answer these questions, we’ll rewind the clock and analyze how the model’s weights evolved over time. Did they start off chaotic before settling into a structured pattern? Were different strategies competing before the final approach emerged?</p>
