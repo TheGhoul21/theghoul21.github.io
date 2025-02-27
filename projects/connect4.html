@@ -266,7 +266,7 @@ ul.task-list li input[type="checkbox"] {
 <h1>First Offline Demo: Play Against the AI</h1>
 <p>Welcome to the first offline demo of our Connect 4 AI project! In this demo, you can play a game of Connect 4 against an AI opponent. The AI has been trained using a GRU-based neural network to predict winning moves and identify game patterns. While the AI is still in its early stages, it demonstrates the potential of machine learning in game strategy development.</p>
 <p>To play, simply click on the column where you want to drop your piece. The game will alternate turns between you and the AI. Enjoy the game and stay tuned for more updates as we continue to improve the AI’s capabilities!</p>
-<p><strong>Disclaimer:</strong> This demo is currently not connected to the AI model. The integration with the AI model will be implemented soon. Stay tuned for updates!</p>
+<p><strong>Note:</strong> This demo is now connected to an AI model using ONNX Runtime. The AI has been trained using a GRU-based neural network to play Connect 4. You play as red and the AI plays as yellow. The AI will automatically make its move after you play. Have fun!</p>
 <style>
 /* Basic CSS for the Connect 4 board */
 #board {
@@ -327,22 +327,350 @@ ul.task-list li input[type="checkbox"] {
     transform: translateY(0); /* End at the final position */
   }
 }
+
+/* Status container styling */
+#status-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px auto;
+  width: 750px;
+  padding: 10px;
+  gap: 10px;
+}
+
+#model-status {
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+#reset-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#reset-button:hover {
+  background-color: #0069d9;
+}
+
+/* Message Popup Styling */
+#message-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.message-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#message-text {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+#message-close {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#message-close:hover {
+  background-color: #0069d9;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Game status styling */
+.game-status {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 10px;
+  min-width: 150px;
+  text-align: center;
+}
 </style>
+<div id="status-container">
+<div id="model-status">
+Loading AI model…
+</div>
+<button id="reset-button">New Game</button>
+<div id="game-status" class="game-status">
+Your turn (Red)
+</div>
+</div>
 <div id="board">
 
 </div>
+<!-- Message Popup -->
+<div id="message-popup" class="hidden">
+<div class="message-content">
+<pre><code>&lt;div id="message-text"&gt;&lt;/div&gt;
+&lt;button id="message-close"&gt;Close&lt;/button&gt;</code></pre>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 <script>
-  // JavaScript to handle the game logic and animation
-
-  const boardElement = document.getElementById('board');
+// Wait for DOM content to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Constants
   const numRows = 6;
   const numCols = 7;
+  
+  // DOM elements
+  const boardElement = document.getElementById('board');
+  const modelStatusElement = document.getElementById('model-status');
+  const resetButton = document.getElementById('reset-button');
+  const messagePopup = document.getElementById('message-popup');
+  const messageText = document.getElementById('message-text');
+  const messageClose = document.getElementById('message-close');
+  const gameStatusElement = document.getElementById('game-status');
+  
+  // Game state variables
   let board = []; // 2D array to represent the board state
-  let currentPlayer = 'red'; // Start with red player
-
+  let currentPlayer = 'red'; // Start with red player (human)
+  const aiPlayer = 'yellow'; // AI player
+  let isAiTurn = false;
+  let isGameActive = true;
+  let ortSession = null;
+  
+  // Initialize the game
+  createBoard();
+  updateGameStatus();
+  initOnnxModel();
+  
+  // Add event listeners
+  if (resetButton) {
+    resetButton.addEventListener('click', function() {
+      resetGame();
+      updateGameStatus();
+    });
+  }
+  
+  if (messageClose) {
+    messageClose.addEventListener('click', function() {
+      messagePopup.classList.add('hidden');
+    });
+  }
+  
+  // Function to show a message popup
+  function showMessage(message) {
+    if (!messageText || !messagePopup) return;
+    messageText.textContent = message;
+    messagePopup.classList.remove('hidden');
+  }
+  
+  // Initialize ONNX Runtime and load the model
+  async function initOnnxModel() {
+    if (!modelStatusElement) return;
+    
+    try {
+      // Set ONNX Runtime options
+      const options = {
+        executionProviders: ['wasm'],
+        graphOptimizationLevel: 'all'
+      };
+      
+      // Path to your ONNX model - this should be accessible via web
+      const modelPath = 'connect4_model.onnx';
+      
+      
+      // Update status
+      modelStatusElement.textContent = 'Loading AI model...';
+      modelStatusElement.style.backgroundColor = '#fff3cd';
+      
+      try {
+        // Create ONNX Runtime session
+        ortSession = await ort.InferenceSession.create(modelPath, options);
+        console.log('ONNX model loaded successfully');
+        
+        // Update status
+        modelStatusElement.textContent = 'AI model loaded successfully!';
+        modelStatusElement.style.backgroundColor = '#d4edda';
+      } catch (modelError) {
+        console.error('Error loading ONNX model, falling back to random moves:', modelError);
+        
+        // Update status for fallback mode
+        modelStatusElement.textContent = 'AI model failed to load. Using random moves.';
+        modelStatusElement.style.backgroundColor = '#f8d7da';
+      }
+      
+    } catch (error) {
+      console.error('Error initializing ONNX:', error);
+      modelStatusElement.textContent = 'AI not available. Using random moves.';
+      modelStatusElement.style.backgroundColor = '#f8d7da';
+    }
+  }
+  
+  // Reset game state and board
+  function resetGame() {
+    // Reset game state
+    board = Array(numRows).fill(null).map(() => Array(numCols).fill(null));
+    currentPlayer = 'red';
+    isAiTurn = false;
+    isGameActive = true;
+    
+    // Clear the board
+    if (boardElement) {
+      boardElement.innerHTML = '';
+      createBoard();
+    }
+    
+    // Update the game status
+    updateGameStatus();
+  }
+  
+  // Convert board state to model input
+  function boardToModelInput() {
+    // Create a flat representation of the board: 1 for player pieces, -1 for AI pieces, 0 for empty
+    const boardState = [];
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
+        if (board[row][col] === 'red') {
+          boardState.push(1);
+        } else if (board[row][col] === 'yellow') {
+          boardState.push(-1);
+        } else {
+          boardState.push(0);
+        }
+      }
+    }
+    
+    return boardState;
+  }
+  
+  // Create a one-hot encoding for column selection
+  function columnToOneHot(colIndex) {
+    const oneHot = new Array(numCols).fill(0);
+    if (colIndex >= 0 && colIndex < numCols) {
+      oneHot[colIndex] = 1;
+    }
+    return oneHot;
+  }
+  
+  // Get AI move using ONNX model
+  async function getAiMove() {
+    if (!ortSession) {
+      // If model isn't loaded, pick a random valid column
+      return getRandomValidColumn();
+    }
+    
+    try {
+      // Prepare input in the format the model expects
+      const boardState = boardToModelInput();
+      
+      // Create ONNX tensor from input data
+      const tensor = new ort.Tensor('float32', new Float32Array(boardState), [1, boardState.length]);
+      
+      // Use 'input' as the tensor name - adjust if your model uses a different input name
+      const feeds = { input: tensor };
+      
+      // Run inference
+      const results = await ortSession.run(feeds);
+      
+      // Get output tensor - adjust 'output' if your model uses a different output name
+      const output = results.output.data;
+      
+      // The model outputs a vector of length 7 (one for each column)
+      // where each value represents the preference for that column
+      let bestCol = 0;
+      let bestScore = -Infinity;
+      
+      for (let col = 0; col < numCols; col++) {
+        // Skip columns that are full
+        if (!isColumnValid(col)) continue;
+        
+        // Find column with highest score
+        if (output[col] > bestScore) {
+          bestScore = output[col];
+          bestCol = col;
+        }
+      }
+      
+      // If all valid columns have very low scores, pick a random one
+      if (bestScore < -0.9) {
+        console.log('Model returned very low scores for all columns, using random fallback');
+        return getRandomValidColumn();
+      }
+      
+      return bestCol;
+    } catch (error) {
+      console.error('Error running AI inference:', error);
+      // If there's an error with the model, use the random fallback
+      return getRandomValidColumn();
+    }
+  }
+  
+  // Check if a column is valid for a move
+  function isColumnValid(col) {
+    return board[0][col] === null; // Check if the top cell is empty
+  }
+  
+  // Get a random valid column (fallback strategy)
+  function getRandomValidColumn() {
+    const validColumns = [];
+    for (let col = 0; col < numCols; col++) {
+      if (isColumnValid(col)) {
+        validColumns.push(col);
+      }
+    }
+    
+    if (validColumns.length === 0) return -1; // Game is a draw
+    
+    const randomIndex = Math.floor(Math.random() * validColumns.length);
+    return validColumns[randomIndex];
+  }
+  
+  // AI makes its move
+  async function makeAiMove() {
+    if (!isGameActive || !isAiTurn) return;
+    
+    // Add a slight delay to make it feel more natural
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    const aiCol = await getAiMove();
+    if (aiCol >= 0) {
+      dropPiece(aiCol);
+    }
+  }
+  
   // Initialize the board
   function createBoard() {
-    board = Array(numRows).fill(null).map(() => Array(numCols).fill(null));  // Initially, every cell is null (empty)
+    if (!boardElement) return;
+    
+    // Initialize board array
+    board = Array(numRows).fill(null).map(() => Array(numCols).fill(null));
+    
+    // Create board cells
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < numCols; col++) {
         const cell = document.createElement('div');
@@ -350,23 +678,22 @@ ul.task-list li input[type="checkbox"] {
         cell.classList.add('column-button');
         cell.dataset.row = row;
         cell.dataset.col = col;
+        
+        // Add click event listener to each cell
+        cell.addEventListener('click', function() {
+          if (!isGameActive || isAiTurn) return;
+          
+          const col = parseInt(this.dataset.col);
+          if (isColumnValid(col)) {
+            dropPiece(col);
+          }
+        });
+        
         boardElement.appendChild(cell);
       }
     }
   }
-
-  createBoard(); // Call the function to create the board on page load.
-
-  // Handle clicks on the column buttons
-  const columnButtons = document.querySelectorAll('.column-button');
-  columnButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
-      const col = parseInt(event.target.dataset.col); // Column number (0-6)
-
-      dropPiece(col); // Call the function to drop a piece into the column
-    });
-  });
-
+  
   // Function to drop a piece into the board
   function dropPiece(col) {
     // Find the lowest available row in the selected column
@@ -377,37 +704,145 @@ ul.task-list li input[type="checkbox"] {
         break;
       }
     }
-
+    
     // If the column is full, do nothing
-    if (row === -1) {
-      return;
-    }
-
+    if (row === -1) return;
+    
     // Update the board state
     board[row][col] = currentPlayer;
-
+    
     // Create the piece element
     const piece = document.createElement('div');
     piece.classList.add('piece');
     piece.classList.add(currentPlayer); // Add 'red' or 'yellow' class
     piece.classList.add('falling');  // Add the 'falling' class to trigger the animation
-
+    
     // Find the correct cell to append the piece to
     const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-
+    if (!cell) return;
+    
     // Append the piece to the cell
     cell.appendChild(piece);
-
+    
     // After the animation, remove the 'falling' class
     setTimeout(() => {
-      piece.classList.remove('falling');
+      if (piece) piece.classList.remove('falling');
+      
+      // Check for a win or draw
+      if (checkWin(row, col)) {
+        isGameActive = false;
+        updateGameStatus(); // Update status first to show "Game Over"
+        // Show winner popup after a short delay to allow animation to complete
+        setTimeout(() => announceWinner(), 300);
+      } else if (checkDraw()) {
+        isGameActive = false;
+        updateGameStatus(); // Update status first to show "Game Over"
+        // Show draw popup after a short delay to allow animation to complete
+        setTimeout(() => announceDraw(), 300);
+      } else {
+        // Switch players
+        currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+        isAiTurn = currentPlayer === aiPlayer;
+        
+        // Update game status
+        updateGameStatus();
+        
+        // If it's AI's turn, make the AI move
+        if (isAiTurn) {
+          makeAiMove();
+        }
+      }
     }, 500); // Duration of the animation
-
-    // Switch players
-    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-
-    // Check for a win (not implemented yet)
   }
+  
+  // Check for a win
+  function checkWin(row, col) {
+    const player = board[row][col];
+    if (!player) return false;
+    
+    const directions = [
+      [0, 1],  // horizontal
+      [1, 0],  // vertical
+      [1, 1],  // diagonal /
+      [1, -1]  // diagonal \
+    ];
+    
+    for (const [dx, dy] of directions) {
+      let count = 1;  // Start with 1 for the piece just placed
+      
+      // Check in the positive direction
+      for (let i = 1; i <= 3; i++) {
+        const newRow = row + i * dx;
+        const newCol = col + i * dy;
+        
+        if (newRow < 0 || newRow >= numRows || newCol < 0 || newCol >= numCols) break;
+        if (board[newRow][newCol] !== player) break;
+        
+        count++;
+      }
+      
+      // Check in the negative direction
+      for (let i = 1; i <= 3; i++) {
+        const newRow = row - i * dx;
+        const newCol = col - i * dy;
+        
+        if (newRow < 0 || newRow >= numRows || newCol < 0 || newCol >= numCols) break;
+        if (board[newRow][newCol] !== player) break;
+        
+        count++;
+      }
+      
+      if (count >= 4) return true;
+    }
+    
+    return false;
+  }
+  
+  // Check for a draw
+  function checkDraw() {
+    for (let col = 0; col < numCols; col++) {
+      if (board[0][col] === null) return false; // If any column has space, game is not a draw
+    }
+    return true; // All columns are full
+  }
+  
+  // Announce the winner
+  function announceWinner() {
+    const winner = currentPlayer === 'red' ? 'You' : 'AI';
+    const message = `${winner} won the game!`;
+    showMessage(message);
+  }
+  
+  // Announce a draw
+  function announceDraw() {
+    showMessage('The game is a draw!');
+  }
+  
+  // Update game status message
+  function updateGameStatus() {
+    if (!gameStatusElement) return;
+    
+    if (!isGameActive) {
+      gameStatusElement.textContent = 'GAME OVER';
+      gameStatusElement.style.backgroundColor = '#e53935'; // Brighter red
+      gameStatusElement.style.color = 'white';
+      gameStatusElement.style.fontWeight = 'bold';
+      return;
+    }
+    
+    const statusText = currentPlayer === 'red' ? 'Your turn (Red)' : 'AI thinking... (Yellow)';
+    gameStatusElement.textContent = statusText;
+    
+    // Update styling based on current player
+    if (currentPlayer === 'red') {
+      gameStatusElement.style.backgroundColor = '#ffebee'; // Light red
+      gameStatusElement.style.color = '#d32f2f'; // Dark red
+    } else {
+      gameStatusElement.style.backgroundColor = '#fff9c4'; // Light yellow
+      gameStatusElement.style.color = '#f57f17'; // Dark yellow
+    }
+  }
+});
 </script>
 
 
