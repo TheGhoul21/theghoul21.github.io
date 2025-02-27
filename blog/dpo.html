@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Luca Simonetti">
+<meta name="dcterms.date" content="2025-02-25">
 
-<title>L’s blog – L.</title>
+<title>DPO: Direct Preference Optimization – L.</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +32,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -129,9 +100,9 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="L.">
-<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
-<meta property="og:image" content="https://theghoul21.github.io//images/278270564_10159906873598664_2201636379743763738_n.jpg">
+<meta property="og:title" content="DPO: Direct Preference Optimization">
+<meta property="og:description" content="LA DPO spiegata, spero, facile.">
+<meta property="og:image" content="https://theghoul21.github.io//images/dpo.jpeg">
 <meta property="og:site_name" content="L.">
 </head>
 
@@ -157,7 +128,7 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -226,14 +197,29 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">L’s blog</h1>
-                      </div>
+      <h1 class="title">DPO: Direct Preference Optimization</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">computer science</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta column-page-left">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 25, 2025</p>
+      </div>
+    </div>
     
       
     </div>
@@ -243,8 +229,20 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(5)</span></div><div class="category" data-category="YWxnZWJyYQ==">algebra <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29tcHV0ZXIlMjBzY2llbmNl">computer science <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Y3J5cHRvZ3JhcGh5">cryptography <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWF0aA==">math <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHJvZ3JhbW1pbmc=">programming <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2ViJTIwZGV2ZWxvcG1lbnQ=">web development <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#direct-preference-optimization" id="toc-direct-preference-optimization" class="nav-link active" data-scroll-target="#direct-preference-optimization">Direct Preference Optimization</a>
+  <ul class="collapse">
+  <li><a href="#rlhf" id="toc-rlhf" class="nav-link" data-scroll-target="#rlhf">RLHF</a></li>
+  <li><a href="#dpo-la-figata-che-semplifica-tutto-o-quasi" id="toc-dpo-la-figata-che-semplifica-tutto-o-quasi" class="nav-link" data-scroll-target="#dpo-la-figata-che-semplifica-tutto-o-quasi">DPO: La Figata che Semplifica Tutto (O Quasi)</a></li>
+  <li><a href="#limiti" id="toc-limiti" class="nav-link" data-scroll-target="#limiti">Limiti</a></li>
+  <li><a href="#quindi" id="toc-quindi" class="nav-link" data-scroll-target="#quindi">Quindi</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -252,191 +250,87 @@ window.Quarto = {
 
 
 
+<section id="direct-preference-optimization" class="level1">
+<h1>Direct Preference Optimization</h1>
+<p>Se vi siete mai chiesti come fanno i vari ChatGPT, Claude eccetera a rispondere in modo sensato e, soprattutto, a non insultarvi ogni due per tre, allora siete nel posto giusto. Perché dietro c’è spesso un processo chiamato <strong>Reinforcement Learning from Human Feedback (RLHF)</strong>, ovvero “Apprendimento per Rinforzo con Feedback Umano”. Sembra complicato, e in effetti lo è, ma cercherò di spiegarvelo senza farvi venire un’aneurisma.</p>
+<section id="rlhf" class="level2">
+<h2 class="anchored" data-anchor-id="rlhf">RLHF</h2>
+<p>Immaginate di voler insegnare a un cane a fare il riporto. Come fate? Gli lanciate la pallina, se ve la riporta gli date un biscottino e gli dite “bravo!”. Se invece scappa col la pallina e se la va a sotterrare in giardino, lo sgridate (o magari tirate giù un porco, dipende da quanto siete incazzati). Ecco, l’RLHF è un po’ la stessa cosa, ma invece del cane abbiamo un modello linguistico gigante e invece dei biscottini e delle ciabatte abbiamo dei <strong>ricompense</strong> e delle <strong>penalità</strong> (in gergo tecnico si chiamano <em>reward</em> e <em>punishment</em>, ma siamo tra amici, quindi diciamo ricompense e penalità).</p>
+<p>Il processo di RLHF, in parole povere, funziona così:</p>
+<ol type="1">
+<li><p><strong>Fase 1: Supervised Fine-Tuning - SFT:</strong> Si parte da un modello linguistico pre-addestrato (tipo GPT, per intenderci). Questo modello è stato addestrato su una quantità di testo immane presa da internet, quindi sa già un sacco di cose, ma è un po’ come un adolescente: sa tante cose teoriche, ma poi nella pratica fa un casino. Quindi, in questa fase, gli si fa fare un po’ di pratica con esempi specifici, tipo “rispondi a questa domanda in modo conciso”, “scrivi un riassunto di questo testo”, eccetera. È come dargli dei compiti a casa, insomma. Questa fase si chiama <strong>Supervised Fine-Tuning (SFT)</strong>, ovvero “Messa a Punto Supervisionata” (che schifo i nomi tradotti in italiano). Fin qui, tutto abbastanza facile.</p></li>
+<li><p><strong>Fase 2: Addestramento del Modello di Ricompensa (Reward Modeling - RM):</strong> Qui inizia il casino. Perché per usare l’apprendimento per rinforzo, abbiamo bisogno di una cosa fondamentale: un <strong>modello di ricompensa</strong>. Ma che cazzo è ’sto modello di ricompensa? È un altro modello (sì, un altro, perché le cose semplici non ci piacciono) che impara a valutare quanto è “buona” una risposta generata dal modello linguistico. “Buona” in che senso? Nel senso che è utile, pertinente, non offensiva, non tossica, eccetera eccetera. Insomma, tutte quelle cose che vogliamo da un chatbot che non sia un troll di internet.</p>
+<p>Per addestrare questo benedetto modello di ricompensa, abbiamo bisogno di <strong>dati di preferenza umana</strong>. UMANA, mi piace come suona. UMANA. Cosa vuol dire UMANA? Vuol dire che dobbiamo far valutare a delle persone vere (i cosiddetti “annotatori umani”, in Kenya o in India di solito) delle coppie di risposte generate dal modello linguistico. Tipo, gli si fa vedere due risposte diverse alla stessa domanda e gli si chiede: “Quale di queste due risposte ti piace di più?”. E l’annotatore umano deve scegliere: “Quetta qui!”. Dopo aver raccolto un bel po’ di ’ste coppie di preferenze, si addestra il modello di ricompensa a predire queste preferenze. In pratica, il modello di ricompensa impara a dire: “Ah, questa risposta è meglio di quest’altra perché è più [… qualcosa]”.</p>
+<p>Matematicamente, il modello di ricompensa spesso si basa sul modello di <strong>Bradley-Terry</strong>. E voi chiederete: che cazzo è il modello di Bradley-Terry? È un modello statistico che serve per modellare le probabilità di vittoria in competizioni a coppie. Immagina di fare un torneo di braccio di ferro. Il modello di Bradley-Terry cerca di capire, date le prestazioni passate dei partecipanti, qual è la probabilità che Tizio batta Caio. Nel nostro caso, la “competizione” è tra due risposte generate dal modello linguistico, e il “vincitore” è la risposta preferita dall’annotatore umano.</p>
+<p>Se indichiamo con <span class="math inline">\(r_\theta(x, y)\)</span> il punteggio (non normalizzato) che il modello di ricompensa <span class="math inline">\(\theta\)</span> assegna alla risposta <span class="math inline">\(y\)</span> data la domanda <span class="math inline">\(x\)</span>, allora il modello di Bradley-Terry dice che la probabilità che la risposta <span class="math inline">\(y_1\)</span> sia preferita alla risposta <span class="math inline">\(y_2\)</span> è data da:</p>
+<p><span class="math display">\[P(y_1 \succ y_2 | x) = \sigma(r_\theta(x, y_1) - r_\theta(x, y_2))\]</span></p>
+<p>dove <span class="math inline">\(\sigma(z) = \frac{1}{1 + e^{-z}}\)</span> è la funzione sigmoide, che serve a schiacciare i valori tra 0 e 1, in modo da ottenere una probabilità. In pratica, più la differenza tra i punteggi <span class="math inline">\(r_\theta(x, y_1)\)</span> e <span class="math inline">\(r_\theta(x, y_2)\)</span> è grande, più è probabile che <span class="math inline">\(y_1\)</span> sia preferita a <span class="math inline">\(y_2\)</span>. E viceversa. Il modello di ricompensa <span class="math inline">\(\theta\)</span> viene addestrato per massimizzare la probabilità di predire correttamente le preferenze umane sui dati di addestramento.</p></li>
+<li><p><strong>Fase 3: Ottimizzazione della Politica con Apprendimento per Rinforzo (Reinforcement Learning Policy Optimization):</strong> Finalmente, arriviamo alla parte “rinforzo”. Ora che abbiamo ‘sto modello di ricompensa che ci dice quanto sono buone le risposte, possiamo usarlo per “guidare” il modello linguistico a generare risposte sempre migliori. Come? Usando un algoritmo di apprendimento per rinforzo, tipo <strong>Proximal Policy Optimization (PPO)</strong>. PPO è un algoritmo un po’ complicato (non ci addentriamo nei dettagli, se no non ne usciamo più), ma l’idea di base è questa: si cerca di modificare il modello linguistico in modo da aumentare la ricompensa media ottenuta, senza però allontanarsi troppo dal modello linguistico originale (quello SFT). È come cercare di migliorare il cane nel riporto, ma senza fargli dimenticare tutto quello che ha imparato prima.</p>
+<p>In questa fase, si definisce una <strong>funzione obiettivo</strong> che cerca di massimizzare la ricompensa, ma anche di mantenere il modello linguistico “vicino” a quello SFT. Una funzione obiettivo tipica per RLHF è tipo questa:</p>
+<p><span class="math display">\[J_{RLHF}(\pi_\phi) = \mathbb{E}_{(x, y) \sim D_\pi} [r_\theta(x, y) - \beta \cdot KL(\pi_\phi(y|x) || \pi_{SFT}(y|x))]\]</span></p>
+<p>Dove:</p>
+<ul>
+<li><span class="math inline">\(\pi_\phi\)</span> è la <strong>politica</strong> (policy) del modello linguistico che stiamo ottimizzando (parametri <span class="math inline">\(\phi\)</span>). In pratica, è il modello linguistico stesso.</li>
+<li><span class="math inline">\(D_\pi\)</span> è la distribuzione dei dati generati dalla politica <span class="math inline">\(\pi_\phi\)</span>.</li>
+<li><span class="math inline">\(r_\theta(x, y)\)</span> è la ricompensa predetta dal modello di ricompensa <span class="math inline">\(\theta\)</span> per la risposta <span class="math inline">\(y\)</span> data la domanda <span class="math inline">\(x\)</span>.</li>
+<li><span class="math inline">\(KL(\pi_\phi(y|x) || \pi_{SFT}(y|x))\)</span> è la divergenza di Kullback-Leibler (KL) tra la politica attuale <span class="math inline">\(\pi_\phi\)</span> e la politica SFT <span class="math inline">\(\pi_{SFT}\)</span>. La divergenza KL quantifica quanto sono diverse due distribuzioni di probabilità. In questo contesto, penalizza le politiche <span class="math inline">\(\pi_\phi\)</span> che si discostano troppo da <span class="math inline">\(\pi_{SFT}\)</span>. Anche se spesso si semplifica dicendo che è una “misura della distanza” tra distribuzioni, tecnicamente non è una distanza vera e propria poiché non rispetta la simmetria (e quindi la commutatività) né la disuguaglianza triangolare. È più corretto considerarla una misura di “dissimilarità”: più è alta, più le due distribuzioni sono diverse.</li>
+<li><span class="math inline">\(\beta\)</span> è un iperparametro che controlla quanto vogliamo penalizzare l’allontanamento dalla politica SFT.</li>
+</ul>
+<p>In pratica, stiamo dicendo: “Vogliamo che il modello linguistico generi risposte che ottengono una ricompensa alta dal modello di ricompensa, ma non vogliamo che si discosti troppo dal modo in cui rispondeva prima (quello SFT)”. È un compromesso tra migliorare la qualità delle risposte e mantenere una certa coerenza con il modello originale.</p></li>
+</ol>
+<p><strong>Problemi dell’RLHF:</strong></p>
+<p>Tutto figo, no? Sì, sulla carta. Ma l’RLHF ha un sacco di problemi, tipo:</p>
+<ul>
+<li><strong>Complessità:</strong> Sono tre fasi separate, ognuna con i suoi casini.</li>
+<li><strong>Instabilità:</strong> L’addestramento con RL è notoriamente instabile. Può succedere che la politica impazzisca e che la ricompensa parta in quinta.</li>
+<li><strong>Costo:</strong> Raccogliere dati di preferenza umana costa un sacco di soldi e tempo.</li>
+<li><strong>Subottimalità:</strong> Anche se tutto va bene, l’RLHF non è detto che trovi la politica <em>ottimale</em>. Perché? Perché stiamo ottimizzando una funzione obiettivo surrogata (quella roba di prima <span class="math inline">\(J_{RLHF}\)</span>), che non è detto che corrisponda esattamente a quello che vogliamo veramente (ovvero, un chatbot che risponde bene).</li>
+</ul>
+<p>Insomma, l’RLHF è un po’ come costruire un castello di carte: figo, ma rischia di crollare al primo soffio di vento.</p>
+</section>
+<section id="dpo-la-figata-che-semplifica-tutto-o-quasi" class="level2">
+<h2 class="anchored" data-anchor-id="dpo-la-figata-che-semplifica-tutto-o-quasi">DPO: La Figata che Semplifica Tutto (O Quasi)</h2>
+<p>Ed è qui che entra in gioco il <strong>Direct Preference Optimization (DPO)</strong>. Il DPO è una figata perché <strong>elimina la necessità di addestrare esplicitamente un modello di ricompensa</strong>. Avete capito bene: niente più modello di ricompensa, niente più fase 2 dell’RLHF. Solo fase 1 (SFT) e poi si passa direttamente alla fase di ottimizzazione, ma in modo molto più semplice e diretto.</p>
+<p>Come fa ’sta magia il DPO? Sfrutta una proprietà matematica del modello di Bradley-Terry. Si può <a href="https://arxiv.org/pdf/2305.18290">dimostrare</a> che la funzione obiettivo dell’RLHF (quella <span class="math inline">\(J_{RLHF}\)</span> di prima) può essere riscritta in una forma molto più semplice, che <strong>dipende solo dalle preferenze umane e non dal modello di ricompensa</strong>.</p>
+<p>In pratica, invece di massimizzare la ricompensa predetta dal modello di ricompensa, il DPO massimizza direttamente la probabilità di generare la risposta preferita, date le coppie di preferenze umane. La funzione obiettivo del DPO è questa:</p>
+<p><span class="math display">\[J_{DPO}(\pi_\phi) = \mathbb{E}_{(x, y_w, y_l) \sim D_{pref}} [\log \sigma( \beta \log \frac{\pi_\phi(y_w|x)}{\pi_\phi(y_l|x)} )]\]</span></p>
+<p>Dove:</p>
+<ul>
+<li><span class="math inline">\((x, y_w, y_l)\)</span> è una tripla di dati di preferenza: <span class="math inline">\(x\)</span> è la domanda, <span class="math inline">\(y_w\)</span> è la risposta preferita (“winner”), <span class="math inline">\(y_l\)</span> è la risposta non preferita (“loser”).</li>
+<li><span class="math inline">\(D_{pref}\)</span> è il dataset di preferenze umane.</li>
+<li><span class="math inline">\(\pi_\phi\)</span> è la politica del modello linguistico che stiamo ottimizzando.</li>
+<li><span class="math inline">\(\sigma(z) = \frac{1}{1 + e^{-z}}\)</span> è la funzione sigmoide.</li>
+<li><span class="math inline">\(\beta\)</span> è un iperparametro (come prima).</li>
+</ul>
+<p>Ma che cazzo significa ’sta roba? Significa che stiamo cercando di <strong>aumentare la probabilità di generare la risposta preferita (<span class="math inline">\(y_w\)</span>) rispetto alla risposta non preferita (<span class="math inline">\(y_l\)</span>)</strong>, per ogni coppia di preferenze nel dataset <span class="math inline">\(D_{pref}\)</span>. E lo facciamo in modo “diretto”, senza passare per il modello di ricompensa. La funzione logaritmo e la sigmoide servono solo a rendere l’ottimizzazione più stabile e a controllare quanto vogliamo spingere per la risposta preferita.</p>
+<p><strong>Vantaggi del DPO:</strong></p>
+<ul>
+<li><strong>Semplicità:</strong> Molto più semplice dell’RLHF. Niente modello di ricompensa da addestrare, solo una funzione obiettivo da ottimizzare direttamente.</li>
+<li><strong>Stabilità:</strong> Più stabile dell’RLHF. L’ottimizzazione è più diretta e meno soggetta a instabilità.</li>
+<li><strong>Efficienza:</strong> Più efficiente dell’RLHF. Meno modelli da addestrare, meno risorse computazionali richieste.</li>
+<li><strong>Performance comparabili (o migliori) all’RLHF:</strong> In molti casi, il DPO ottiene performance simili o addirittura migliori dell’RLHF, pur essendo molto più semplice.</li>
+</ul>
+</section>
+<section id="limiti" class="level2">
+<h2 class="anchored" data-anchor-id="limiti">Limiti</h2>
+<p>Ovviamente, anche il DPO non è la cura di tutti i mali. Ha anche lui, ahimé, i suoi limiti:</p>
+<ul>
+<li><strong>Dipendenza dai dati di preferenza:</strong> Il DPO funziona bene solo se abbiamo dati di preferenza umana di alta qualità e in quantità sufficiente. Se i dati di preferenza sono di scarsa qualità, anche il chatbot addestrato con DPO sarà di scarsa qualità. “Garbage in, garbage out”, come dicono gli americani.</li>
+<li><strong>Iperparametri:</strong> Anche il DPO ha i suoi iperparametri da sintonizzare (tipo <span class="math inline">\(\beta\)</span>). Sintonizzare gli iperparametri può essere un casino, soprattutto perché non è detto che esista un valore ottimo per tutto il dataset.</li>
+<li><strong>Non è una soluzione magica:</strong> Il DPO è un miglioramento rispetto all’RLHF, ma non risolve tutti i problemi dell’allineamento dei modelli linguistici. Ci sono ancora un sacco di sfide aperte, tipo come garantire che i chatbot siano veramente sicuri, affidabili, etici, eccetera eccetera.</li>
+</ul>
+<p>Insomma, il DPO è una figata ma c’è ancora un sacco di lavoro da fare.</p>
+</section>
+<section id="quindi" class="level2">
+<h2 class="anchored" data-anchor-id="quindi">Quindi</h2>
+<p>Il Direct Preference Optimization (DPO) è una tecnica nuova e promettente per addestrare modelli linguistici che siano allineati con le preferenze umane. È più semplice, stabile ed efficiente dell’RLHF, e ottiene performance comparabili o migliori. Il DPO sta aprendo nuove possibilità per lo sviluppo di chatbot più fighi e accessibili a tutti.</p>
+<p>La prossima volta che sentirete parlare di DPO, pensate a ’sta spiegazione (spero) non troppo incasinata, e ricordatevi che dietro ai chatbot che usate tutti i giorni c’è un sacco di matematica, sudore e, a volte, anche qualche parolaccia. E se qualcuno vi chiede “Ma che cazzo è ’sto DPO?” (per qualsiasi motivo questa cosa sia uscita durante una conversazione), mandategli questo articolo!</p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1740438000000" data-listing-file-modified-sort="1740462238906" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2001">
-<div class="thumbnail">
-<p><a href="../blog/dpo.html" class="no-external"></a></p><a href="../blog/dpo.html" class="no-external">
-<p><img loading="lazy" src="../images/dpo.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/dpo.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/dpo.html" class="no-external">DPO: Direct Preference Optimization</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/dpo.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/dpo.html" class="no-external">Se vi siete mai chiesti come fanno i vari ChatGPT, Claude eccetera a rispondere in modo sensato e, soprattutto, a non insultarvi ogni due per tre, allora siete nel posto…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/dpo.html" class="no-external">
-<div class="listing-date">
-Feb 25, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1738882800000" data-listing-file-modified-sort="1738989420601" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1882">
-<div class="thumbnail">
-<p><a href="../blog/hashing.html" class="no-external"></a></p><a href="../blog/hashing.html" class="no-external">
-<p><img loading="lazy" src="../images/hashing.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/hashing.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/hashing.html" class="no-external">Hashing: Che Cos’è ’sto Hashing?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/hashing.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/hashing.html" class="no-external">Se hai mai sentito parlare di password, sicurezza informatica o anche solo di blockchain (di cui abbiamo parlato la settimana scorsa, se te lo sei perso sei un pirla)…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/hashing.html" class="no-external">
-<div class="listing-date">
-Feb 7, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="Y29tcHV0ZXIlMjBzY2llbmNl" data-listing-date-sort="1738450800000" data-listing-file-modified-sort="1738486154962" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2307">
-<div class="thumbnail">
-<p><a href="../blog/blockchain.html" class="no-external"></a></p><a href="../blog/blockchain.html" class="no-external">
-<p><img loading="lazy" src="../images/blockchain.jpeg" class="thumbnail-image"></p>
-</a><p><a href="../blog/blockchain.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/blockchain.html" class="no-external">Blockchain: Non Solo Criptovalute</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/blockchain.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Y29tcHV0ZXIlMjBzY2llbmNl'); return false;">
-computer science
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/blockchain.html" class="no-external">Se non hai sentito parlare di Bitcoin e altre criptovalute vuol dire che fino ad oggi hai vissuto in una caverna, perché i media ormai hanno scartavetrato con questo…<strong></strong></a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/blockchain.html" class="no-external">
-<div class="listing-date">
-Feb 2, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWF0aCUyQ2NyeXB0b2dyYXBoeSUyQ2FsZ2VicmE=" data-listing-date-sort="1738364400000" data-listing-file-modified-sort="1738392826219" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3770">
-<div class="thumbnail">
-<p><a href="../blog/group-prime-order.html" class="no-external"></a></p><a href="../blog/group-prime-order.html" class="no-external">
-<p><img loading="lazy" src="../images/group-prime-order.jpg" class="thumbnail-image"></p>
-</a><p><a href="../blog/group-prime-order.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/group-prime-order.html" class="no-external">Gruppi di Ordine Primo</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/group-prime-order.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('bWF0aA=='); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Y3J5cHRvZ3JhcGh5'); return false;">
-cryptography
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YWxnZWJyYQ=='); return false;">
-algebra
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/group-prime-order.html" class="no-external">Una volta parlavo con un mio amico di Algebra astratta e ricordo che mi chiese se davvero esistesse qualcosa come l’algebra astratta. Secondo lui l’aggettivo <em>astratta</em> era…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/group-prime-order.html" class="no-external">
-<div class="listing-date">
-Feb 1, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="cHJvZ3JhbW1pbmclMkN3ZWIlMjBkZXZlbG9wbWVudA==" data-listing-date-sort="1738191600000" data-listing-file-modified-sort="1738955099505" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2049">
-<div class="thumbnail">
-<p><a href="../blog/sss.html" class="no-external"></a></p><a href="../blog/sss.html" class="no-external">
-<p><img loading="lazy" src="../images/sss.png" class="thumbnail-image"></p>
-</a><p><a href="../blog/sss.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/sss.html" class="no-external">Shamir’s Secret Sharing</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/sss.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cHJvZ3JhbW1pbmc='); return false;">
-programming
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('d2ViJTIwZGV2ZWxvcG1lbnQ='); return false;">
-web development
-</div>
-</div>
-<div class="listing-description">
-<a href="../blog/sss.html" class="no-external">In questo articolo mi voglio concentrare su una spiegazione (speriamo) dettagliata dell’algoritmo Shamir’s Secret Sharing, provando ad illustrare sia la parte più teorica…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/sss.html" class="no-external">
-<div class="listing-date">
-Jan 30, 2025
-</div>
-<div class="listing-author">
-Luca Simonetti
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

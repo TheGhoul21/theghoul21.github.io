@@ -212,7 +212,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#research-development-diary-1" id="toc-research-development-diary-1" class="nav-link" data-scroll-target="#research-development-diary-1">Research &amp; Development Diary</a>
   <ul class="collapse">
   <li><a href="#february-16th-2025" id="toc-february-16th-2025" class="nav-link" data-scroll-target="#february-16th-2025">February 16th, 2025</a></li>
+  <li><a href="#february-27th-2025" id="toc-february-27th-2025" class="nav-link" data-scroll-target="#february-27th-2025">February 27th 2025</a></li>
   </ul></li>
+  <li><a href="#first-offline-demo-play-against-the-ai" id="toc-first-offline-demo-play-against-the-ai" class="nav-link" data-scroll-target="#first-offline-demo-play-against-the-ai">First Offline Demo: Play Against the AI</a></li>
   </ul>
 </nav>
     </div>
@@ -239,9 +241,176 @@ ul.task-list li input[type="checkbox"] {
 <p>Progress: Successfully experimented with GRUs on the “adding problem” to understand RNN learning dynamics. Demonstrated that normalizing input/output to [0,1] significantly improves performance. Showed the model (with a hidden size of <em>one</em>) can learn to sum a variable number of masked inputs, even with variable sequence lengths (up to +/- 80% variation). This highlights the surprising capability of even tiny RNNs.</p>
 <p>Technical Notes: - GRUs were used for all experiments. - Input/output normalization to [0,1] is essential for learning. - The model architecture is extremely small: a single-layer GRU with hidden size 1, followed by a linear layer. - The model successfully learned with a variable number of masked elements and variable sequence length. - The sequence length has little to no effect on the ability to learn.</p>
 <p>Next Steps: - Begin investigating the incorporation of the DPO loss. - Define the structure of the meta-learning network. Consider the size constraint (meta-network should be smaller than the main network?). - Start thinking about how to design signals for “flag” and “value” to sum. - Explore whether an Energy-Based Model (EBM) is suitable for the meta-learning component (though stability could a concern).</p>
-
-
 </section>
+<section id="february-27th-2025" class="level2">
+<h2 class="anchored" data-anchor-id="february-27th-2025">February 27th 2025</h2>
+<p><strong>Progress:</strong></p>
+<p>Successfully trained a GRU-based neural network to predict winning moves in the game Connect Four. Demonstrated that the network achieves a 67% accuracy in identifying the winning column when presented with a game state near completion. The initial training used a dataset of 200,000 randomly generated game states, highlighting the potential for relatively small networks to learn meaningful patterns in game scenarios. Discovered that the network learns to <em>identify</em> a win, but not <em>construct</em> a game strategy.</p>
+<p><strong>Technical Notes:</strong></p>
+<ul>
+<li>GRUs were used for the initial experiments.</li>
+<li>Dataset consists of 200,000 randomly generated Connect Four games, where a “win state” is identified.</li>
+<li>Training utilized 80% of the dataset for 1000 epochs.</li>
+<li>Network accuracy on predicting winning moves reached 67%.</li>
+<li>Realized that current training focuses on identifying existing wins, not developing a game-playing strategy.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>Begin fine-tuning the network using Direct Preference Optimization (DPO).</li>
+<li>Investigate methods for generating more strategic training data to enable the network to construct complete games.</li>
+<li>Explore different network architectures and training strategies to improve overall game-playing performance.</li>
+</ul>
+</section>
+</section>
+<section id="first-offline-demo-play-against-the-ai" class="level1">
+<h1>First Offline Demo: Play Against the AI</h1>
+<p>Welcome to the first offline demo of our Connect 4 AI project! In this demo, you can play a game of Connect 4 against an AI opponent. The AI has been trained using a GRU-based neural network to predict winning moves and identify game patterns. While the AI is still in its early stages, it demonstrates the potential of machine learning in game strategy development.</p>
+<p>To play, simply click on the column where you want to drop your piece. The game will alternate turns between you and the AI. Enjoy the game and stay tuned for more updates as we continue to improve the AI’s capabilities!</p>
+<p><strong>Disclaimer:</strong> This demo is currently not connected to the AI model. The integration with the AI model will be implemented soon. Stay tuned for updates!</p>
+<style>
+/* Basic CSS for the Connect 4 board */
+#board {
+  display: grid;
+  grid-template-columns: repeat(7, 100px); /* 7 columns */
+  grid-template-rows: repeat(6, 100px); /* 6 rows */
+  gap: 5px;
+  background-color: #007bff; /* Blue board */
+  padding: 10px;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 750px; /* Adjust as needed */
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.piece {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  /*  Add classes for .red and .yellow in JS */
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+/* Column selector buttons */
+#controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+
+/* Falling Animation */
+.falling {
+  animation: fall 0.5s ease-in-out;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-600px); /* Start above the board */
+  }
+  100% {
+    transform: translateY(0); /* End at the final position */
+  }
+}
+</style>
+<div id="board">
+
+</div>
+<script>
+  // JavaScript to handle the game logic and animation
+
+  const boardElement = document.getElementById('board');
+  const numRows = 6;
+  const numCols = 7;
+  let board = []; // 2D array to represent the board state
+  let currentPlayer = 'red'; // Start with red player
+
+  // Initialize the board
+  function createBoard() {
+    board = Array(numRows).fill(null).map(() => Array(numCols).fill(null));  // Initially, every cell is null (empty)
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.classList.add('column-button');
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        boardElement.appendChild(cell);
+      }
+    }
+  }
+
+  createBoard(); // Call the function to create the board on page load.
+
+  // Handle clicks on the column buttons
+  const columnButtons = document.querySelectorAll('.column-button');
+  columnButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      const col = parseInt(event.target.dataset.col); // Column number (0-6)
+
+      dropPiece(col); // Call the function to drop a piece into the column
+    });
+  });
+
+  // Function to drop a piece into the board
+  function dropPiece(col) {
+    // Find the lowest available row in the selected column
+    let row = -1;
+    for (let i = numRows - 1; i >= 0; i--) {
+      if (board[i][col] === null) {
+        row = i;
+        break;
+      }
+    }
+
+    // If the column is full, do nothing
+    if (row === -1) {
+      return;
+    }
+
+    // Update the board state
+    board[row][col] = currentPlayer;
+
+    // Create the piece element
+    const piece = document.createElement('div');
+    piece.classList.add('piece');
+    piece.classList.add(currentPlayer); // Add 'red' or 'yellow' class
+    piece.classList.add('falling');  // Add the 'falling' class to trigger the animation
+
+    // Find the correct cell to append the piece to
+    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+    // Append the piece to the cell
+    cell.appendChild(piece);
+
+    // After the animation, remove the 'falling' class
+    setTimeout(() => {
+      piece.classList.remove('falling');
+    }, 500); // Duration of the animation
+
+    // Switch players
+    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+
+    // Check for a win (not implemented yet)
+  }
+</script>
+
+
 </section>
 
 </main> <!-- /main -->

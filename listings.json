@@ -1,11 +1,19 @@
 [
   {
-    "listing": "/blog/index.html",
+    "listing": "/index.html",
     "items": [
-      "/blog/hashing.html",
       "/blog/blockchain.html",
+      "/blog/dpo.html",
       "/blog/group-prime-order.html",
-      "/blog/sss.html"
+      "/blog/hashing.html",
+      "/blog/sss.html",
+      "/projects/adding-problem-part1.html",
+      "/projects/adding-problem-part2.html",
+      "/projects/adding-problem-part3.html",
+      "/projects/connect4.html",
+      "/projects/hopfield.html",
+      "/projects/prese-rnn.html",
+      "/projects/spatial-spike-neural-networks-it.html"
     ]
   },
   {
@@ -13,6 +21,7 @@
     "items": [
       "/projects/adding-problem-part1.html",
       "/projects/adding-problem-part2.html",
+      "/projects/adding-problem-part3.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",
@@ -20,18 +29,13 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/blog/index.html",
     "items": [
+      "/blog/dpo.html",
+      "/blog/hashing.html",
       "/blog/blockchain.html",
       "/blog/group-prime-order.html",
-      "/blog/hashing.html",
-      "/blog/sss.html",
-      "/projects/adding-problem-part1.html",
-      "/projects/adding-problem-part2.html",
-      "/projects/connect4.html",
-      "/projects/hopfield.html",
-      "/projects/prese-rnn.html",
-      "/projects/spatial-spike-neural-networks-it.html"
+      "/blog/sss.html"
     ]
   }
 ]
