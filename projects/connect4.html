@@ -418,6 +418,198 @@ ul.task-list li input[type="checkbox"] {
   min-width: 150px;
   text-align: center;
 }
+
+/* Evaluation settings styles */
+#evaluation-settings {
+  width: 750px;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+}
+
+#evaluation-mode {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+#frequency-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#evaluation-frequency {
+  width: 150px;
+}
+
+/* Evaluation popup styles */
+#evaluation-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.evaluation-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#evaluation-text {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+.evaluation-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.evaluation-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+#evaluate-optimal {
+  background-color: #4caf50;
+  color: white;
+}
+
+#evaluate-non-optimal {
+  background-color: #f44336;
+  color: white;
+}
+
+#evaluate-skip {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+/* History buttons style */
+.history-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.history-buttons button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.history-buttons button:hover {
+  background-color: #0056b3;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 80%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+
+.close-modal:hover {
+  color: #000;
+}
+
+#history-list {
+  margin-top: 20px;
+}
+
+.history-item {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.history-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.history-meta {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.eval-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.eval-optimal, .eval-non-optimal {
+  display: flex;
+  align-items: center;
+}
+
+.eval-optimal span {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.eval-non-optimal span {
+  color: #f44336;
+  font-weight: bold;
+}
 </style>
 <div id="status-container">
 <div id="model-status">
@@ -425,19 +617,18 @@ Loading AI model…
 </div>
 <button id="reset-button">New Game</button>
 <div id="game-status" class="game-status">
-Your turn (Red)
+AI turn (Yellow)
 </div>
+</div>
+<div id="evaluation-settings-container">
+<p><!-- Settings will be created dynamically --></p>
 </div>
 <div id="board">
 
 </div>
-<!-- Message Popup -->
-<div id="message-popup" class="hidden">
-<div class="message-content">
-<pre><code>&lt;div id="message-text"&gt;&lt;/div&gt;
-&lt;button id="message-close"&gt;Close&lt;/button&gt;</code></pre>
-</div>
-</div>
+<!-- History modal will be created dynamically -->
+<!-- Evaluation popup will be created dynamically -->
+<!-- Message popup will be created dynamically -->
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 <script>
 // Wait for DOM content to be fully loaded
@@ -450,23 +641,370 @@ document.addEventListener('DOMContentLoaded', function() {
   const boardElement = document.getElementById('board');
   const modelStatusElement = document.getElementById('model-status');
   const resetButton = document.getElementById('reset-button');
-  const messagePopup = document.getElementById('message-popup');
-  const messageText = document.getElementById('message-text');
-  const messageClose = document.getElementById('message-close');
   const gameStatusElement = document.getElementById('game-status');
+  
+  // UI elements that will be created dynamically
+  let messagePopup, messageText, messageClose;
+  let historyModal, historyList, closeModalButton;
+  let showHistoryButton, exportHistoryButton;
+  
+  // Function to create history modal dynamically
+  function createHistoryModal() {
+    // If modal already exists, return
+    if (document.getElementById('history-modal')) return;
+    
+    // Create modal container
+    historyModal = document.createElement('div');
+    historyModal.id = 'history-modal';
+    historyModal.className = 'modal hidden';
+    historyModal.style.position = 'fixed';
+    historyModal.style.top = '0';
+    historyModal.style.left = '0';
+    historyModal.style.width = '100%';
+    historyModal.style.height = '100%';
+    historyModal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    historyModal.style.display = 'flex';
+    historyModal.style.justifyContent = 'center';
+    historyModal.style.alignItems = 'center';
+    historyModal.style.zIndex = '1000';
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.backgroundColor = 'white';
+    content.style.padding = '30px';
+    content.style.borderRadius = '8px';
+    content.style.maxWidth = '80%';
+    content.style.maxHeight = '80vh';
+    content.style.overflow = 'auto';
+    content.style.position = 'relative';
+    
+    // Create close button
+    closeModalButton = document.createElement('span');
+    closeModalButton.className = 'close-modal';
+    closeModalButton.innerHTML = '&times;';
+    closeModalButton.style.position = 'absolute';
+    closeModalButton.style.top = '10px';
+    closeModalButton.style.right = '15px';
+    closeModalButton.style.fontSize = '24px';
+    closeModalButton.style.cursor = 'pointer';
+    closeModalButton.style.color = '#555';
+    
+    // Add event listener to close button
+    closeModalButton.addEventListener('click', function() {
+      hideMatchHistory();
+    });
+    
+    // Create heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'Match History';
+    heading.style.marginTop = '0';
+    heading.style.marginBottom = '20px';
+    
+    // Create list container
+    historyList = document.createElement('div');
+    historyList.id = 'history-list';
+    historyList.style.marginTop = '20px';
+    
+    // Add everything to the DOM
+    content.appendChild(closeModalButton);
+    content.appendChild(heading);
+    content.appendChild(historyList);
+    historyModal.appendChild(content);
+    document.body.appendChild(historyModal);
+  }
+  
+  // Evaluation DOM elements
+  let evaluationModeSelect, evaluationFrequencySlider, frequencyValueDisplay, frequencyContainer;
+  
+  // Function to create evaluation settings UI
+  function createEvaluationSettings() {
+    // If already created, return
+    if (document.getElementById('evaluation-settings')) return;
+    
+    // Create settings container
+    const settingsDiv = document.createElement('div');
+    settingsDiv.id = 'evaluation-settings';
+    settingsDiv.style.width = '750px';
+    settingsDiv.style.margin = '10px auto';
+    settingsDiv.style.padding = '10px';
+    settingsDiv.style.backgroundColor = '#f5f5f5';
+    settingsDiv.style.borderRadius = '4px';
+    settingsDiv.style.display = 'flex';
+    settingsDiv.style.flexWrap = 'wrap';
+    settingsDiv.style.alignItems = 'center';
+    settingsDiv.style.gap = '15px';
+    
+    // Create mode label
+    const modeLabel = document.createElement('label');
+    modeLabel.setAttribute('for', 'evaluation-mode');
+    modeLabel.textContent = 'Evaluation Mode:';
+    
+    // Create mode select
+    evaluationModeSelect = document.createElement('select');
+    evaluationModeSelect.id = 'evaluation-mode';
+    evaluationModeSelect.style.padding = '6px';
+    evaluationModeSelect.style.borderRadius = '4px';
+    evaluationModeSelect.style.border = '1px solid #ddd';
+    
+    // Add options
+    const options = [
+      { value: 'none', text: 'None' },
+      { value: 'optional', text: 'Optional', selected: true },
+      { value: 'mandatory', text: 'Mandatory' },
+      { value: 'random', text: 'Random' }
+    ];
+    
+    options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.text;
+      if (opt.selected) option.selected = true;
+      evaluationModeSelect.appendChild(option);
+    });
+    
+    // Create frequency container
+    frequencyContainer = document.createElement('div');
+    frequencyContainer.id = 'frequency-container';
+    frequencyContainer.style.display = 'flex';
+    frequencyContainer.style.alignItems = 'center';
+    frequencyContainer.style.gap = '10px';
+    
+    // Create frequency label
+    const freqLabel = document.createElement('label');
+    freqLabel.setAttribute('for', 'evaluation-frequency');
+    freqLabel.textContent = 'Random Frequency:';
+    
+    // Create frequency slider
+    evaluationFrequencySlider = document.createElement('input');
+    evaluationFrequencySlider.id = 'evaluation-frequency';
+    evaluationFrequencySlider.type = 'range';
+    evaluationFrequencySlider.min = '0';
+    evaluationFrequencySlider.max = '1';
+    evaluationFrequencySlider.step = '0.1';
+    evaluationFrequencySlider.value = '0.3';
+    evaluationFrequencySlider.style.width = '150px';
+    
+    // Create frequency value display
+    frequencyValueDisplay = document.createElement('span');
+    frequencyValueDisplay.id = 'frequency-value';
+    frequencyValueDisplay.textContent = '30%';
+    
+    // Create history buttons container
+    const historyButtonsDiv = document.createElement('div');
+    historyButtonsDiv.className = 'history-buttons';
+    historyButtonsDiv.style.display = 'flex';
+    historyButtonsDiv.style.gap = '10px';
+    historyButtonsDiv.style.marginLeft = 'auto';
+    
+    // Create show history button
+    showHistoryButton = document.createElement('button');
+    showHistoryButton.id = 'show-history-button';
+    showHistoryButton.textContent = 'Show Match History';
+    showHistoryButton.style.padding = '6px 12px';
+    showHistoryButton.style.backgroundColor = '#007bff';
+    showHistoryButton.style.color = 'white';
+    showHistoryButton.style.border = 'none';
+    showHistoryButton.style.borderRadius = '4px';
+    showHistoryButton.style.cursor = 'pointer';
+    showHistoryButton.style.fontWeight = 'bold';
+    
+    // Create export history button
+    exportHistoryButton = document.createElement('button');
+    exportHistoryButton.id = 'export-history-button';
+    exportHistoryButton.textContent = 'Export History';
+    exportHistoryButton.style.padding = '6px 12px';
+    exportHistoryButton.style.backgroundColor = '#007bff';
+    exportHistoryButton.style.color = 'white';
+    exportHistoryButton.style.border = 'none';
+    exportHistoryButton.style.borderRadius = '4px';
+    exportHistoryButton.style.cursor = 'pointer';
+    exportHistoryButton.style.fontWeight = 'bold';
+    
+    // Add event listeners
+    showHistoryButton.addEventListener('click', function() {
+      showMatchHistory();
+    });
+    
+    exportHistoryButton.addEventListener('click', function() {
+      exportMatchHistory();
+    });
+    
+    evaluationModeSelect.addEventListener('change', function() {
+      evaluationMode = this.value;
+      
+      // Show/hide frequency slider based on mode
+      if (evaluationMode === 'random') {
+        frequencyContainer.style.display = 'flex';
+      } else {
+        frequencyContainer.style.display = 'none';
+      }
+    });
+    
+    evaluationFrequencySlider.addEventListener('input', function() {
+      evaluationFrequency = parseFloat(this.value);
+      frequencyValueDisplay.textContent = `${Math.round(evaluationFrequency * 100)}%`;
+    });
+    
+    // Add elements to frequency container
+    frequencyContainer.appendChild(freqLabel);
+    frequencyContainer.appendChild(evaluationFrequencySlider);
+    frequencyContainer.appendChild(frequencyValueDisplay);
+    
+    // Add buttons to history buttons container
+    historyButtonsDiv.appendChild(showHistoryButton);
+    historyButtonsDiv.appendChild(exportHistoryButton);
+    
+    // Add all elements to settings container
+    settingsDiv.appendChild(modeLabel);
+    settingsDiv.appendChild(evaluationModeSelect);
+    settingsDiv.appendChild(frequencyContainer);
+    settingsDiv.appendChild(historyButtonsDiv);
+    
+    // Add settings to the document
+    const container = document.getElementById('evaluation-settings-container');
+    if (container) {
+      container.appendChild(settingsDiv);
+    }
+    
+    // Trigger initial state
+    evaluationModeSelect.dispatchEvent(new Event('change'));
+  }
+  
+  // Create evaluation popup dynamically
+  let evaluationPopup, evaluateOptimalBtn, evaluateNonOptimalBtn, evaluateSkipBtn;
+  
+  function createEvaluationPopup() {
+    // If popup already exists, return
+    if (document.getElementById('evaluation-popup')) return;
+    
+    // Create popup container
+    evaluationPopup = document.createElement('div');
+    evaluationPopup.id = 'evaluation-popup';
+    evaluationPopup.className = 'hidden';
+    evaluationPopup.style.position = 'fixed';
+    evaluationPopup.style.top = '0';
+    evaluationPopup.style.left = '0';
+    evaluationPopup.style.width = '100%';
+    evaluationPopup.style.height = '100%';
+    evaluationPopup.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    evaluationPopup.style.display = 'flex';
+    evaluationPopup.style.justifyContent = 'center';
+    evaluationPopup.style.alignItems = 'center';
+    evaluationPopup.style.zIndex = '1000';
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'evaluation-content';
+    content.style.backgroundColor = 'white';
+    content.style.padding = '30px';
+    content.style.borderRadius = '8px';
+    content.style.maxWidth = '400px';
+    content.style.textAlign = 'center';
+    content.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    
+    // Create text
+    const text = document.createElement('div');
+    text.id = 'evaluation-text';
+    text.textContent = 'How would you rate this AI move?';
+    text.style.fontSize = '20px';
+    text.style.marginBottom = '20px';
+    text.style.color = '#333';
+    text.style.fontWeight = 'bold';
+    
+    // Create buttons container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'evaluation-buttons';
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.justifyContent = 'space-around';
+    buttonsContainer.style.gap = '10px';
+    
+    // Create buttons
+    evaluateOptimalBtn = document.createElement('button');
+    evaluateOptimalBtn.id = 'evaluate-optimal';
+    evaluateOptimalBtn.className = 'evaluation-button';
+    evaluateOptimalBtn.textContent = 'Optimal';
+    evaluateOptimalBtn.style.padding = '10px 20px';
+    evaluateOptimalBtn.style.border = 'none';
+    evaluateOptimalBtn.style.borderRadius = '4px';
+    evaluateOptimalBtn.style.cursor = 'pointer';
+    evaluateOptimalBtn.style.fontWeight = 'bold';
+    evaluateOptimalBtn.style.backgroundColor = '#4caf50';
+    evaluateOptimalBtn.style.color = 'white';
+    
+    evaluateNonOptimalBtn = document.createElement('button');
+    evaluateNonOptimalBtn.id = 'evaluate-non-optimal';
+    evaluateNonOptimalBtn.className = 'evaluation-button';
+    evaluateNonOptimalBtn.textContent = 'Non-Optimal';
+    evaluateNonOptimalBtn.style.padding = '10px 20px';
+    evaluateNonOptimalBtn.style.border = 'none';
+    evaluateNonOptimalBtn.style.borderRadius = '4px';
+    evaluateNonOptimalBtn.style.cursor = 'pointer';
+    evaluateNonOptimalBtn.style.fontWeight = 'bold';
+    evaluateNonOptimalBtn.style.backgroundColor = '#f44336';
+    evaluateNonOptimalBtn.style.color = 'white';
+    
+    evaluateSkipBtn = document.createElement('button');
+    evaluateSkipBtn.id = 'evaluate-skip';
+    evaluateSkipBtn.className = 'evaluation-button';
+    evaluateSkipBtn.textContent = 'Skip';
+    evaluateSkipBtn.style.padding = '10px 20px';
+    evaluateSkipBtn.style.border = 'none';
+    evaluateSkipBtn.style.borderRadius = '4px';
+    evaluateSkipBtn.style.cursor = 'pointer';
+    evaluateSkipBtn.style.fontWeight = 'bold';
+    evaluateSkipBtn.style.backgroundColor = '#9e9e9e';
+    evaluateSkipBtn.style.color = 'white';
+    
+    // Add event listeners to buttons
+    evaluateOptimalBtn.addEventListener('click', function() {
+      handleEvaluation('optimal');
+    });
+    
+    evaluateNonOptimalBtn.addEventListener('click', function() {
+      handleEvaluation('non-optimal');
+    });
+    
+    evaluateSkipBtn.addEventListener('click', function() {
+      handleEvaluation('skip');
+    });
+    
+    // Add everything to the DOM
+    buttonsContainer.appendChild(evaluateOptimalBtn);
+    buttonsContainer.appendChild(evaluateNonOptimalBtn);
+    buttonsContainer.appendChild(evaluateSkipBtn);
+    content.appendChild(text);
+    content.appendChild(buttonsContainer);
+    evaluationPopup.appendChild(content);
+    document.body.appendChild(evaluationPopup);
+  }
   
   // Game state variables
   let board = []; // 2D array to represent the board state
-  let currentPlayer = 'red'; // Start with red player (human)
-  const aiPlayer = 'yellow'; // AI player
-  let isAiTurn = false;
+  let currentPlayer = 'yellow'; // Start with yellow (AI)
+  const aiPlayer = 'yellow'; // AI plays as yellow
+  const humanPlayer = 'red'; // Human plays as red
+  let isAiTurn = true; // AI moves first
   let isGameActive = true;
   let ortSession = null;
+  
+  // Match storage and evaluation variables
+  let matchHistory = []; // Store all moves in the current match
+  let evaluationMode = 'optional'; // 'mandatory', 'optional', 'random', or 'none'
+  let evaluationFrequency = 0.3; // For 'random' mode, frequency of evaluation (0-1)
+  
+  // Timers
+  let evaluationTimer = null; // Timer for auto-continuing after evaluation
   
   // Initialize the game
   createBoard();
   updateGameStatus();
   initOnnxModel();
+  createEvaluationSettings(); // Create the evaluation settings
+  createEvaluationPopup(); // Create the evaluation popup
+  
+  // Let the AI make the first move
+  setTimeout(() => makeAiMove(), 1000);
   
   // Add event listeners
   if (resetButton) {
@@ -476,17 +1014,123 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  if (messageClose) {
+  // Create message popup
+  function createMessagePopup() {
+    // If popup already exists, return
+    if (document.getElementById('message-popup')) return;
+    
+    // Create popup container
+    messagePopup = document.createElement('div');
+    messagePopup.id = 'message-popup';
+    messagePopup.className = 'hidden';
+    messagePopup.style.position = 'fixed';
+    messagePopup.style.top = '0';
+    messagePopup.style.left = '0';
+    messagePopup.style.width = '100%';
+    messagePopup.style.height = '100%';
+    messagePopup.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    messagePopup.style.display = 'flex';
+    messagePopup.style.justifyContent = 'center';
+    messagePopup.style.alignItems = 'center';
+    messagePopup.style.zIndex = '1000';
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'message-content';
+    content.style.backgroundColor = 'white';
+    content.style.padding = '30px';
+    content.style.borderRadius = '8px';
+    content.style.maxWidth = '400px';
+    content.style.textAlign = 'center';
+    content.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    
+    // Create message text
+    messageText = document.createElement('div');
+    messageText.id = 'message-text';
+    messageText.style.fontSize = '24px';
+    messageText.style.marginBottom = '20px';
+    messageText.style.color = '#333';
+    messageText.style.fontWeight = 'bold';
+    
+    // Create close button
+    messageClose = document.createElement('button');
+    messageClose.id = 'message-close';
+    messageClose.textContent = 'Close';
+    messageClose.style.padding = '8px 16px';
+    messageClose.style.backgroundColor = '#007bff';
+    messageClose.style.color = 'white';
+    messageClose.style.border = 'none';
+    messageClose.style.borderRadius = '4px';
+    messageClose.style.cursor = 'pointer';
+    messageClose.style.fontWeight = 'bold';
+    
+    // Add event listener to close button
     messageClose.addEventListener('click', function() {
       messagePopup.classList.add('hidden');
+    });
+    
+    // Add everything to the DOM
+    content.appendChild(messageText);
+    content.appendChild(messageClose);
+    messagePopup.appendChild(content);
+    document.body.appendChild(messagePopup);
+  }
+  
+  // Evaluation settings event listeners
+  if (evaluationModeSelect) {
+    evaluationModeSelect.addEventListener('change', function() {
+      evaluationMode = this.value;
+      
+      // Show/hide frequency slider based on mode
+      if (evaluationMode === 'random' && frequencyContainer) {
+        frequencyContainer.style.display = 'flex';
+      } else if (frequencyContainer) {
+        frequencyContainer.style.display = 'none';
+      }
+    });
+    
+    // Trigger change event to set initial state
+    evaluationModeSelect.dispatchEvent(new Event('change'));
+  }
+  
+  // Close modal if clicking outside of content
+  window.addEventListener('click', function(event) {
+    if (historyModal && event.target === historyModal) {
+      hideMatchHistory();
+    }
+  });
+  
+  // Evaluation frequency events are now handled in createEvaluationSettings
+  
+  // Evaluation popup buttons
+  if (evaluateOptimalBtn) {
+    evaluateOptimalBtn.addEventListener('click', function() {
+      handleEvaluation('optimal');
+    });
+  }
+  
+  if (evaluateNonOptimalBtn) {
+    evaluateNonOptimalBtn.addEventListener('click', function() {
+      handleEvaluation('non-optimal');
+    });
+  }
+  
+  if (evaluateSkipBtn) {
+    evaluateSkipBtn.addEventListener('click', function() {
+      handleEvaluation('skip');
     });
   }
   
   // Function to show a message popup
   function showMessage(message) {
-    if (!messageText || !messagePopup) return;
+    // Create the popup if it doesn't exist
+    if (!messagePopup) {
+      createMessagePopup();
+    }
+    
     messageText.textContent = message;
     messagePopup.classList.remove('hidden');
+    messagePopup.style.display = 'flex'; // Ensure it's displayed
   }
   
   // Initialize ONNX Runtime and load the model
@@ -502,7 +1146,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Path to your ONNX model - this should be accessible via web
       const modelPath = 'connect4_model.onnx';
-      
+
       
       // Update status
       modelStatusElement.textContent = 'Loading AI model...';
@@ -535,9 +1179,42 @@ document.addEventListener('DOMContentLoaded', function() {
   function resetGame() {
     // Reset game state
     board = Array(numRows).fill(null).map(() => Array(numCols).fill(null));
-    currentPlayer = 'red';
-    isAiTurn = false;
+    currentPlayer = aiPlayer; // Start with AI
+    isAiTurn = true;
     isGameActive = true;
+    
+    // Clear match history
+    matchHistory = [];
+    
+    // Clear any active timers
+    if (evaluationTimer) {
+      clearTimeout(evaluationTimer);
+      evaluationTimer = null;
+    }
+    
+    // Remove popup elements if they exist
+    const cleanupElements = [
+      { el: evaluationPopup, name: 'evaluation-popup' },
+      { el: messagePopup, name: 'message-popup' },
+      { el: historyModal, name: 'history-modal' }
+    ];
+    
+    cleanupElements.forEach(item => {
+      const element = item.el || document.getElementById(item.name);
+      if (element && element.parentNode) {
+        element.parentNode.removeChild(element);
+      }
+    });
+    
+    // Reset popup variables
+    evaluationPopup = null;
+    messagePopup = null;
+    historyModal = null;
+    historyList = null;
+    
+    // Create new UI elements
+    createEvaluationSettings();
+    createEvaluationPopup();
     
     // Clear the board
     if (boardElement) {
@@ -547,6 +1224,71 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update the game status
     updateGameStatus();
+    
+    // Let the AI make the first move
+    setTimeout(() => makeAiMove(), 1000);
+  }
+  
+  // Function to record a move in the match history
+  function recordMove(row, col, player, evaluation = null) {
+    matchHistory.push({
+      row,
+      col,
+      player,
+      boardState: JSON.parse(JSON.stringify(board)), // Deep copy of current board
+      timestamp: new Date().toISOString(),
+      evaluation
+    });
+    
+    // For demonstration purposes, log the match history to console
+    console.log('Match History:', matchHistory);
+  }
+  
+  // Function to show evaluation popup
+  function showEvaluationPopup() {
+    if (!evaluationPopup) {
+      // Create popup if it doesn't exist
+      createEvaluationPopup();
+    }
+    evaluationPopup.classList.remove('hidden');
+    evaluationPopup.style.display = 'flex'; // Ensure it's displayed as flex
+  }
+  
+  // Function to hide evaluation popup
+  function hideEvaluationPopup() {
+    if (!evaluationPopup) return;
+    evaluationPopup.classList.add('hidden');
+  }
+  
+  // Function to determine if evaluation should be shown
+  function shouldShowEvaluation() {
+    if (evaluationMode === 'none') return false;
+    if (evaluationMode === 'mandatory') return true;
+    if (evaluationMode === 'optional') return true;
+    if (evaluationMode === 'random') return Math.random() < evaluationFrequency;
+    return false;
+  }
+  
+  // Function to handle evaluation result
+  function handleEvaluation(result) {
+    // Clear any existing evaluation timer
+    if (evaluationTimer) {
+      clearTimeout(evaluationTimer);
+      evaluationTimer = null;
+    }
+    
+    // Hide the evaluation popup
+    hideEvaluationPopup();
+    
+    // Update the last move in history with the evaluation
+    if (matchHistory.length > 0 && result !== 'skip') {
+      const lastMove = matchHistory[matchHistory.length - 1];
+      lastMove.evaluation = result;
+    }
+    
+    // Switch to human player's turn
+    isAiTurn = false;
+    updateGameStatus();
   }
   
   // Convert board state to model input
@@ -555,9 +1297,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const boardState = [];
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < numCols; col++) {
-        if (board[row][col] === 'red') {
+        if (board[row][col] === humanPlayer) {
           boardState.push(1);
-        } else if (board[row][col] === 'yellow') {
+        } else if (board[row][col] === aiPlayer) {
           boardState.push(-1);
         } else {
           boardState.push(0);
@@ -654,6 +1396,9 @@ document.addEventListener('DOMContentLoaded', function() {
   async function makeAiMove() {
     if (!isGameActive || !isAiTurn) return;
     
+    // AI player is always 'yellow'
+    currentPlayer = aiPlayer;
+    
     // Add a slight delay to make it feel more natural
     await new Promise(resolve => setTimeout(resolve, 800));
     
@@ -682,6 +1427,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add click event listener to each cell
         cell.addEventListener('click', function() {
           if (!isGameActive || isAiTurn) return;
+          
+          // Human player is always 'red'
+          currentPlayer = humanPlayer;
           
           const col = parseInt(this.dataset.col);
           if (isColumnValid(col)) {
@@ -724,6 +1472,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Append the piece to the cell
     cell.appendChild(piece);
     
+    // Record this move in match history
+    recordMove(row, col, currentPlayer);
+    
     // After the animation, remove the 'falling' class
     setTimeout(() => {
       if (piece) piece.classList.remove('falling');
@@ -740,20 +1491,47 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show draw popup after a short delay to allow animation to complete
         setTimeout(() => announceDraw(), 300);
       } else {
-        // Switch players
-        currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-        isAiTurn = currentPlayer === aiPlayer;
+        // Game continues - handle next player's turn
         
-        // Update game status
-        updateGameStatus();
-        
-        // If it's AI's turn, make the AI move
-        if (isAiTurn) {
-          makeAiMove();
+        // If this was an AI move and evaluation is needed
+        if (currentPlayer === aiPlayer && shouldShowEvaluation()) {
+          // Clear any existing evaluation timer
+          if (evaluationTimer) {
+            clearTimeout(evaluationTimer);
+            evaluationTimer = null;
+          }
+          
+          // Show evaluation popup
+          showEvaluationPopup();
+          
+          // If evaluation is optional, set a timeout to auto-continue after a delay
+          if (evaluationMode === 'optional' || evaluationMode === 'random') {
+            evaluationTimer = setTimeout(() => {
+              // Only auto-continue if the popup is still visible
+              if (evaluationPopup && !evaluationPopup.classList.contains('hidden')) {
+                hideEvaluationPopup();
+                // Switch to human player's turn
+                isAiTurn = false;
+                updateGameStatus();
+              }
+              evaluationTimer = null;
+            }, 5000); // 5 second timeout for optional evaluation
+          }
+        } else if (currentPlayer === aiPlayer) {
+          // AI move without evaluation - switch to human player
+          isAiTurn = false;
+          updateGameStatus();
+        } else if (currentPlayer === humanPlayer) {
+          // After human move, switch to AI's turn and let it make a move
+          isAiTurn = true;
+          updateGameStatus();
+          setTimeout(() => makeAiMove(), 800);
         }
       }
     }, 500); // Duration of the animation
   }
+  
+  // Note: We've removed the continueGameAfterMove function and replaced it with direct turn handling
   
   // Check for a win
   function checkWin(row, col) {
@@ -808,14 +1586,236 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Announce the winner
   function announceWinner() {
-    const winner = currentPlayer === 'red' ? 'You' : 'AI';
+    const winner = currentPlayer === humanPlayer ? 'You' : 'AI';
     const message = `${winner} won the game!`;
+    
+    // Save match outcome
+    const matchOutcome = {
+      id: generateMatchId(),
+      result: winner === 'You' ? 'player_win' : 'ai_win',
+      moves: matchHistory,
+      endTime: new Date().toISOString(),
+      startTime: matchHistory.length > 0 ? matchHistory[0].timestamp : new Date().toISOString()
+    };
+    
+    // Log the complete match data to console
+    console.log('Match Complete:', matchOutcome);
+    
+    // Save to localStorage
+    saveMatch(matchOutcome);
+    
     showMessage(message);
   }
   
   // Announce a draw
   function announceDraw() {
+    // Save match outcome
+    const matchOutcome = {
+      id: generateMatchId(),
+      result: 'draw',
+      moves: matchHistory,
+      endTime: new Date().toISOString(),
+      startTime: matchHistory.length > 0 ? matchHistory[0].timestamp : new Date().toISOString()
+    };
+    
+    // Log the complete match data to console
+    console.log('Match Complete:', matchOutcome);
+    
+    // Save to localStorage
+    saveMatch(matchOutcome);
+    
     showMessage('The game is a draw!');
+  }
+  
+  // Helper function to generate a unique match ID
+  function generateMatchId() {
+    return 'match_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+  
+  // Helper function to save a match to localStorage
+  function saveMatch(matchData) {
+    try {
+      const matches = loadMatches();
+      matches.push(matchData);
+      
+      // Keep only the last 50 matches to avoid storage limits
+      const matchesToSave = matches.slice(-50);
+      localStorage.setItem('connect4_matches', JSON.stringify(matchesToSave));
+      console.log('Match saved to localStorage successfully');
+    } catch (e) {
+      console.error('Error saving match to localStorage:', e);
+    }
+  }
+  
+  // Helper function to load matches from localStorage
+  function loadMatches() {
+    try {
+      const matches = localStorage.getItem('connect4_matches');
+      return matches ? JSON.parse(matches) : [];
+    } catch (e) {
+      console.error('Error loading matches from localStorage:', e);
+      return [];
+    }
+  }
+  
+  // Function to show match history modal
+  function showMatchHistory() {
+    // Create the modal if it doesn't exist
+    if (!historyModal) {
+      createHistoryModal();
+    }
+    
+    // Get matches from localStorage
+    const matches = loadMatches();
+    
+    // Clear previous content
+    historyList.innerHTML = '';
+    
+    if (matches.length === 0) {
+      const noMatches = document.createElement('p');
+      noMatches.textContent = 'No match history found.';
+      historyList.appendChild(noMatches);
+    } else {
+      // Sort matches by end time, most recent first
+      matches.sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+      
+      // Display each match
+      matches.forEach((match, index) => {
+        const matchItem = document.createElement('div');
+        matchItem.className = 'history-item';
+        matchItem.style.padding = '10px';
+        matchItem.style.marginBottom = '15px';
+        matchItem.style.border = '1px solid #ddd';
+        matchItem.style.borderRadius = '5px';
+        matchItem.style.backgroundColor = '#f9f9f9';
+        
+        // Get match title based on result
+        let resultText = 'Draw';
+        if (match.result === 'player_win') resultText = 'Player Win';
+        if (match.result === 'ai_win') resultText = 'AI Win';
+        
+        // Calculate evaluation statistics
+        const totalMoves = match.moves.length;
+        let optimalCount = 0;
+        let nonOptimalCount = 0;
+        
+        match.moves.forEach(move => {
+          if (move.player === aiPlayer && move.evaluation === 'optimal') {
+            optimalCount++;
+          } else if (move.player === aiPlayer && move.evaluation === 'non-optimal') {
+            nonOptimalCount++;
+          }
+        });
+        
+        // Format date
+        const matchDate = new Date(match.endTime);
+        const dateString = matchDate.toLocaleDateString() + ' ' + matchDate.toLocaleTimeString();
+        
+        // Create title
+        const title = document.createElement('h3');
+        title.textContent = `Match ${index + 1}: ${resultText}`;
+        title.style.marginTop = '0';
+        title.style.marginBottom = '10px';
+        title.style.color = '#007bff';
+        
+        // Create meta info
+        const metaDiv = document.createElement('div');
+        metaDiv.style.fontSize = '14px';
+        metaDiv.style.color = '#666';
+        metaDiv.style.marginBottom = '10px';
+        
+        const dateDiv = document.createElement('div');
+        dateDiv.textContent = `Date: ${dateString}`;
+        
+        const movesDiv = document.createElement('div');
+        movesDiv.textContent = `Total Moves: ${totalMoves}`;
+        
+        metaDiv.appendChild(dateDiv);
+        metaDiv.appendChild(movesDiv);
+        
+        // Create evaluation stats
+        const statsDiv = document.createElement('div');
+        statsDiv.style.display = 'flex';
+        statsDiv.style.gap = '20px';
+        statsDiv.style.marginTop = '10px';
+        
+        const optimalDiv = document.createElement('div');
+        optimalDiv.style.display = 'flex';
+        optimalDiv.style.alignItems = 'center';
+        optimalDiv.textContent = 'Optimal AI Moves: ';
+        
+        const optimalSpan = document.createElement('span');
+        optimalSpan.textContent = optimalCount;
+        optimalSpan.style.color = '#4caf50';
+        optimalSpan.style.fontWeight = 'bold';
+        optimalSpan.style.marginLeft = '5px';
+        
+        optimalDiv.appendChild(optimalSpan);
+        
+        const nonOptimalDiv = document.createElement('div');
+        nonOptimalDiv.style.display = 'flex';
+        nonOptimalDiv.style.alignItems = 'center';
+        nonOptimalDiv.textContent = 'Non-Optimal AI Moves: ';
+        
+        const nonOptimalSpan = document.createElement('span');
+        nonOptimalSpan.textContent = nonOptimalCount;
+        nonOptimalSpan.style.color = '#f44336';
+        nonOptimalSpan.style.fontWeight = 'bold';
+        nonOptimalSpan.style.marginLeft = '5px';
+        
+        nonOptimalDiv.appendChild(nonOptimalSpan);
+        
+        statsDiv.appendChild(optimalDiv);
+        statsDiv.appendChild(nonOptimalDiv);
+        
+        // Add everything to match item
+        matchItem.appendChild(title);
+        matchItem.appendChild(metaDiv);
+        matchItem.appendChild(statsDiv);
+        
+        historyList.appendChild(matchItem);
+      });
+    }
+    
+    // Show the modal
+    historyModal.classList.remove('hidden');
+    historyModal.style.display = 'flex';
+  }
+  
+  // Function to hide match history modal
+  function hideMatchHistory() {
+    if (!historyModal) return;
+    historyModal.classList.add('hidden');
+  }
+  
+  // Function to export match history as JSON
+  function exportMatchHistory() {
+    const matches = loadMatches();
+    
+    if (matches.length === 0) {
+      alert('No match history to export.');
+      return;
+    }
+    
+    // Create a blob with the JSON data
+    const jsonData = JSON.stringify(matches, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'connect4_match_history.json';
+    
+    // Trigger download
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
   }
   
   // Update game status message
@@ -830,11 +1830,11 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    const statusText = currentPlayer === 'red' ? 'Your turn (Red)' : 'AI thinking... (Yellow)';
+    const statusText = currentPlayer === humanPlayer ? 'Your turn (Red)' : 'AI thinking... (Yellow)';
     gameStatusElement.textContent = statusText;
     
     // Update styling based on current player
-    if (currentPlayer === 'red') {
+    if (currentPlayer === humanPlayer) {
       gameStatusElement.style.backgroundColor = '#ffebee'; // Light red
       gameStatusElement.style.color = '#d32f2f'; // Dark red
     } else {

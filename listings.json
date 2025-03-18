@@ -7,6 +7,9 @@
       "/blog/group-prime-order.html",
       "/blog/hashing.html",
       "/blog/sss.html",
+      "/blog/t-ecdsa-three-rounds2.html",
+      "/projects/amari-network-backup.html",
+      "/projects/amari-network.html",
       "/projects/adding-problem-part1.html",
       "/projects/adding-problem-part2.html",
       "/projects/adding-problem-part3.html",
@@ -19,6 +22,8 @@
   {
     "listing": "/projects/index.html",
     "items": [
+      "/projects/amari-network-backup.html",
+      "/projects/amari-network.html",
       "/projects/adding-problem-part1.html",
       "/projects/adding-problem-part2.html",
       "/projects/adding-problem-part3.html",
@@ -31,6 +36,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/t-ecdsa-three-rounds2.html",
       "/blog/dpo.html",
       "/blog/hashing.html",
       "/blog/blockchain.html",

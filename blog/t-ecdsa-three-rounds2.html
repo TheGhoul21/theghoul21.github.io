@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Yash">
+<meta name="dcterms.date" content="2025-03-18">
+
+<title>Three-Round Threshold ECDSA Protocol – L.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a973770d809960bcbda85a0f6824f60f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="L.">
+<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
+<meta property="og:image" content="https://theghoul21.github.io//images/278270564_10159906873598664_2201636379743763738_n.jpg">
+<meta property="og:site_name" content="L.">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">L.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/QC-2023-2024/" target="_blank">
+ <span class="dropdown-text">Quantum Computing 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/MB-2024-2025/" target="_blank">
+ <span class="dropdown-text">Biologia Molecolare 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/VVT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Verification and Validation Techniques 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AR-2024-2025/" target="_blank">
+ <span class="dropdown-text">Automated Reasoning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AA-2023-2024/" target="_blank">
+ <span class="dropdown-text">Advanced Algorithms 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AI-2023-2024/" target="_blank">
+ <span class="dropdown-text">Artificial Intelligence 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/SA-2024-2025/" target="_blank">
+ <span class="dropdown-text">Applied Statistics 2024/2025</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Three-Round Threshold ECDSA Protocol</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Yash </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 18, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#background-on-digital-signatures" id="toc-background-on-digital-signatures" class="nav-link" data-scroll-target="#background-on-digital-signatures">Background on Digital Signatures</a>
+  <ul class="collapse">
+  <li><a href="#schnorr-signatures-a-review" id="toc-schnorr-signatures-a-review" class="nav-link" data-scroll-target="#schnorr-signatures-a-review">Schnorr Signatures: A Review</a>
+  <ul class="collapse">
+  <li><a href="#schnorr-key-generation" id="toc-schnorr-key-generation" class="nav-link" data-scroll-target="#schnorr-key-generation">Schnorr Key Generation</a></li>
+  <li><a href="#schnorr-signing" id="toc-schnorr-signing" class="nav-link" data-scroll-target="#schnorr-signing">Schnorr Signing</a></li>
+  <li><a href="#schnorr-verification" id="toc-schnorr-verification" class="nav-link" data-scroll-target="#schnorr-verification">Schnorr Verification</a></li>
+  </ul></li>
+  <li><a href="#elliptic-curve-digital-signature-algorithm-ecdsa" id="toc-elliptic-curve-digital-signature-algorithm-ecdsa" class="nav-link" data-scroll-target="#elliptic-curve-digital-signature-algorithm-ecdsa">Elliptic Curve Digital Signature Algorithm (ECDSA)</a>
+  <ul class="collapse">
+  <li><a href="#ecdsa-signing-process" id="toc-ecdsa-signing-process" class="nav-link" data-scroll-target="#ecdsa-signing-process">ECDSA Signing Process</a></li>
+  <li><a href="#challenges-for-mpc" id="toc-challenges-for-mpc" class="nav-link" data-scroll-target="#challenges-for-mpc">Challenges for MPC</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#threshold-signatures-and-secure-multi-party-computation-mpc" id="toc-threshold-signatures-and-secure-multi-party-computation-mpc" class="nav-link" data-scroll-target="#threshold-signatures-and-secure-multi-party-computation-mpc">Threshold Signatures and Secure Multi-Party Computation (MPC)</a>
+  <ul class="collapse">
+  <li><a href="#motivation-securing-bitcoin-bobs-keys" id="toc-motivation-securing-bitcoin-bobs-keys" class="nav-link" data-scroll-target="#motivation-securing-bitcoin-bobs-keys">Motivation: Securing Bitcoin Bob’s Keys</a></li>
+  <li><a href="#threshold-signing-concept" id="toc-threshold-signing-concept" class="nav-link" data-scroll-target="#threshold-signing-concept">Threshold Signing Concept</a></li>
+  <li><a href="#adversary-model-dishonest-majority" id="toc-adversary-model-dishonest-majority" class="nav-link" data-scroll-target="#adversary-model-dishonest-majority">Adversary Model: Dishonest Majority</a></li>
+  <li><a href="#linear-secret-sharing-and-operations" id="toc-linear-secret-sharing-and-operations" class="nav-link" data-scroll-target="#linear-secret-sharing-and-operations">Linear Secret Sharing and Operations</a>
+  <ul class="collapse">
+  <li><a href="#additive-secret-sharing" id="toc-additive-secret-sharing" class="nav-link" data-scroll-target="#additive-secret-sharing">Additive Secret Sharing</a></li>
+  <li><a href="#linear-combinations-of-secrets" id="toc-linear-combinations-of-secrets" class="nav-link" data-scroll-target="#linear-combinations-of-secrets">Linear Combinations of Secrets</a></li>
+  </ul></li>
+  <li><a href="#secure-two-party-multiplication-as-a-building-block" id="toc-secure-two-party-multiplication-as-a-building-block" class="nav-link" data-scroll-target="#secure-two-party-multiplication-as-a-building-block">Secure Two-Party Multiplication as a Building Block</a></li>
+  </ul></li>
+  <li><a href="#evolution-of-threshold-ecdsa-techniques" id="toc-evolution-of-threshold-ecdsa-techniques" class="nav-link" data-scroll-target="#evolution-of-threshold-ecdsa-techniques">Evolution of Threshold ECDSA Techniques</a>
+  <ul class="collapse">
+  <li><a href="#rewriting-ecdsa-for-mpc-friendliness-taming-non-linearities" id="toc-rewriting-ecdsa-for-mpc-friendliness-taming-non-linearities" class="nav-link" data-scroll-target="#rewriting-ecdsa-for-mpc-friendliness-taming-non-linearities">Rewriting ECDSA for MPC Friendliness: Taming Non-Linearities</a>
+  <ul class="collapse">
+  <li><a href="#avoiding-secure-inversion-a-primary-goal" id="toc-avoiding-secure-inversion-a-primary-goal" class="nav-link" data-scroll-target="#avoiding-secure-inversion-a-primary-goal">Avoiding Secure Inversion: A Primary Goal</a></li>
+  </ul></li>
+  <li><a href="#early-approaches-and-the-honest-majority-setting" id="toc-early-approaches-and-the-honest-majority-setting" class="nav-link" data-scroll-target="#early-approaches-and-the-honest-majority-setting">Early Approaches and the Honest Majority Setting</a></li>
+  <li><a href="#dishonest-majority-approaches-and-the-landscape-of-tradeoffs" id="toc-dishonest-majority-approaches-and-the-landscape-of-tradeoffs" class="nav-link" data-scroll-target="#dishonest-majority-approaches-and-the-landscape-of-tradeoffs">Dishonest Majority Approaches and the Landscape of Tradeoffs</a>
+  <ul class="collapse">
+  <li><a href="#multiplicative-shares-and-paillier-encryption-homomorphic-power" id="toc-multiplicative-shares-and-paillier-encryption-homomorphic-power" class="nav-link" data-scroll-target="#multiplicative-shares-and-paillier-encryption-homomorphic-power">Multiplicative Shares and Paillier Encryption: Homomorphic Power</a></li>
+  <li><a href="#ot-based-secure-multiplication-efficiency-focus" id="toc-ot-based-secure-multiplication-efficiency-focus" class="nav-link" data-scroll-target="#ot-based-secure-multiplication-efficiency-focus">OT-based Secure Multiplication: Efficiency Focus</a></li>
+  <li><a href="#revisiting-inverted-nonce-and-verification-challenges" id="toc-revisiting-inverted-nonce-and-verification-challenges" class="nav-link" data-scroll-target="#revisiting-inverted-nonce-and-verification-challenges">Revisiting Inverted Nonce and Verification Challenges</a></li>
+  </ul></li>
+  <li><a href="#dimensions-of-variation-a-comparative-landscape" id="toc-dimensions-of-variation-a-comparative-landscape" class="nav-link" data-scroll-target="#dimensions-of-variation-a-comparative-landscape">Dimensions of Variation: A Comparative Landscape</a>
+  <ul class="collapse">
+  <li><a href="#ecdsa-rewriting-methods-shaping-the-computation" id="toc-ecdsa-rewriting-methods-shaping-the-computation" class="nav-link" data-scroll-target="#ecdsa-rewriting-methods-shaping-the-computation">ECDSA Rewriting Methods: Shaping the Computation</a></li>
+  <li><a href="#secure-multiplication-techniques-the-mpc-engine" id="toc-secure-multiplication-techniques-the-mpc-engine" class="nav-link" data-scroll-target="#secure-multiplication-techniques-the-mpc-engine">Secure Multiplication Techniques: The MPC Engine</a></li>
+  <li><a href="#verification-strategies-ensuring-correctness-in-mpc" id="toc-verification-strategies-ensuring-correctness-in-mpc" class="nav-link" data-scroll-target="#verification-strategies-ensuring-correctness-in-mpc">Verification Strategies: Ensuring Correctness in MPC</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#our-contribution-three-round-threshold-ecdsa-protocol" id="toc-our-contribution-three-round-threshold-ecdsa-protocol" class="nav-link" data-scroll-target="#our-contribution-three-round-threshold-ecdsa-protocol">Our Contribution: Three-Round Threshold ECDSA Protocol</a>
+  <ul class="collapse">
+  <li><a href="#leveraging-the-ecdsa-tuple-method-for-efficient-mpc" id="toc-leveraging-the-ecdsa-tuple-method-for-efficient-mpc" class="nav-link" data-scroll-target="#leveraging-the-ecdsa-tuple-method-for-efficient-mpc">Leveraging the ECDSA Tuple Method for Efficient MPC</a></li>
+  <li><a href="#a-novel-statistical-consistency-check-for-lightweight-verification" id="toc-a-novel-statistical-consistency-check-for-lightweight-verification" class="nav-link" data-scroll-target="#a-novel-statistical-consistency-check-for-lightweight-verification">A Novel Statistical Consistency Check for Lightweight Verification</a></li>
+  <li><a href="#detailed-explanation-of-the-pairwise-verification-mechanism" id="toc-detailed-explanation-of-the-pairwise-verification-mechanism" class="nav-link" data-scroll-target="#detailed-explanation-of-the-pairwise-verification-mechanism">Detailed Explanation of the Pairwise Verification Mechanism</a>
+  <ul class="collapse">
+  <li><a href="#ensuring-consistency-of-the-random-mask-phi-using-vole" id="toc-ensuring-consistency-of-the-random-mask-phi-using-vole" class="nav-link" data-scroll-target="#ensuring-consistency-of-the-random-mask-phi-using-vole">Ensuring Consistency of the Random Mask <span class="math inline">\(\phi\)</span> using VOLE</a></li>
+  <li><a href="#statistical-verification-of-discrete-logarithm-inputs" id="toc-statistical-verification-of-discrete-logarithm-inputs" class="nav-link" data-scroll-target="#statistical-verification-of-discrete-logarithm-inputs">Statistical Verification of Discrete Logarithm Inputs</a></li>
+  <li><a href="#security-analysis-of-the-statistical-check" id="toc-security-analysis-of-the-statistical-check" class="nav-link" data-scroll-target="#security-analysis-of-the-statistical-check">Security Analysis of the Statistical Check</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Imagine storing millions of dollars in Bitcoin with only a single laptop protecting the private key that controls it all. If an attacker compromises that laptop, your funds can be stolen in minutes with no recourse. This terrifying scenario is precisely why threshold cryptography has become increasingly important in cryptocurrency security.</p>
+<p>In this article, we’ll dive into the world of threshold ECDSA (Elliptic Curve Digital Signature Algorithm) with a focus on a novel three-round protocol. This protocol represents a significant advancement in how we can secure private keys by distributing them across multiple devices while maintaining efficiency.</p>
+<p>The core idea of threshold signatures is elegant: rather than storing a private key on a single device (a single point of failure), we distribute it across multiple devices or parties. A quorum of these parties must cooperate to produce a valid signature, meaning an attacker would need to compromise multiple devices to steal your funds. This approach leverages Multi-Party Computation (MPC) to manage and mitigate the risk associated with private key security.</p>
+<p>Throughout this article, we’ll explore:</p>
+<ul>
+<li>The background of digital signatures, focusing on Schnorr and ECDSA</li>
+<li>Why ECDSA is challenging to distribute compared to other signature schemes</li>
+<li>The evolution of threshold ECDSA techniques</li>
+<li>Our novel three-round threshold ECDSA protocol that achieves both security and efficiency</li>
+<li>How this protocol uses a statistical consistency check to verify correct behavior</li>
+</ul>
+<p>Whether you’re a cryptographer, security engineer, or blockchain enthusiast, understanding these advances in threshold signatures can help you build more secure systems in an increasingly decentralized world.</p>
+</section>
+<section id="background-on-digital-signatures" class="level1">
+<h1>Background on Digital Signatures</h1>
+<section id="schnorr-signatures-a-review" class="level2">
+<h2 class="anchored" data-anchor-id="schnorr-signatures-a-review">Schnorr Signatures: A Review</h2>
+<p>Before diving into the complexities of ECDSA, let’s review Schnorr signatures, which are known for their efficiency, compactness, and natural suitability for MPC-based distribution. Their linear algebraic structure makes them relatively easy to work with in threshold settings.</p>
+<p>Schnorr signatures operate within a cyclic group <span class="math inline">\(\mathbb{G}\)</span>, typically derived from elliptic curves. Here are the essential components:</p>
+<ul>
+<li>A cryptographic hash function <span class="math inline">\(\mathcal{H}\)</span></li>
+<li>A cyclic group <span class="math inline">\(\mathbb{G}\)</span> generated by <span class="math inline">\(G\)</span></li>
+<li>The order of the group is a large prime <span class="math inline">\(q\)</span> (typically around <span class="math inline">\(2^{256}\)</span>)</li>
+<li>Group elements are represented by capital letters (e.g., <span class="math inline">\(X, R \in \mathbb{G}\)</span>)</li>
+<li>Their corresponding scalars (discrete logarithms) are represented by lowercase letters (e.g., <span class="math inline">\(x, k \in \mathbb{Z}_q\)</span>), such that <span class="math inline">\(X = xG\)</span></li>
+<li>The group operation is denoted additively: <span class="math inline">\((x+y)G = X + Y = xG + yG\)</span></li>
+<li>Security relies on the computational hardness of the discrete logarithm problem in <span class="math inline">\(\mathbb{G}\)</span></li>
+</ul>
+<section id="schnorr-key-generation" class="level3">
+<h3 class="anchored" data-anchor-id="schnorr-key-generation">Schnorr Key Generation</h3>
+<p>The key generation process is straightforward:</p>
+<ol type="1">
+<li><strong>Secret Key Sampling:</strong> Randomly select a secret key <span class="math inline">\(\mathrm{sk}\)</span> from the scalar field <span class="math inline">\(\mathbb{Z}_q\)</span></li>
+<li><strong>Public Key Derivation:</strong> Compute the public key <span class="math inline">\(\mathrm{pk}\)</span> by multiplying the secret key with the group generator: <span class="math inline">\(\mathrm{pk} = \mathrm{sk} \cdot G\)</span></li>
+</ol>
+</section>
+<section id="schnorr-signing" class="level3">
+<h3 class="anchored" data-anchor-id="schnorr-signing">Schnorr Signing</h3>
+<p>To generate a Schnorr signature for a message <span class="math inline">\(\mathrm{msg}\)</span> under the secret key <span class="math inline">\(\mathrm{sk}\)</span>:</p>
+<ol type="1">
+<li><strong>Nonce Generation:</strong> Sample a random nonce (ephemeral key) <span class="math inline">\(k \leftarrow \mathbb{Z}_q\)</span>. This nonce is crucial for each signature and must be kept secret.</li>
+<li><strong>Nonce Point Computation:</strong> Calculate the nonce point <span class="math inline">\(R = k \cdot G\)</span>, a point on the elliptic curve.</li>
+<li><strong>Challenge Computation:</strong> Compute the cryptographic hash of the nonce point <span class="math inline">\(R\)</span>, the message <span class="math inline">\(\mathrm{msg}\)</span>, and the public key <span class="math inline">\(\mathrm{pk}\)</span>: <span class="math inline">\(e = \mathcal{H}(R || \mathrm{msg} || \mathrm{pk})\)</span>. Including the public key in the hash is a recommended security practice.</li>
+<li><strong>Signature Component Calculation:</strong> Compute the signature component <span class="math inline">\(s\)</span> as a linear combination: <span class="math inline">\(s = k + e \cdot \mathrm{sk} \pmod{q}\)</span>. This is performed in the scalar field <span class="math inline">\(\mathbb{Z}_q\)</span>.</li>
+<li><strong>Signature Output:</strong> The Schnorr signature is the pair <span class="math inline">\(\mathrm{sig} = (s, e)\)</span>.</li>
+</ol>
+</section>
+<section id="schnorr-verification" class="level3">
+<h3 class="anchored" data-anchor-id="schnorr-verification">Schnorr Verification</h3>
+<p>To verify a Schnorr signature <span class="math inline">\(\mathrm{sig} = (s, e)\)</span> for a message <span class="math inline">\(\mathrm{msg}\)</span> under the public key <span class="math inline">\(\mathrm{pk}\)</span>:</p>
+<ol type="1">
+<li><strong>Recompute Nonce Point:</strong> Recompute a point <span class="math inline">\(R' = s \cdot G - e \cdot \mathrm{pk}\)</span>. If the signature is valid, <span class="math inline">\(R'\)</span> should equal the original nonce point <span class="math inline">\(R\)</span>.</li>
+<li><strong>Verification Check:</strong> Verify by checking if <span class="math inline">\(e \stackrel{?}{=} \mathcal{H}(R' || \mathrm{msg} || \mathrm{pk})\)</span>. If this equality holds, the signature is valid.</li>
+</ol>
+<p>The linear structure of the signing equation <span class="math inline">\(s = k + e \cdot \mathrm{sk}\)</span> makes Schnorr signatures particularly advantageous for MPC. Since addition and scalar multiplication are linear operations, they can be efficiently computed in a distributed manner using techniques like additive secret sharing, making Schnorr signatures “MPC-friendly.”</p>
+</section>
+</section>
+<section id="elliptic-curve-digital-signature-algorithm-ecdsa" class="level2">
+<h2 class="anchored" data-anchor-id="elliptic-curve-digital-signature-algorithm-ecdsa">Elliptic Curve Digital Signature Algorithm (ECDSA)</h2>
+<p>ECDSA is the most widely deployed digital signature scheme in practice, used across a vast range of internet infrastructure and applications, including cryptocurrencies like Bitcoin and Ethereum. ECDSA gained prominence partly because it appeared to circumvent patents associated with Schnorr signatures when it was first standardized.</p>
+<p>However, unlike Schnorr, ECDSA’s algebraic structure creates significant challenges when attempting to create efficient and secure MPC protocols for threshold signatures. Let’s examine why.</p>
+<section id="ecdsa-signing-process" class="level3">
+<h3 class="anchored" data-anchor-id="ecdsa-signing-process">ECDSA Signing Process</h3>
+<section id="ecdsa-key-generation" class="level4">
+<h4 class="anchored" data-anchor-id="ecdsa-key-generation">ECDSA Key Generation</h4>
+<p>ECDSA key generation mirrors that of Schnorr signatures:</p>
+<ol type="1">
+<li><strong>Secret Key Sampling:</strong> Sample a secret key <span class="math inline">\(\mathrm{sk} \leftarrow \mathbb{Z}_q\)</span></li>
+<li><strong>Public Key Derivation:</strong> Compute the public key <span class="math inline">\(\mathrm{pk} = \mathrm{sk} \cdot G\)</span></li>
+</ol>
+</section>
+<section id="ecdsa-signing" class="level4">
+<h4 class="anchored" data-anchor-id="ecdsa-signing">ECDSA Signing</h4>
+<p>To sign a message <span class="math inline">\(\mathrm{msg}\)</span> using ECDSA with secret key <span class="math inline">\(\mathrm{sk}\)</span>:</p>
+<ol type="1">
+<li><strong>Nonce Generation:</strong> Sample a random nonce <span class="math inline">\(k \leftarrow \mathbb{Z}_q\)</span></li>
+<li><strong>Nonce Point Computation:</strong> Compute the nonce point <span class="math inline">\(R = k \cdot G = (x_R, y_R)\)</span>, where <span class="math inline">\((x_R, y_R)\)</span> are the coordinates of point <span class="math inline">\(R\)</span></li>
+<li><strong>Calculate <span class="math inline">\(r\)</span>:</strong> Compute <span class="math inline">\(r = x_R \pmod{q}\)</span>. If <span class="math inline">\(r = 0\)</span>, restart with a new nonce</li>
+<li><strong>Message Hash:</strong> Compute the cryptographic hash of the message: <span class="math inline">\(e = \mathcal{H}(\mathrm{msg})\)</span></li>
+<li><strong>Calculate <span class="math inline">\(s\)</span>:</strong> Compute <span class="math inline">\(s = k^{-1} (e + r \cdot \mathrm{sk}) \pmod{q}\)</span>. If <span class="math inline">\(s = 0\)</span>, restart with a new nonce</li>
+<li><strong>Signature Output:</strong> The ECDSA signature is the pair <span class="math inline">\(\mathrm{sig} = (r, s)\)</span></li>
+</ol>
+<p>In point 5. <span class="math inline">\(k^{-1}\)</span> refers to the modular inverse of the nonce <span class="math inline">\(k\)</span> modulo <span class="math inline">\(q\)</span>. This inversion operation is a significant challenge in MPC settings due to its non-linearity. To make this less abstract and more concrete, let’s make a super easy example:</p>
+<p>Let’s see a simple example to illustrate the ECDSA signing process. Suppose we have the following parameters:</p>
+<ul>
+<li>Secret key <span class="math inline">\(\mathrm{sk} = 7\)</span></li>
+<li>Nonce <span class="math inline">\(k = 3\)</span></li>
+<li>Message hash <span class="math inline">\(e = 5\)</span></li>
+<li>Group generator <span class="math inline">\(G = (2, 3)\)</span> (for simplicity, assume these are coordinates on the elliptic curve)</li>
+</ul>
+<p>The steps are as follows:</p>
+<ol type="1">
+<li><strong>Nonce Point Computation:</strong> Calculate the nonce point <span class="math inline">\(R = k \cdot G\)</span>. For our example, let’s assume <span class="math inline">\(R = (6, 1)\)</span>.</li>
+<li><strong>Calculate <span class="math inline">\(r\)</span>:</strong> Compute <span class="math inline">\(r = x_R \pmod{q}\)</span>. Here, <span class="math inline">\(x_R = 6\)</span>, so <span class="math inline">\(r = 6\)</span>.</li>
+<li><strong>Calculate <span class="math inline">\(s\)</span>:</strong> Compute <span class="math inline">\(s = k^{-1} (e + r \cdot \mathrm{sk}) \pmod{q}\)</span>. Assuming <span class="math inline">\(k^{-1} = 2\)</span> (since <span class="math inline">\(3 \cdot 2 \equiv 1 \pmod{q}\)</span>), we get <span class="math inline">\(s = 2 \cdot (5 + 6 \cdot 7) \pmod{q} = 2 \cdot (5 + 42) = 2 \cdot 47 = 94 \pmod{q}\)</span>. If <span class="math inline">\(q = 97\)</span>, then <span class="math inline">\(s = 94\)</span>.</li>
+</ol>
+<p>The ECDSA signature is <span class="math inline">\((r, s) = (6, 94)\)</span>.</p>
+</section>
+<section id="ecdsa-verification" class="level4">
+<h4 class="anchored" data-anchor-id="ecdsa-verification">ECDSA Verification</h4>
+<p>To verify an ECDSA signature <span class="math inline">\(\mathrm{sig} = (r, s)\)</span> for a message <span class="math inline">\(\mathrm{msg}\)</span> under the public key <span class="math inline">\(\mathrm{pk}\)</span>:</p>
+<ol type="1">
+<li><strong>Range Verification:</strong> Verify that both <span class="math inline">\(r\)</span> and <span class="math inline">\(s\)</span> are within the valid range <span class="math inline">\([1, q-1]\)</span></li>
+<li><strong>Message Hash:</strong> Compute the hash of the message: <span class="math inline">\(e = \mathcal{H}(\mathrm{msg})\)</span></li>
+<li><strong>Compute Inverses and Intermediate Values:</strong> Compute <span class="math inline">\(s^{-1} \pmod{q}\)</span>, then calculate <span class="math inline">\(u_1 = e \cdot s^{-1} \pmod{q}\)</span> and <span class="math inline">\(u_2 = r \cdot s^{-1} \pmod{q}\)</span></li>
+<li><strong>Recompute Point <span class="math inline">\(R'\)</span>:</strong> Compute <span class="math inline">\(R' = u_1 \cdot G + u_2 \cdot \mathrm{pk} = (x_{R'}, y_{R'})\)</span></li>
+<li><strong>Calculate <span class="math inline">\(v\)</span>:</strong> Compute <span class="math inline">\(v = x_{R'} \pmod{q}\)</span></li>
+<li><strong>Verification Check:</strong> Check if <span class="math inline">\(v = r\)</span>. If so, the signature is valid</li>
+</ol>
+</section>
+</section>
+<section id="challenges-for-mpc" class="level3">
+<h3 class="anchored" data-anchor-id="challenges-for-mpc">Challenges for MPC</h3>
+<p>While ECDSA is widely adopted, its signing process creates significant challenges for MPC protocols, particularly in dishonest majority settings. These challenges stem from the non-linear operations within the signing algorithm:</p>
+<ul>
+<li><p><strong>Secure Multiplication of Secrets:</strong> The term <span class="math inline">\(r \cdot \mathrm{sk}\)</span> in calculating <span class="math inline">\(s = k^{-1} (e + r \cdot \mathrm{sk}) \pmod{q}\)</span> requires multiplying two values that must remain secret in a threshold setting. Securely performing this multiplication in an MPC context is non-trivial.</p></li>
+<li><p><strong>Secure Modular Inversion of Secrets:</strong> Computing <span class="math inline">\(s\)</span> involves the modular inversion of the secret nonce <span class="math inline">\(k\)</span> (i.e., <span class="math inline">\(k^{-1} \pmod{q}\)</span>). Secure inversion is generally a computationally expensive operation in MPC. Naïve approaches using arithmetic circuits for inversion are prohibitively inefficient.</p></li>
+</ul>
+<p>These non-linearities contrast sharply with the linear structure of Schnorr signatures. Directly translating the standard ECDSA signing algorithm into a secure MPC protocol is inefficient and complex due to these operations. Consequently, significant research has been dedicated to developing techniques to circumvent or efficiently implement these non-linear operations.</p>
+</section>
+</section>
+</section>
+<section id="threshold-signatures-and-secure-multi-party-computation-mpc" class="level1">
+<h1>Threshold Signatures and Secure Multi-Party Computation (MPC)</h1>
+<section id="motivation-securing-bitcoin-bobs-keys" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-securing-bitcoin-bobs-keys">Motivation: Securing Bitcoin Bob’s Keys</h2>
+<p>Consider “Bitcoin Bob,” who stores significant Bitcoin wealth secured by a private key on his personal laptop. When Bob sends Bitcoin to his friend Alice, he must sign a transaction message using this private key, creating a critical vulnerability. If an attacker compromises Bob’s laptop, they could extract the private key.</p>
+<p>The consequences of such a key compromise are severe:</p>
+<ul>
+<li><strong>Stolen Funds:</strong> An attacker could forge transactions to transfer all of Bob’s Bitcoin</li>
+<li><strong>Identity Theft:</strong> They could sign any message as if it came from Bob</li>
+<li><strong>Long-Term Risk:</strong> If the compromised key is used for other purposes (secure communication, access control), the attacker gains persistent unauthorized access</li>
+</ul>
+<p>This scenario illustrates the inherent risk of relying on a single device to safeguard a private key. Threshold signatures emerge as a powerful countermeasure to mitigate this single point of failure.</p>
+</section>
+<section id="threshold-signing-concept" class="level2">
+<h2 class="anchored" data-anchor-id="threshold-signing-concept">Threshold Signing Concept</h2>
+<p>Threshold signing enhances the security of digital signatures by distributing the private key across multiple participants or devices. Instead of a single entity holding the entire private key, in a threshold signature scheme, the private key is split into <span class="math inline">\(n\)</span> shares, with each of <span class="math inline">\(n\)</span> parties receiving one share.</p>
+<p>A crucial parameter is the <strong>threshold value</strong>, denoted as <span class="math inline">\(t\)</span>. This defines the minimum number of parties required to cooperate to generate a valid signature. In a <span class="math inline">\((t+1, n)\)</span>-threshold signature scheme, any group of <span class="math inline">\(t+1\)</span> or more parties can jointly produce a signature. However, any coalition of <span class="math inline">\(t\)</span> or fewer parties cannot generate a valid signature or reconstruct the complete private key.</p>
+<p>The security benefits are significant:</p>
+<ul>
+<li><strong>Distributed Risk:</strong> An attacker must compromise more than <span class="math inline">\(t\)</span> parties to forge signatures</li>
+<li><strong>Fault Tolerance:</strong> The system can tolerate the failure of up to <span class="math inline">\(t\)</span> parties without losing signing capability</li>
+<li><strong>Enhanced Security:</strong> By eliminating the single point of failure, threshold signatures significantly improve overall security</li>
+</ul>
+<p>To generate a signature in a threshold scheme, the participating parties engage in a distributed protocol using MPC techniques. This allows them to compute a signature jointly without revealing their individual private key shares.</p>
+</section>
+<section id="adversary-model-dishonest-majority" class="level2">
+<h2 class="anchored" data-anchor-id="adversary-model-dishonest-majority">Adversary Model: Dishonest Majority</h2>
+<p>In threshold signature protocols, the <strong>adversary model</strong> defines the capabilities and limitations of attackers. A particularly strong model is the <strong>dishonest majority</strong> setting.</p>
+<p>In this setting, we assume the adversary can corrupt and control up to <span class="math inline">\(n-1\)</span> out of <span class="math inline">\(n\)</span> total parties. This means the number of corrupted parties can be greater than or equal to half the total. In the most extreme scenario, only a single party might remain honest.</p>
+<p>Furthermore, the adversary is considered <strong>malicious</strong>. A malicious adversary can actively and arbitrarily deviate from the protocol by:</p>
+<ul>
+<li>Sending malformed messages to disrupt the protocol</li>
+<li>Refusing to participate or halting execution</li>
+<li>Colluding with other adversarial parties</li>
+<li>Attempting to learn private information</li>
+</ul>
+<p>Designing secure threshold ECDSA protocols in the dishonest majority setting is significantly more challenging than in weaker models like honest majority (where more than half the parties are honest). Protocols for dishonest majority must incorporate robust mechanisms to ensure correctness and security even against powerful, actively malicious adversaries.</p>
+</section>
+<section id="linear-secret-sharing-and-operations" class="level2">
+<h2 class="anchored" data-anchor-id="linear-secret-sharing-and-operations">Linear Secret Sharing and Operations</h2>
+<p>To enable secure distributed computation, <strong>secret sharing</strong> is a fundamental cryptographic technique. Among various schemes, <strong>linear secret sharing</strong> is particularly well-suited for MPC protocols due to algebraic properties that facilitate efficient computation of linear operations on secret values.</p>
+<section id="additive-secret-sharing" class="level3">
+<h3 class="anchored" data-anchor-id="additive-secret-sharing">Additive Secret Sharing</h3>
+<p><strong>Additive secret sharing</strong> is a simple yet powerful linear secret sharing scheme that’s conceptually straightforward and efficient for many MPC applications.</p>
+<p>In additive secret sharing, to share a secret value <span class="math inline">\(x\)</span>, it’s split into multiple shares that sum to the original secret. For instance, to share <span class="math inline">\(x\)</span> among two parties, we generate two random values <span class="math inline">\(x_A\)</span> and <span class="math inline">\(x_B\)</span> such that <span class="math inline">\(x = x_A + x_B\)</span>. Party A receives <span class="math inline">\(x_A\)</span> as their share, and Party B receives <span class="math inline">\(x_B\)</span>.</p>
+<p>Generalizing to <span class="math inline">\(n\)</span> parties, we generate <span class="math inline">\(n-1\)</span> random values <span class="math inline">\(x_1, x_2, \ldots, x_{n-1}\)</span> and compute the <span class="math inline">\(n^{th}\)</span> share as <span class="math inline">\(x_n = x - (x_1 + x_2 + \ldots + x_{n-1})\)</span>. The secret <span class="math inline">\(x\)</span> is shared as <span class="math inline">\([x] = (x_1, x_2, \ldots, x_n)\)</span>, where party <span class="math inline">\(i\)</span> holds share <span class="math inline">\(x_i\)</span>. By construction, <span class="math inline">\(x = \sum_{i=1}^{n} x_i\)</span>.</p>
+<p>The crucial security property is <strong>privacy</strong>. Individual shares reveal no information about the secret value itself. In additive secret sharing, knowing any <span class="math inline">\(t\)</span> shares (where <span class="math inline">\(t &lt; n\)</span>) provides no information about <span class="math inline">\(x\)</span>. Only by combining at least <span class="math inline">\(t+1\)</span> shares can the secret be recovered.</p>
+</section>
+<section id="linear-combinations-of-secrets" class="level3">
+<h3 class="anchored" data-anchor-id="linear-combinations-of-secrets">Linear Combinations of Secrets</h3>
+<p>A significant benefit of linear secret sharing schemes is the ability to perform <strong>linear operations</strong> on secret-shared values <strong>locally</strong>, without requiring interaction between parties.</p>
+<p>Suppose we have two secret-shared values <span class="math inline">\(X = [x]\)</span> and <span class="math inline">\(Y = [y]\)</span>, meaning each party <span class="math inline">\(i\)</span> holds shares <span class="math inline">\(x_i\)</span> and <span class="math inline">\(y_i\)</span> respectively, such that <span class="math inline">\(x = \sum_i x_i\)</span> and <span class="math inline">\(y = \sum_i y_i\)</span>. If we want to compute a linear combination <span class="math inline">\(Z = cX + dY = [cx + dy]\)</span>, where <span class="math inline">\(c\)</span> and <span class="math inline">\(d\)</span> are public constants, each party can compute their share of <span class="math inline">\(Z\)</span> independently.</p>
+<p>Party <span class="math inline">\(i\)</span> computes their share as <span class="math inline">\(z_i = c \cdot x_i + d \cdot y_i\)</span>. Then, if we sum up all the shares <span class="math inline">\(z_i\)</span>, we get:</p>
+<p><span class="math display">\[ \sum_{i} z_i = \sum_{i} (c \cdot x_i + d \cdot y_i) = c \sum_{i} x_i + d \sum_{i} y_i = c \cdot x + d \cdot y = z \]</span></p>
+<p>Thus, <span class="math inline">\(Z = [z] = [cx + dy]\)</span> is indeed the secret sharing of the linear combination. This computation is entirely local; parties don’t need to communicate.</p>
+<p><strong>Example:</strong></p>
+<p>Let’s say we have two secrets, <span class="math inline">\(x = 10\)</span> and <span class="math inline">\(y = 5\)</span>, shared additively among three parties. - Shares of <span class="math inline">\(x\)</span>: <span class="math inline">\(x_1 = 3, x_2 = 5, x_3 = 2\)</span> (since <span class="math inline">\(3+5+2 = 10\)</span>) - Shares of <span class="math inline">\(y\)</span>: <span class="math inline">\(y_1 = 1, y_2 = 2, y_3 = 2\)</span> (since <span class="math inline">\(1+2+2 = 5\)</span>)</p>
+<p>Suppose we want to compute <span class="math inline">\(Z = 2X + 3Y = [2x + 3y] = [2 \cdot 10 + 3 \cdot 5] = [35]\)</span>. Each party computes their share of <span class="math inline">\(Z\)</span> locally: - <span class="math inline">\(z_1 = 2x_1 + 3y_1 = 2 \cdot 3 + 3 \cdot 1 = 9\)</span> - <span class="math inline">\(z_2 = 2x_2 + 3y_2 = 2 \cdot 5 + 3 \cdot 2 = 16\)</span> - <span class="math inline">\(z_3 = 2x_3 + 3y_3 = 2 \cdot 2 + 3 \cdot 2 = 10\)</span></p>
+<p>Checking the sum: <span class="math inline">\(z_1 + z_2 + z_3 = 9 + 16 + 10 = 35 = 2x + 3y\)</span>. So, <span class="math inline">\(Z = [35]\)</span> is secret shared as <span class="math inline">\((9, 16, 10)\)</span>.</p>
+<p>This ability to perform linear operations locally is crucial for efficient MPC protocols, serving as building blocks for more complex computations while maintaining privacy.</p>
+</section>
+</section>
+<section id="secure-two-party-multiplication-as-a-building-block" class="level2">
+<h2 class="anchored" data-anchor-id="secure-two-party-multiplication-as-a-building-block">Secure Two-Party Multiplication as a Building Block</h2>
+<p>While linear operations on secret shares are efficient and non-interactive, <strong>non-linear operations</strong>, such as multiplication of secret values, are more complex and typically require interaction. <strong>Secure two-party multiplication</strong> (<span class="math inline">\(\mathrm{2PMul}\)</span>) is a fundamental building block that enables secure computation of products of secret values and is essential for constructing many dishonest majority MPC protocols, including threshold ECDSA.</p>
+<p><strong>Secure two-party multiplication</strong> (<span class="math inline">\(\mathrm{2PMul}\)</span>) is a core MPC primitive that allows two parties to compute the product of their secret inputs while only revealing shares of the product, and nothing else about the inputs themselves. It is a cornerstone for building more complex MPC protocols.</p>
+<p>A <span class="math inline">\(\mathrm{2PMul}\)</span> protocol involves two parties, Party A and Party B. Party A holds a secret value <span class="math inline">\(\alpha\)</span>, and Party B holds a secret value <span class="math inline">\(\beta\)</span>. The goal is for them to interact and compute shares of the product <span class="math inline">\(\gamma = \alpha \cdot \beta\)</span>. After executing the protocol, Party A receives a share <span class="math inline">\(C\)</span>, and Party B receives a share <span class="math inline">\(D\)</span>, such that <span class="math inline">\(C + D = \alpha \cdot \beta\)</span>. Crucially, the individual shares <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span> should not reveal information about <span class="math inline">\(\alpha\)</span> or <span class="math inline">\(\beta\)</span>.</p>
+<p>There are several cryptographic techniques to instantiate <span class="math inline">\(\mathrm{2PMul}\)</span> protocols:</p>
+<ul>
+<li><p><strong>Oblivious Transfer (OT) based <span class="math inline">\(\mathrm{2PMul}\)</span>:</strong> OT is a cryptographic primitive where a sender transmits one of several possible messages to a receiver but remains oblivious as to which message was chosen. OT-based <span class="math inline">\(\mathrm{2PMul}\)</span> protocols are widely used and can be quite efficient, especially with OT extension techniques.</p></li>
+<li><p><strong>Additively Homomorphic Encryption (AHE) based <span class="math inline">\(\mathrm{2PMul}\)</span>:</strong> AHE schemes, such as Paillier encryption, allow for addition of encrypted values without decryption. Party A can encrypt its input <span class="math inline">\(\alpha\)</span> and send the ciphertext to Party B, who homomorphically multiplies it with <span class="math inline">\(\beta\)</span> and partially decrypts to generate shares of the product.</p></li>
+</ul>
+<p>The choice of <span class="math inline">\(\mathrm{2PMul}\)</span> instantiation significantly impacts the overall performance of a threshold ECDSA protocol, including efficiency, round complexity, and security assumptions. The optimal choice depends on application requirements, desired security level, and computational environment.</p>
+</section>
+</section>
+<section id="evolution-of-threshold-ecdsa-techniques" class="level1">
+<h1>Evolution of Threshold ECDSA Techniques</h1>
+<p>The development of efficient and secure threshold ECDSA protocols has been a central focus in cryptographic research for over two decades. The inherent non-linearities of ECDSA make it significantly more challenging to distribute compared to Schnorr signatures. Let’s trace the evolution of techniques aimed at overcoming these challenges.</p>
+<section id="rewriting-ecdsa-for-mpc-friendliness-taming-non-linearities" class="level2">
+<h2 class="anchored" data-anchor-id="rewriting-ecdsa-for-mpc-friendliness-taming-non-linearities">Rewriting ECDSA for MPC Friendliness: Taming Non-Linearities</h2>
+<p>A foundational strategy in designing threshold ECDSA protocols is to reformulate or “rewrite” the standard signing algorithm to make it more amenable to MPC. The goal is to minimize or eliminate expensive operations like secure modular inversion and simplify the requirements for secure multiplication.</p>
+<section id="avoiding-secure-inversion-a-primary-goal" class="level3">
+<h3 class="anchored" data-anchor-id="avoiding-secure-inversion-a-primary-goal">Avoiding Secure Inversion: A Primary Goal</h3>
+<p>The modular inversion of the nonce <span class="math inline">\(k^{-1}\)</span> in standard ECDSA (<span class="math inline">\(s = k^{-1}(e + r \cdot \mathrm{sk}) \pmod{q}\)</span>) is a major bottleneck in MPC. Directly implementing modular inversion using generic MPC techniques results in prohibitively high computational costs. Early research focused on finding ways to reformulate ECDSA signing to circumvent the need for secure inversion.</p>
+<section id="the-inverted-nonce-method-shifting-the-inversion" class="level4">
+<h4 class="anchored" data-anchor-id="the-inverted-nonce-method-shifting-the-inversion">The Inverted Nonce Method: Shifting the Inversion</h4>
+<p>The <strong>inverted nonce method</strong>, pioneered by Langford et al.&nbsp;and further developed by Gennaro et al., represents an early approach to address the secure inversion challenge.</p>
+<p>Instead of computing <span class="math inline">\(s = k^{-1}(e + r \cdot \mathrm{sk})\)</span>, this method modifies the nonce generation step. In standard ECDSA, the nonce point is <span class="math inline">\(R = k \cdot G\)</span>. In the inverted nonce method, this becomes <span class="math inline">\(R = k^{-1} \cdot G\)</span>.</p>
+<p>This seemingly small change has significant implications for the signing equation. The goal was to move the inversion from the final signature component calculation into the nonce point generation, hoping to compute <span class="math inline">\(k^{-1} \cdot G\)</span> more efficiently than performing inversion within the MPC protocol.</p>
+<p>However, this approach doesn’t eliminate the challenge of inversion—it merely shifts it. Computing <span class="math inline">\(R = k^{-1} \cdot G\)</span> securely still requires addressing the inversion of the secret nonce <span class="math inline">\(k\)</span>. Early works utilized techniques such as the <strong>Barland-Beaver trick</strong> combined with <strong>redundant computation and masking</strong> to handle this inverted nonce generation.</p>
+</section>
+<section id="the-ecdsa-tuple-method-masking-and-linearization" class="level4">
+<h4 class="anchored" data-anchor-id="the-ecdsa-tuple-method-masking-and-linearization">The ECDSA Tuple Method: Masking and Linearization</h4>
+<p>The <strong>ECDSA tuple method</strong> represents a more recent and conceptually cleaner approach to rewriting ECDSA for MPC. While implicitly present in earlier works like Lindell-Nof and Renalucci, it was explicitly formalized by Abraham et al.</p>
+<p>This method introduces a random masking value <span class="math inline">\(\phi\)</span> to linearize the signing equation. The core idea is to rewrite the intended signing value by separating it into a “numerator” and “denominator,” both masked by <span class="math inline">\(\phi\)</span>.</p>
+<p>Let’s consider the standard ECDSA signature component <span class="math inline">\(s = k^{-1}(e + r \cdot \mathrm{sk}) \pmod{q}\)</span>. The ECDSA tuple method rewrites this as <span class="math inline">\(S = \frac{\alpha}{\beta}\)</span>, where both <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are masked by <span class="math inline">\(\phi\)</span>. If the original signing value was conceptually <span class="math inline">\(v = k^{-1}(e + r \cdot \mathrm{sk})\)</span>, then:</p>
+<ul>
+<li>Numerator: <span class="math inline">\(\alpha = \phi \cdot v = \phi \cdot k^{-1}(e + r \cdot \mathrm{sk})\)</span></li>
+<li>Denominator: <span class="math inline">\(\beta = \phi \cdot 1 = \phi\)</span></li>
+</ul>
+<p>The signature <span class="math inline">\(S\)</span> is obtained as the ratio <span class="math inline">\(\alpha / \beta\)</span>. By working with these masked values, the protocol primarily involves secure multiplications and linear operations, avoiding explicit secure inversion within the core MPC protocol. The random mask <span class="math inline">\(\phi\)</span> ensures security and enables efficient verification.</p>
+</section>
+</section>
+</section>
+<section id="early-approaches-and-the-honest-majority-setting" class="level2">
+<h2 class="anchored" data-anchor-id="early-approaches-and-the-honest-majority-setting">Early Approaches and the Honest Majority Setting</h2>
+<p>Initial explorations into threshold ECDSA often operated under the assumption of an <strong>honest majority</strong>.</p>
+<p>In the <strong>honest majority setting</strong>, it’s assumed that a majority of participating parties are honest and will faithfully follow the protocol. This is a weaker adversary model compared to dishonest majority.</p>
+<p>This assumption significantly simplifies the design and analysis of MPC protocols. In honest majority settings, simpler MPC techniques and weaker security assumptions can often be tolerated.</p>
+<p>Early threshold ECDSA protocols, developed by Langford et al., Gennaro et al., and others, often leveraged the inverted nonce method and employed MPC techniques efficient in honest majority settings. These protocols demonstrated the feasibility of threshold ECDSA but were limited by their reliance on the honest majority assumption.</p>
+</section>
+<section id="dishonest-majority-approaches-and-the-landscape-of-tradeoffs" class="level2">
+<h2 class="anchored" data-anchor-id="dishonest-majority-approaches-and-the-landscape-of-tradeoffs">Dishonest Majority Approaches and the Landscape of Tradeoffs</h2>
+<p>To achieve security in more realistic scenarios, particularly in the <strong>dishonest majority setting</strong>, research shifted towards more sophisticated techniques. Protocols for dishonest majority must withstand malicious adversaries who can arbitrarily deviate from the protocol and potentially control a majority of participants.</p>
+<section id="multiplicative-shares-and-paillier-encryption-homomorphic-power" class="level3">
+<h3 class="anchored" data-anchor-id="multiplicative-shares-and-paillier-encryption-homomorphic-power">Multiplicative Shares and Paillier Encryption: Homomorphic Power</h3>
+<p>The approach of using <strong>multiplicative secret sharing</strong> with <strong>Paillier homomorphic encryption</strong> emerged as a significant technique for building dishonest majority threshold ECDSA protocols, employed in works by McKenzie-Writer and Gennaro-Goldfeder-Narayan-Boneh.</p>
+<p>This approach leverages multiplicative secret sharing to partially linearize the ECDSA signing equation and utilizes Paillier encryption’s additive homomorphic property to perform secure computations on encrypted shares. Paillier encryption allows addition of encrypted values and multiplication of an encrypted value by a public scalar without decryption.</p>
+<p>In threshold ECDSA, Paillier encryption facilitates secure multiplication and combination of secret shares. Parties can encrypt their shares and perform homomorphic operations to compute shares of products.</p>
+<p>However, Paillier encryption introduces significant computational overhead. Encryption and decryption operations are relatively expensive compared to operations in symmetric cryptography or elliptic curve operations. Lindell made notable optimizations to the Gennaro-Goldfeder-Narayan-Boneh protocol, but Paillier-based approaches generally trade security for increased computational complexity.</p>
+</section>
+<section id="ot-based-secure-multiplication-efficiency-focus" class="level3">
+<h3 class="anchored" data-anchor-id="ot-based-secure-multiplication-efficiency-focus">OT-based Secure Multiplication: Efficiency Focus</h3>
+<p>In contrast to Paillier-based methods, using <strong>Oblivious Transfer (OT)</strong> for secure multiplication offers different trade-offs, often prioritizing efficiency, as in the speaker’s work from 2018-2019.</p>
+<p>This approach combines multiplicative rewriting of ECDSA with OT-based <span class="math inline">\(\mathrm{2PMul}\)</span> protocols. OT-based <span class="math inline">\(\mathrm{2PMul}\)</span> can be significantly faster than Paillier-based approaches, especially using OT extension techniques.</p>
+<p>By employing OT for secure multiplication, researchers achieved a better balance between security and efficiency, with lower computational overhead and potentially lower latency. OT-based approaches represent a significant branch in threshold ECDSA evolution, focusing on practical efficiency while maintaining dishonest majority security.</p>
+</section>
+<section id="revisiting-inverted-nonce-and-verification-challenges" class="level3">
+<h3 class="anchored" data-anchor-id="revisiting-inverted-nonce-and-verification-challenges">Revisiting Inverted Nonce and Verification Challenges</h3>
+<p>The inverted nonce method continued to be explored for dishonest majority security. Gennaro and Goldfeder revisited this approach, while Kenetti-Gennaro-Goldfeder-Maclianis-Pellet incorporated <strong>zero-knowledge proofs</strong> for verification at each protocol step.</p>
+<p>Zero-knowledge proofs allow a party to prove computation correctness without revealing sensitive information. In threshold ECDSA, these proofs ensure honest behavior and correct execution. Parties can prove in zero-knowledge that they have correctly computed shares, performed multiplications accurately, and followed protocol specifications.</p>
+<p>While zero-knowledge proofs provide strong security guarantees, they introduce significant computational overhead. Generating and verifying these proofs can be expensive, and complexity scales with the computation being proven. Protocols heavily relying on zero-knowledge proofs for verification tend to be slower and less efficient than those using lighter-weight verification techniques.</p>
+</section>
+</section>
+<section id="dimensions-of-variation-a-comparative-landscape" class="level2">
+<h2 class="anchored" data-anchor-id="dimensions-of-variation-a-comparative-landscape">Dimensions of Variation: A Comparative Landscape</h2>
+<p>When comparing threshold ECDSA protocols, several key dimensions highlight different design choices and trade-offs.</p>
+<section id="ecdsa-rewriting-methods-shaping-the-computation" class="level3">
+<h3 class="anchored" data-anchor-id="ecdsa-rewriting-methods-shaping-the-computation">ECDSA Rewriting Methods: Shaping the Computation</h3>
+<p>The choice of <strong>ECDSA rewriting method</strong> significantly impacts the structure and efficiency of a protocol:</p>
+<ul>
+<li><p><strong>Inverted Nonce Method:</strong> Modifies nonce generation to use <span class="math inline">\(R = k^{-1} \cdot G\)</span>, shifting the inversion challenge but requiring techniques to handle inverted nonce generation securely</p></li>
+<li><p><strong>Multiplicative Rewriting:</strong> Breaks down the ECDSA signing equation into components expressible through multiplicative secret sharing, often combined with Paillier encryption or OT-based multiplication</p></li>
+<li><p><strong>ECDSA Tuple Method:</strong> Uses a random mask <span class="math inline">\(\phi\)</span> to rewrite the signing value as a ratio of masked numerator and denominator, creating a process relying primarily on secure multiplications and avoiding explicit inversions</p></li>
+</ul>
+</section>
+<section id="secure-multiplication-techniques-the-mpc-engine" class="level3">
+<h3 class="anchored" data-anchor-id="secure-multiplication-techniques-the-mpc-engine">Secure Multiplication Techniques: The MPC Engine</h3>
+<p>The choice of <strong>secure multiplication technique</strong> heavily influences efficiency and security:</p>
+<ul>
+<li><p><strong>Paillier Encryption-based <span class="math inline">\(\mathrm{2PMul}\)</span>:</strong> Uses Paillier encryption’s homomorphic properties for secure multiplication. While offering dishonest majority security, these methods can be computationally intensive</p></li>
+<li><p><strong>Oblivious Transfer (OT)-based <span class="math inline">\(\mathrm{2PMul}\)</span>:</strong> Employs OT protocols and extension techniques for efficient secure multiplication, often offering a better balance of efficiency and security</p></li>
+<li><p><strong>Generic MPC (Arithmetic Circuits):</strong> Expresses multiplication as an arithmetic circuit evaluated with generic MPC protocols, generally inefficient for ECDSA due to the complexity of modular operations</p></li>
+</ul>
+</section>
+<section id="verification-strategies-ensuring-correctness-in-mpc" class="level3">
+<h3 class="anchored" data-anchor-id="verification-strategies-ensuring-correctness-in-mpc">Verification Strategies: Ensuring Correctness in MPC</h3>
+<p>In dishonest majority settings, <strong>verification strategies</strong> ensure honest behavior and correct computation:</p>
+<ul>
+<li><p><strong>Checking Relations in the Exponent:</strong> Parties check publicly verifiable relationships between values, often in the exponent of elliptic curve groups</p></li>
+<li><p><strong>Interactive Signature Verification:</strong> Some protocols use interactive verification where parties collaboratively verify signature shares before revealing the final signature</p></li>
+<li><p><strong>Zero-Knowledge Proofs (ZKPs):</strong> Proving correctness of each step provides strong security and verifiability but introduces significant computational overhead</p></li>
+<li><p><strong>Committed Computation Replay:</strong> Performing computation twice—once in private MPC and again in committed form—then proving relationships between committed values</p></li>
+<li><p><strong>Message Authentication Codes (MACs):</strong> Generic MPC compilers often use MACs to ensure computation integrity</p></li>
+<li><p><strong>Statistical Consistency Checks:</strong> Lightweight checks leveraging probabilistic arguments to detect cheating with high probability, offering efficient verification with minimal overhead</p></li>
+</ul>
+<p>These dimensions provide a framework for analyzing the evolution of threshold ECDSA protocols towards more efficient, secure, and practical solutions.</p>
+</section>
+</section>
+</section>
+<section id="our-contribution-three-round-threshold-ecdsa-protocol" class="level1">
+<h1>Our Contribution: Three-Round Threshold ECDSA Protocol</h1>
+<p>Our work introduces a novel three-round threshold ECDSA protocol specifically designed for the dishonest majority setting. The protocol prioritizes simplicity and efficiency, minimizing communication rounds and computational overhead through two key innovations.</p>
+<section id="leveraging-the-ecdsa-tuple-method-for-efficient-mpc" class="level2">
+<h2 class="anchored" data-anchor-id="leveraging-the-ecdsa-tuple-method-for-efficient-mpc">Leveraging the ECDSA Tuple Method for Efficient MPC</h2>
+<p>Our protocol strategically employs the <strong>ECDSA tuple method</strong> as its foundation. This method transforms the inherently non-linear ECDSA signing equation into a form more amenable to efficient MPC, shifting the computational burden from expensive secure inversions towards secure multiplications that can be handled more efficiently.</p>
+<p>By adopting this approach, we construct a protocol that’s inherently streamlined for MPC. The signing process primarily involves linear operations and secure two-party multiplications (<span class="math inline">\(\mathrm{2PMul}\)</span>), making it well-suited for implementation using efficient MPC primitives. This strategic choice is crucial in achieving low-round complexity and minimizing computational cost.</p>
+</section>
+<section id="a-novel-statistical-consistency-check-for-lightweight-verification" class="level2">
+<h2 class="anchored" data-anchor-id="a-novel-statistical-consistency-check-for-lightweight-verification">A Novel Statistical Consistency Check for Lightweight Verification</h2>
+<p>A key contribution is our novel <strong>statistical consistency check</strong> for verification. Instead of complex zero-knowledge proofs or heavyweight MAC-based approaches, we introduce a simple and efficient pairwise check. This check provides probabilistic guarantees of correctness with overwhelmingly high probability while being significantly cheaper than deterministic methods.</p>
+</section>
+<section id="detailed-explanation-of-the-pairwise-verification-mechanism" class="level2">
+<h2 class="anchored" data-anchor-id="detailed-explanation-of-the-pairwise-verification-mechanism">Detailed Explanation of the Pairwise Verification Mechanism</h2>
+<p>Our pairwise verification mechanism ensures two critical properties:</p>
+<ol type="1">
+<li><p><strong>Consistency of the Random Mask <span class="math inline">\(\phi\)</span>:</strong> The security of the ECDSA tuple method relies on the random mask <span class="math inline">\(\phi\)</span> being consistently used across all related computations. The same <span class="math inline">\(\phi\)</span> must be employed in generating both <span class="math inline">\(\phi \cdot K\)</span> and <span class="math inline">\(\phi \cdot \mathrm{sk}\)</span> components.</p></li>
+<li><p><strong>Correctness of Discrete Logarithm Inputs in Multiplication:</strong> The protocol involves secure multiplications where one input is expected to be the discrete logarithm of a publicly known elliptic curve point. For instance, when computing <span class="math inline">\(\phi \cdot K\)</span>, we must verify that <span class="math inline">\(K\)</span> is indeed the discrete logarithm of the nonce point <span class="math inline">\(R = K \cdot G\)</span>. Similarly, for <span class="math inline">\(\phi \cdot \mathrm{sk}\)</span>, we need to ensure <span class="math inline">\(\mathrm{sk}\)</span> is the discrete logarithm of the public key <span class="math inline">\(\mathrm{pk} = \mathrm{sk} \cdot G\)</span>.</p></li>
+</ol>
+<p>Our pairwise verification mechanism efficiently addresses both requirements using a combination of protocol design and a lightweight statistical check.</p>
+<section id="ensuring-consistency-of-the-random-mask-phi-using-vole" class="level3">
+<h3 class="anchored" data-anchor-id="ensuring-consistency-of-the-random-mask-phi-using-vole">Ensuring Consistency of the Random Mask <span class="math inline">\(\phi\)</span> using VOLE</h3>
+<p>To guarantee the consistency of the random mask <span class="math inline">\(\phi\)</span> across multiple secure multiplications, our protocol leverages a property inherent in certain <span class="math inline">\(\mathrm{2PMul}\)</span> protocols, particularly those based on two-message Vector Oblivious Linear Evaluation (VOLE).</p>
+<p><strong>Vector Oblivious Linear Evaluation (VOLE)</strong> is a cryptographic primitive that allows for efficient generation of correlated random values. In our protocol, VOLE is used to ensure that the random mask <span class="math inline">\(\phi\)</span> is consistently used across multiple secure multiplications.</p>
+<p>Many efficient <span class="math inline">\(\mathrm{2PMul}\)</span> protocols are structured as two-message protocols. In such protocols, the first message sent by one party often depends solely on its input to the multiplication. This characteristic allows for a clever optimization to ensure <span class="math inline">\(\phi\)</span> consistency.</p>
+<p>Imagine two parties, Party A and Party B, engaging in <span class="math inline">\(\mathrm{2PMul}\)</span>. If Party A’s first message in the protocol is solely determined by its input, and Party A needs to multiply the same input (related to <span class="math inline">\(\phi\)</span>) with two different inputs from Party B (inputs related to <span class="math inline">\(K\)</span> and <span class="math inline">\(\mathrm{sk}\)</span>), Party A can simply reuse the same first message for both <span class="math inline">\(\mathrm{2PMul}\)</span> instances.</p>
+<p>By reusing the first message, Party A effectively commits to the same underlying input (related to <span class="math inline">\(\phi\)</span>) for both multiplications. Party B, upon receiving the same first message in both instances, is assured that Party A is using the same input. This inherent property provides a natural and efficient way to enforce the consistency of <span class="math inline">\(\phi\)</span> without requiring additional communication or complex mechanisms.</p>
+</section>
+<section id="statistical-verification-of-discrete-logarithm-inputs" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-verification-of-discrete-logarithm-inputs">Statistical Verification of Discrete Logarithm Inputs</h3>
+<p>The statistical consistency check is designed to verify that when a party claims to provide an input to a <span class="math inline">\(\mathrm{2PMul}\)</span> protocol that is supposed to be the discrete logarithm of a public elliptic curve point, they are indeed using the correct value. This is crucial for ensuring the integrity of the cryptographic operations.</p>
+<p>Let’s consider a simplified two-party scenario involving a “Phone” and a “Laptop” for illustration. Suppose the Phone party inputs a share of <span class="math inline">\(\phi\)</span>, denoted as <span class="math inline">\(\phi_{\text{phone}}\)</span>, and the Laptop party inputs a share of <span class="math inline">\(K\)</span>, denoted as <span class="math inline">\(K_{\text{laptop}}\)</span>, into a <span class="math inline">\(\mathrm{2PMul}\)</span> protocol. After execution, they obtain output shares, <span class="math inline">\(T_{\phi}\)</span> for the Phone and <span class="math inline">\(T_{K}\)</span> for the Laptop, such that <span class="math inline">\(T_{\phi} + T_{K} = \phi \cdot K\)</span>. The Laptop party claims that its input <span class="math inline">\(K_{\text{laptop}}\)</span> corresponds to a value <span class="math inline">\(K\)</span> which is the discrete logarithm of a public point <span class="math inline">\(R = K \cdot G\)</span>. We need to verify this claim.</p>
+<p>The verification process proceeds as follows:</p>
+<ol type="1">
+<li><p><strong>Exponentiation of Phone’s Share:</strong> The Phone party computes its share of the product in the exponent by performing elliptic curve scalar multiplication: <span class="math inline">\(\mathcal{T}_{\phi} = T_{\phi} \cdot G\)</span>, resulting in an elliptic curve point.</p></li>
+<li><p><strong>Exponentiation of Laptop’s Share:</strong> Similarly, the Laptop party computes its share in the exponent: <span class="math inline">\(\mathcal{T}_{K} = T_{K} \cdot G\)</span>.</p></li>
+<li><p><strong>Phone Computes Expected Value:</strong> The Phone party, knowing its share <span class="math inline">\(T_{\phi}\)</span> and the public point <span class="math inline">\(R = K \cdot G\)</span>, can compute the expected value in the exponent. Since <span class="math inline">\(T_{\phi} + T_{K} = \phi \cdot K\)</span>, ideally, <span class="math inline">\(\mathcal{T}_{\phi} + \mathcal{T}_{K} = (\phi \cdot K) \cdot G = \phi \cdot (K \cdot G) = \phi \cdot R\)</span>. The Phone can calculate the expected value of <span class="math inline">\(\mathcal{T}_{K}\)</span> as: <span class="math inline">\(\mathcal{T}_{K}^{\text{expected}} = (\phi \cdot R) - \mathcal{T}_{\phi}\)</span>.</p></li>
+<li><p><strong>Laptop Sends Actual Exponent Share:</strong> The Laptop sends its computed elliptic curve point <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}} = \mathcal{T}_{K}\)</span> to the Phone.</p></li>
+<li><p><strong>Verification Check:</strong> The Phone performs the statistical consistency check by comparing the expected value <span class="math inline">\(\mathcal{T}_{K}^{\text{expected}}\)</span> with the actual value <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}}\)</span>. If they are equal, the check passes, indicating a high probability of correctness. If not, the check fails, indicating a likely cheating attempt.</p></li>
+</ol>
+</section>
+<section id="security-analysis-of-the-statistical-check" class="level3">
+<h3 class="anchored" data-anchor-id="security-analysis-of-the-statistical-check">Security Analysis of the Statistical Check</h3>
+<p>The security of this statistical check hinges on the fact that if the Laptop attempts to cheat by providing an incorrect input <span class="math inline">\(K' = K + \delta\)</span> to the <span class="math inline">\(\mathrm{2PMul}\)</span> protocol (where <span class="math inline">\(\delta \neq 0\)</span>), it is overwhelmingly unlikely that they will pass the verification check.</p>
+<p>Let’s analyze a cheating scenario where the Laptop uses an incorrect input <span class="math inline">\(K' = K + \delta\)</span>. When the Phone computes the expected value <span class="math inline">\(\mathcal{T}_{K}^{\text{expected}} = (\phi \cdot R) - \mathcal{T}_{\phi}\)</span>, it assumes the Laptop used the correct input <span class="math inline">\(K\)</span>. However, if the Laptop used <span class="math inline">\(K' = K + \delta\)</span>, the actual value computed in the exponent will be <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}} = (T_{K}') \cdot G\)</span>, where <span class="math inline">\(T_{\phi} + T_{K}' = \phi \cdot K'\)</span>.</p>
+<p>Therefore: <span class="math inline">\(T_{K}' = \phi \cdot K' - T_{\phi} = \phi \cdot (K + \delta) - T_{\phi} = (\phi \cdot K - T_{\phi}) + \phi \cdot \delta = T_{K} + \phi \cdot \delta\)</span></p>
+<p>Thus, <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}} = (T_{K} + \phi \cdot \delta) \cdot G = \mathcal{T}_{K} + (\phi \cdot \delta) \cdot G = \mathcal{T}_{K} + (\phi \cdot G) \cdot \delta\)</span>.</p>
+<p>The expected value computed by the Phone is <span class="math inline">\(\mathcal{T}_{K}^{\text{expected}} = (\phi \cdot R) - \mathcal{T}_{\phi} = (\phi \cdot K) \cdot G - \mathcal{T}_{\phi} = \mathcal{T}_{K}\)</span>.</p>
+<p>The difference between actual and expected values is <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}} - \mathcal{T}_{K}^{\text{expected}} = (\phi \cdot \delta) \cdot G\)</span>. For the check to pass when cheating, the Laptop must make <span class="math inline">\(\mathcal{T}_{K}^{\text{actual}} = \mathcal{T}_{K}^{\text{expected}}\)</span>, meaning <span class="math inline">\((\phi \cdot \delta) \cdot G = 0\)</span>. Since <span class="math inline">\(G\)</span> is the generator of a group of order <span class="math inline">\(q\)</span>, and <span class="math inline">\(\delta \neq 0\)</span>, this equality holds only if <span class="math inline">\(\phi \cdot \delta \equiv 0 \pmod{q}\)</span>, or equivalently, <span class="math inline">\(\phi \equiv 0 \pmod{q}\)</span> (since <span class="math inline">\(\delta \not\equiv 0 \pmod{q}\)</span>).</p>
+<p>However, <span class="math inline">\(\phi\)</span> is chosen randomly from <span class="math inline">\(\mathbb{Z}_q\)</span>. The probability that a randomly chosen <span class="math inline">\(\phi \in \mathbb{Z}_q\)</span> equals <span class="math inline">\(0 \pmod{q}\)</span> is negligible, specifically <span class="math inline">\(1/q\)</span>. Since <span class="math inline">\(q\)</span> is a large prime (around <span class="math inline">\(2^{256}\)</span>), this probability is astronomically small (approximately <span class="math inline">\(2^{-256}\)</span>).</p>
+<p>Therefore, if the Laptop uses an incorrect input, the probability of passing the check is negligibly small. If it uses the correct input, the check always passes. This binary outcome makes the statistical check highly effective in practice.</p>
+<p>The random mask <span class="math inline">\(\phi\)</span> acts as an information-theoretic MAC on the secret values <span class="math inline">\(K\)</span> and <span class="math inline">\(\mathrm{sk}\)</span>. The check leverages $randomness to detect inconsistencies in the inputs to the secure multiplication, providing a lightweight yet robust verification mechanism.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/theghoul21\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Luca Simonetti</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
