@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Luca Simonetti">
-<meta name="dcterms.date" content="2025-07-11">
+<meta name="dcterms.date" content="2025-07-20">
 
 <title>Analyzing GRU Training Dynamics on the Adding Problem - Part 3 – L.</title>
 <style>
@@ -134,7 +134,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Analyzing GRU Training Dynamics on the Adding Problem - Part 2">
+<meta property="og:title" content="Analyzing GRU Training Dynamics on the Adding Problem - Part 3">
 <meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
 <meta property="og:image" content="https://theghoul21.github.io//images/dalle-gru.webp">
 <meta property="og:site_name" content="L.">
@@ -255,7 +255,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 11, 2025</p>
+        <p class="date">July 20, 2025</p>
       </div>
     </div>
     
@@ -596,7 +596,7 @@ x &amp;\approx 4.329y - 2.165
 </details>
 </div>
 <p>Let’s print the linear layer parameters we obtained from the training, and the handcrafted ones we calculated above. And see how they compare.</p>
-<div id="181e6256" class="cell" data-execution_count="2">
+<div id="2c76c2ae" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store values for display</span></span>
@@ -923,7 +923,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<div id="4c00fe79" class="cell" data-execution_count="5">
+<div id="544086f3" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store training dynamics results for display</span></span>
@@ -1031,7 +1031,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 <p>The results confirm our hypothesis dramatically! The model performs exceptionally well only on sequences of length 4 with exactly 2 flags - exactly what it was trained on.</p>
-<div id="e97827c9" class="cell" data-execution_count="7">
+<div id="4f2baec2" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store configuration results for display</span></span>
@@ -1146,7 +1146,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<div id="6fbedf92" class="cell" data-execution_count="9">
+<div id="5825e66c" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store information analysis results for display</span></span>
