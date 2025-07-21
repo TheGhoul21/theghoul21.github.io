@@ -275,20 +275,24 @@ window.Quarto = {
   <li><a href="#the-optimal-strategy" id="toc-the-optimal-strategy" class="nav-link" data-scroll-target="#the-optimal-strategy"><span class="header-section-number">2</span> The Optimal Strategy</a></li>
   <li><a href="#weight-evolution-analysis-over-training" id="toc-weight-evolution-analysis-over-training" class="nav-link" data-scroll-target="#weight-evolution-analysis-over-training"><span class="header-section-number">3</span> Weight Evolution Analysis Over Training</a></li>
   <li><a href="#training-dynamics-at-different-epochs" id="toc-training-dynamics-at-different-epochs" class="nav-link" data-scroll-target="#training-dynamics-at-different-epochs"><span class="header-section-number">4</span> Training Dynamics at Different Epochs</a></li>
-  <li><a href="#experimental-validation-testing-sequence-length-sensitivity" id="toc-experimental-validation-testing-sequence-length-sensitivity" class="nav-link" data-scroll-target="#experimental-validation-testing-sequence-length-sensitivity"><span class="header-section-number">5</span> Experimental Validation: Testing Sequence Length Sensitivity</a></li>
+  <li><a href="#experimental-validation-testing-sequence-length-sensitivity" id="toc-experimental-validation-testing-sequence-length-sensitivity" class="nav-link" data-scroll-target="#experimental-validation-testing-sequence-length-sensitivity"><span class="header-section-number">5</span> Experimental Validation: Testing Sequence Length Sensitivity</a>
+  <ul class="collapse">
+  <li><a href="#strategy-evolution-how-did-the-2-zeros-pattern-emerge" id="toc-strategy-evolution-how-did-the-2-zeros-pattern-emerge" class="nav-link" data-scroll-target="#strategy-evolution-how-did-the-2-zeros-pattern-emerge"><span class="header-section-number">5.1</span> Strategy Evolution: How Did the “2 Zeros” Pattern Emerge?</a></li>
+  <li><a href="#information-theoretic-perspective-why-2-zeros" id="toc-information-theoretic-perspective-why-2-zeros" class="nav-link" data-scroll-target="#information-theoretic-perspective-why-2-zeros"><span class="header-section-number">5.2</span> Information-Theoretic Perspective: Why “2 Zeros”?</a></li>
+  </ul></li>
   <li><a href="#the-mathematical-impossibility-of-general-addition-with-hidden-size-1" id="toc-the-mathematical-impossibility-of-general-addition-with-hidden-size-1" class="nav-link" data-scroll-target="#the-mathematical-impossibility-of-general-addition-with-hidden-size-1"><span class="header-section-number">6</span> The Mathematical Impossibility of General Addition with Hidden Size 1</a>
   <ul class="collapse">
   <li><a href="#information-theoretic-analysis" id="toc-information-theoretic-analysis" class="nav-link" data-scroll-target="#information-theoretic-analysis"><span class="header-section-number">6.1</span> Information Theoretic Analysis</a></li>
-  </ul></li>
-  <li><a href="#strategy-comparison-learned-vs-optimal" id="toc-strategy-comparison-learned-vs-optimal" class="nav-link" data-scroll-target="#strategy-comparison-learned-vs-optimal"><span class="header-section-number">7</span> Strategy Comparison: Learned vs Optimal</a>
+  <li><a href="#the-encoding-challenge" id="toc-the-encoding-challenge" class="nav-link" data-scroll-target="#the-encoding-challenge"><span class="header-section-number">6.2</span> The Encoding Challenge</a></li>
+  <li><a href="#can-we-handcraft-the-2-zeros-strategy" id="toc-can-we-handcraft-the-2-zeros-strategy" class="nav-link" data-scroll-target="#can-we-handcraft-the-2-zeros-strategy"><span class="header-section-number">6.3</span> Can We Handcraft the “2 Zeros” Strategy?</a>
   <ul class="collapse">
-  <li><a href="#the-learned-strategy-count-to-4-sum-2" id="toc-the-learned-strategy-count-to-4-sum-2" class="nav-link" data-scroll-target="#the-learned-strategy-count-to-4-sum-2"><span class="header-section-number">7.1</span> The Learned Strategy: “Count to 4, Sum 2”</a></li>
-  <li><a href="#analysis-of-the-learned-strategy" id="toc-analysis-of-the-learned-strategy" class="nav-link" data-scroll-target="#analysis-of-the-learned-strategy"><span class="header-section-number">7.2</span> Analysis of the Learned Strategy</a></li>
-  <li><a href="#handcrafted-weights-vs-learned-weights" id="toc-handcrafted-weights-vs-learned-weights" class="nav-link" data-scroll-target="#handcrafted-weights-vs-learned-weights"><span class="header-section-number">7.3</span> Handcrafted Weights vs Learned Weights</a></li>
+  <li><a href="#the-bit-packing-approach" id="toc-the-bit-packing-approach" class="nav-link" data-scroll-target="#the-bit-packing-approach"><span class="header-section-number">6.3.1</span> The Bit-Packing Approach</a></li>
+  <li><a href="#the-fundamental-impossibility" id="toc-the-fundamental-impossibility" class="nav-link" data-scroll-target="#the-fundamental-impossibility"><span class="header-section-number">6.3.2</span> The Fundamental Impossibility</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">8</span> Conclusion</a>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7</span> Conclusion</a>
   <ul class="collapse">
-  <li><a href="#coming-next" id="toc-coming-next" class="nav-link" data-scroll-target="#coming-next"><span class="header-section-number">8.1</span> Coming Next…</a></li>
+  <li><a href="#coming-next" id="toc-coming-next" class="nav-link" data-scroll-target="#coming-next"><span class="header-section-number">7.1</span> Coming Next…</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -308,6 +312,7 @@ window.Quarto = {
 </section>
 <section id="the-optimal-strategy" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> The Optimal Strategy</h1>
+<p>Before starting, let me be clear about what I’m attempting here: I want to explore whether we can handcraft weights that would theoretically solve the adding problem optimally. This is likely to be a challenging hypothesis that might not pan out, but it’s worth investigating to understand the mathematical constraints our GRU faced during training.</p>
 <p>Let’s remind briefly the equations that govern the GRU. The GRU is a recurrent neural network that uses gates to control the flow of information. The equations are as follows: Initially, for <span class="math inline">\(t = 0\)</span>, the output vector is <span class="math inline">\(h_0 = 0\)</span>.</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -317,14 +322,14 @@ r_t &amp;= \sigma(W_r x_t + U_r h_{t-1} + b_r) \\
 h_t &amp;= (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 \end{aligned}
 \]</span></p>
-<p>So let’s handcraft some weights that will solve the adding problem. We want this to act in a general way, so we want the GRU to be able to sum any number of elements in the input list. Let’s start from the simplest case, the case of a list of just one element. In this case, the GRU should just output the input element if it is marked with the <code>flag</code> flag, and zero otherwise.</p>
+<p>Let’s attempt to handcraft some weights that could theoretically solve the adding problem in a general way, allowing the GRU to sum any number of elements in the input list. Let’s start from the simplest case, the case of a list of just one element. In this case, the GRU should just output the input element if it is marked with the <code>flag</code> flag, and zero otherwise.</p>
 <p><span class="math display">\[\eqalign{
 input &amp;= \begin{bmatrix}
 37 &amp; 1 \\
 \end{bmatrix} \\
 }^T\]</span></p>
 <p>A naive approach would be that the hidden state <span class="math inline">\(h_t\)</span> accumulates the input element multiplying it by the flag, so that if the flag is 1, the input element is added to the hidden state, otherwise it is not. But, remember we have to deal with the activation functions, in this case the sigmoid function <span class="math inline">\(\sigma\)</span> and the hyperbolic tangent function <span class="math inline">\(\phi\)</span>. As a quick reminder, the sigmoid function squashes the input to the range [0, 1], while the hyperbolic tangent function squashes the input to the range [-1, 1]. So we have to take this into account when designing our weights. In our case we have that we sum a single number, so we can easily map back the output of the sigmoid function to the range of the input element. Remembering that <span class="math inline">\(\sigma(0) = 0.5\)</span> and <span class="math inline">\(\sigma(1) = 0.731\)</span>, we can map it back noticing that locally the sigmoid can be approximated as a linear function, a straight line more or less. So we could easily use this formula to get back our input element: Let’s say our number is 37 (normalized in the range [0, 1] as 0.37), then we can use the following weights: <span class="math display">\[
-\sigma(37) \approx 0.591458978
+\sigma(0.37) \approx 0.591458978
 \]</span></p>
 <p>Now if we use some math from middle school, we can easily see that if we draw a line between <span class="math inline">\(\sigma(0)\)</span> and <span class="math inline">\(\sigma(1)\)</span>, we can get the slope of the line, which is: <span class="math display">\[
 m = \frac{\sigma(1) - \sigma(0)}{1 - 0} = \frac{0.731 - 0.5}{1 - 0} = 0.231
@@ -596,7 +601,7 @@ x &amp;\approx 4.329y - 2.165
 </details>
 </div>
 <p>Let’s print the linear layer parameters we obtained from the training, and the handcrafted ones we calculated above. And see how they compare.</p>
-<div id="2c76c2ae" class="cell" data-execution_count="2">
+<div id="f8169388" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store values for display</span></span>
@@ -628,7 +633,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </section>
 <section id="weight-evolution-analysis-over-training" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Weight Evolution Analysis Over Training</h1>
-<p>Now let’s dive deeper into how the GRU actually learned this strategy. One of the key questions I posed at the beginning was: “How did the weights evolve over time?” To answer this, let’s examine the weight trajectories throughout training and see if we can identify critical moments where the learning strategy changed.</p>
+<p>Now let’s examine in detail how the GRU actually learned this strategy. One of the key questions I posed at the beginning was: “How did the weights evolve over time?” To answer this, let’s examine the weight trajectories throughout training and see if we can identify critical moments where the learning strategy changed.</p>
 <div id="weight-evolution-detailed" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
@@ -923,7 +928,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<div id="544086f3" class="cell" data-execution_count="5">
+<div id="56dceb12" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store training dynamics results for display</span></span>
@@ -1030,28 +1035,494 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<p>The results confirm our hypothesis dramatically! The model performs exceptionally well only on sequences of length 4 with exactly 2 flags - exactly what it was trained on.</p>
-<div id="4f2baec2" class="cell" data-execution_count="7">
+<p>The results reveal something fascinating! Looking at the performance patterns, we can see what the GRU actually learned:</p>
+<div id="8c5be3dc" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store configuration results for display</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>best_config_0 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'success_rate'</span>]}</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>best_config_1 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'success_rate'</span>]}</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>best_config_2 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'success_rate'</span>]}</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store configuration results for display and analyze the pattern</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>best_config_0 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'success_rate'</span>], <span class="st">'len'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'seq_len'</span>], <span class="st">'flags'</span>: best_configs.iloc[<span class="dv">0</span>][<span class="st">'num_flags'</span>]}</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>best_config_1 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'success_rate'</span>], <span class="st">'len'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'seq_len'</span>], <span class="st">'flags'</span>: best_configs.iloc[<span class="dv">1</span>][<span class="st">'num_flags'</span>]}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>best_config_2 <span class="op">=</span> {<span class="st">'error'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'success_rate'</span>], <span class="st">'len'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'seq_len'</span>], <span class="st">'flags'</span>: best_configs.iloc[<span class="dv">2</span>][<span class="st">'num_flags'</span>]}</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>worst_config_0 <span class="op">=</span> {<span class="st">'error'</span>: worst_configs.iloc[<span class="dv">0</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: worst_configs.iloc[<span class="dv">0</span>][<span class="st">'success_rate'</span>]}</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>worst_config_1 <span class="op">=</span> {<span class="st">'error'</span>: worst_configs.iloc[<span class="dv">1</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: worst_configs.iloc[<span class="dv">1</span>][<span class="st">'success_rate'</span>]}</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>worst_config_2 <span class="op">=</span> {<span class="st">'error'</span>: worst_configs.iloc[<span class="dv">2</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: worst_configs.iloc[<span class="dv">2</span>][<span class="st">'success_rate'</span>]}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>worst_config_2 <span class="op">=</span> {<span class="st">'error'</span>: worst_configs.iloc[<span class="dv">2</span>][<span class="st">'avg_error'</span>], <span class="st">'success'</span>: worst_configs.iloc[<span class="dv">2</span>][<span class="st">'success_rate'</span>]}</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate zeros for best performing configs</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>zeros_0 <span class="op">=</span> <span class="bu">int</span>(best_config_0[<span class="st">'len'</span>] <span class="op">-</span> best_config_0[<span class="st">'flags'</span>])</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>zeros_1 <span class="op">=</span> <span class="bu">int</span>(best_config_1[<span class="st">'len'</span>] <span class="op">-</span> best_config_1[<span class="st">'flags'</span>]) </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>zeros_2 <span class="op">=</span> <span class="bu">int</span>(best_config_2[<span class="st">'len'</span>] <span class="op">-</span> best_config_2[<span class="st">'flags'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p><strong>Best Performance Configurations:</strong> - Length 4, 2 flags: 0.006 error, 100.0% success - Length 4, 3 flags: 0.009 error, 100.0% success<br>
-- Length 4, 1 flag: 0.019 error, 100.0% success</p>
+<p><strong>Best Performance Configurations:</strong> - Length 5, 3 flags (2 zeros): 0.006 error, 100.0% success - Length 4, 2 flags (2 zeros): 0.009 error, 100.0% success<br>
+- Length 6, 4 flags (2 zeros): 0.019 error, 100.0% success</p>
 <p><strong>Worst Performance Configurations:</strong> - Length 8, 4 flags: 5.637 error, 0.0% success - Length 7, 4 flags: 5.118 error, 0.0% success - Length 6, 4 flags: 2.929 error, 0.0% success</p>
-<p>This reveals the fundamental limitation of training a hidden-size-1 GRU on such a constrained dataset.</p>
+<p><strong>The Hidden Pattern</strong>: The GRU didn’t learn to “count to 4, sum 2 elements” as we thought. It learned to expect <strong>exactly 2 elements with flag=0</strong>! Notice how all the best-performing configurations have exactly 2 zeros, while everything else fails catastrophically (success rates near 0%). Even (3,1) with 2 zeros performs reasonably well (0.09 error, 70% success) compared to other configurations that completely fail.</p>
+<p>This completely changes our understanding - the model is sensitive to the number of <em>unflagged</em> elements, not flagged ones. It’s counting the zeros!</p>
+<section id="strategy-evolution-how-did-the-2-zeros-pattern-emerge" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="strategy-evolution-how-did-the-2-zeros-pattern-emerge"><span class="header-section-number">5.1</span> Strategy Evolution: How Did the “2 Zeros” Pattern Emerge?</h2>
+<p>Now let’s investigate whether this “2 zeros” specialization was always present or emerged during training. Did the model start with a different strategy that worked better on other configurations?</p>
+<div id="strategy-evolution-analysis" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_epoch_strategies():</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Test different sequence configurations at various training epochs"""</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test configurations with different zero counts</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    test_configs <span class="op">=</span> [</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>], [<span class="dv">40</span>, <span class="dv">0</span>], [<span class="dv">50</span>, <span class="dv">0</span>]),  <span class="co"># 4 len, 2 flags, 2 zeros</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>], [<span class="dv">40</span>, <span class="dv">1</span>], [<span class="dv">50</span>, <span class="dv">0</span>]),  <span class="co"># 4 len, 3 flags, 1 zero</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">0</span>], [<span class="dv">40</span>, <span class="dv">0</span>]),           <span class="co"># 3 len, 1 flag, 2 zeros</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>], [<span class="dv">40</span>, <span class="dv">1</span>], [<span class="dv">50</span>, <span class="dv">1</span>], [<span class="dv">60</span>, <span class="dv">0</span>]),  <span class="co"># 5 len, 4 flags, 1 zero</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>], [<span class="dv">40</span>, <span class="dv">0</span>], [<span class="dv">50</span>, <span class="dv">0</span>], [<span class="dv">60</span>, <span class="dv">0</span>]),  <span class="co"># 5 len, 2 flags, 3 zeros</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    config_names <span class="op">=</span> [<span class="st">'(4,2)-2zeros'</span>, <span class="st">'(4,3)-1zero'</span>, <span class="st">'(3,1)-2zeros'</span>, <span class="st">'(5,4)-1zero'</span>, <span class="st">'(5,2)-3zeros'</span>]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    expected_outputs <span class="op">=</span> [<span class="dv">50</span>, <span class="dv">70</span>, <span class="dv">20</span>, <span class="dv">130</span>, <span class="dv">50</span>]  <span class="co"># Expected sums</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test at key epochs</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    key_epochs <span class="op">=</span> [<span class="dv">0</span>, <span class="bu">len</span>(all_weights)<span class="op">//</span><span class="dv">4</span>, <span class="bu">len</span>(all_weights)<span class="op">//</span><span class="dv">2</span>, <span class="bu">len</span>(all_weights)<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch_idx <span class="kw">in</span> key_epochs:</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        epoch_weights <span class="op">=</span> all_weights[epoch_idx]</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        epoch_num <span class="op">=</span> epoch_idx <span class="op">*</span> <span class="dv">49</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> config_idx, (config, config_name, expected) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(test_configs, config_names, expected_outputs)):</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Create test tensor</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            test_tensor <span class="op">=</span> torch.tensor(config).<span class="bu">float</span>().unsqueeze(<span class="dv">0</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            test_tensor[:, :, <span class="dv">0</span>] <span class="op">/=</span> HIGH</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Simulate forward pass with epoch weights</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="kw">def</span> simulate_epoch_forward(seq, weights):</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                W_ih <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.weight_ih_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                W_hh <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.weight_hh_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                b_ih <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.bias_ih_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>                b_hh <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.bias_hh_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>                W_linear <span class="op">=</span> torch.tensor(weights[<span class="st">'linear.weight'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>                b_linear <span class="op">=</span> torch.tensor(weights[<span class="st">'linear.bias'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>                h <span class="op">=</span> torch.zeros(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(seq.shape[<span class="dv">1</span>]):</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                    x_t <span class="op">=</span> seq[:, t, :].unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Compute gates</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                    gi <span class="op">=</span> torch.matmul(x_t, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                    gh <span class="op">=</span> torch.matmul(h, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>                    i_r, i_z, i_n <span class="op">=</span> gi.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>                    h_r, h_z, h_n <span class="op">=</span> gh.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>                    resetgate <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                    updategate <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                    newgate <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate <span class="op">*</span> h_n))</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>                    h <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate) <span class="op">*</span> newgate <span class="op">+</span> updategate <span class="op">*</span> h</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Final output</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                output <span class="op">=</span> (h <span class="op">@</span> W_linear.T <span class="op">+</span> b_linear).item() <span class="op">*</span> HIGH</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> output</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>            prediction <span class="op">=</span> simulate_epoch_forward(test_tensor, epoch_weights)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>            error <span class="op">=</span> <span class="bu">abs</span>(prediction <span class="op">-</span> expected) <span class="op">/</span> expected</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">'epoch'</span>: epoch_num,</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>                <span class="st">'config'</span>: config_name,</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">'prediction'</span>: prediction,</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>                <span class="st">'expected'</span>: expected,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>                <span class="st">'error'</span>: error</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the analysis</span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>epoch_strategy_results <span class="op">=</span> test_epoch_strategies()</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">6</span>))</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Error evolution for each configuration</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>configs <span class="op">=</span> epoch_strategy_results[<span class="st">'config'</span>].unique()</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="bu">sorted</span>(epoch_strategy_results[<span class="st">'epoch'</span>].unique())</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> config <span class="kw">in</span> configs:</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>    config_data <span class="op">=</span> epoch_strategy_results[epoch_strategy_results[<span class="st">'config'</span>] <span class="op">==</span> config]</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].plot(config_data[<span class="st">'epoch'</span>], config_data[<span class="st">'error'</span>], </span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'o'</span>, label<span class="op">=</span>config, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Relative Error'</span>)</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">'Strategy Evolution: Error by Configuration'</span>)</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend()</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: Predictions vs expected for final epoch</span></span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>final_epoch_data <span class="op">=</span> epoch_strategy_results[epoch_strategy_results[<span class="st">'epoch'</span>] <span class="op">==</span> <span class="bu">max</span>(epochs)]</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>x_pos <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(final_epoch_data))</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar([i <span class="op">-</span> <span class="fl">0.2</span> <span class="cf">for</span> i <span class="kw">in</span> x_pos], final_epoch_data[<span class="st">'prediction'</span>], </span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>           width<span class="op">=</span><span class="fl">0.4</span>, label<span class="op">=</span><span class="st">'Predicted'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar([i <span class="op">+</span> <span class="fl">0.2</span> <span class="cf">for</span> i <span class="kw">in</span> x_pos], final_epoch_data[<span class="st">'expected'</span>], </span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>           width<span class="op">=</span><span class="fl">0.4</span>, label<span class="op">=</span><span class="st">'Expected'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">'Configuration'</span>)</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">'Output Value'</span>)</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">'Final Epoch: Predictions vs Expected'</span>)</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xticks(x_pos)</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xticklabels(final_epoch_data[<span class="st">'config'</span>], rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend()</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Create comprehensive epoch analysis with systematic testing</span></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprehensive_epoch_analysis():</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Test all sequence length/flag combinations across epochs"""</span></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>    key_epochs <span class="op">=</span> [<span class="dv">0</span>, <span class="bu">len</span>(all_weights)<span class="op">//</span><span class="dv">4</span>, <span class="bu">len</span>(all_weights)<span class="op">//</span><span class="dv">2</span>, <span class="bu">len</span>(all_weights)<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch_idx <span class="kw">in</span> key_epochs:</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>        epoch_weights <span class="op">=</span> all_weights[epoch_idx]</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>        epoch_num <span class="op">=</span> epoch_idx <span class="op">*</span> <span class="dv">49</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Test all configurations from the original analysis</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> seq_len <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">7</span>):  <span class="co"># lengths 2-6</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> num_flags <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">min</span>(seq_len <span class="op">+</span> <span class="dv">1</span>, <span class="dv">4</span>)):  <span class="co"># 1-3 flags</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Generate multiple test cases for this configuration</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>                errors <span class="op">=</span> []</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):  <span class="co"># 10 test cases per config</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Generate random sequence</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>                    values <span class="op">=</span> np.random.randint(<span class="dv">10</span>, <span class="dv">90</span>, seq_len)</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>                    flags <span class="op">=</span> np.zeros(seq_len)</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Randomly place flags</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>                    flag_positions <span class="op">=</span> np.random.choice(seq_len, size<span class="op">=</span>num_flags, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>                    flags[flag_positions] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Create input tensor</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>                    test_seq <span class="op">=</span> np.column_stack([values, flags])</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>                    test_tensor <span class="op">=</span> torch.tensor(test_seq).<span class="bu">float</span>().unsqueeze(<span class="dv">0</span>)</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>                    test_tensor[:, :, <span class="dv">0</span>] <span class="op">/=</span> HIGH</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Expected output</span></span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>                    expected <span class="op">=</span> np.<span class="bu">sum</span>(values[flag_positions])</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Simulate with epoch weights</span></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">def</span> simulate_epoch_forward(seq, weights):</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>                        W_ih <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.weight_ih_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>                        W_hh <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.weight_hh_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>                        b_ih <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.bias_ih_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>                        b_hh <span class="op">=</span> torch.tensor(weights[<span class="st">'gru.bias_hh_l0'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>                        W_linear <span class="op">=</span> torch.tensor(weights[<span class="st">'linear.weight'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>                        b_linear <span class="op">=</span> torch.tensor(weights[<span class="st">'linear.bias'</span>]).<span class="bu">float</span>()</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>                        h <span class="op">=</span> torch.zeros(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(seq.shape[<span class="dv">1</span>]):</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>                            x_t <span class="op">=</span> seq[:, t, :].unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>                            gi <span class="op">=</span> torch.matmul(x_t, W_ih.t()) <span class="op">+</span> b_ih</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>                            gh <span class="op">=</span> torch.matmul(h, W_hh.t()) <span class="op">+</span> b_hh</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>                            i_r, i_z, i_n <span class="op">=</span> gi.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>                            h_r, h_z, h_n <span class="op">=</span> gh.chunk(<span class="dv">3</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>                            resetgate <span class="op">=</span> torch.sigmoid(i_r <span class="op">+</span> h_r)</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>                            updategate <span class="op">=</span> torch.sigmoid(i_z <span class="op">+</span> h_z)</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>                            newgate <span class="op">=</span> torch.tanh(i_n <span class="op">+</span> (resetgate <span class="op">*</span> h_n))</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>                            h <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> updategate) <span class="op">*</span> newgate <span class="op">+</span> updategate <span class="op">*</span> h</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>                        output <span class="op">=</span> (h <span class="op">@</span> W_linear.T <span class="op">+</span> b_linear).item() <span class="op">*</span> HIGH</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">return</span> output</span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">try</span>:</span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>                        prediction <span class="op">=</span> simulate_epoch_forward(test_tensor, epoch_weights)</span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>                        error <span class="op">=</span> <span class="bu">abs</span>(prediction <span class="op">-</span> expected) <span class="op">/</span> <span class="bu">max</span>(expected, <span class="dv">1</span>)</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>                        errors.append(error)</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">except</span>:</span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>                        errors.append(<span class="bu">float</span>(<span class="st">'inf'</span>))</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>                avg_error <span class="op">=</span> np.mean(errors)</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>                success_rate <span class="op">=</span> np.mean([e <span class="op">&lt;</span> <span class="fl">0.1</span> <span class="cf">for</span> e <span class="kw">in</span> errors])</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>                results.append({</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'epoch'</span>: epoch_num,</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'seq_len'</span>: seq_len,</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'num_flags'</span>: num_flags,</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'num_zeros'</span>: seq_len <span class="op">-</span> num_flags,</span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'avg_error'</span>: avg_error,</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'success_rate'</span>: success_rate</span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>                })</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a><span class="co"># Run comprehensive analysis</span></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>epoch_results_df <span class="op">=</span> comprehensive_epoch_analysis()</span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a><span class="co"># Create epoch-by-epoch heatmaps like the original analysis</span></span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="bu">sorted</span>(epoch_results_df[<span class="st">'epoch'</span>].unique())</span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="bu">len</span>(epochs), <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span> <span class="op">*</span> <span class="bu">len</span>(epochs)))</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(epochs) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>    axes <span class="op">=</span> axes.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, epoch <span class="kw">in</span> <span class="bu">enumerate</span>(epochs):</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>    epoch_data <span class="op">=</span> epoch_results_df[epoch_results_df[<span class="st">'epoch'</span>] <span class="op">==</span> epoch]</span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Error heatmap</span></span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>    pivot_error <span class="op">=</span> epoch_data.pivot(index<span class="op">=</span><span class="st">'num_flags'</span>, columns<span class="op">=</span><span class="st">'seq_len'</span>, values<span class="op">=</span><span class="st">'avg_error'</span>)</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(pivot_error, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'.2f'</span>, cmap<span class="op">=</span><span class="st">'Reds'</span>, ax<span class="op">=</span>axes[i, <span class="dv">0</span>], </span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>                cbar_kws<span class="op">=</span>{<span class="st">'label'</span>: <span class="st">'Average Relative Error'</span>}, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">0</span>].set_title(<span class="ss">f'Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">: Average Relative Error'</span>)</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">0</span>].set_xlabel(<span class="st">'Sequence Length'</span>)</span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">0</span>].set_ylabel(<span class="st">'Number of Flags'</span>)</span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Success rate heatmap  </span></span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a>    pivot_success <span class="op">=</span> epoch_data.pivot(index<span class="op">=</span><span class="st">'num_flags'</span>, columns<span class="op">=</span><span class="st">'seq_len'</span>, values<span class="op">=</span><span class="st">'success_rate'</span>)</span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(pivot_success, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'.2f'</span>, cmap<span class="op">=</span><span class="st">'Greens'</span>, ax<span class="op">=</span>axes[i, <span class="dv">1</span>],</span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a>                cbar_kws<span class="op">=</span>{<span class="st">'label'</span>: <span class="st">'Success Rate'</span>}, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">1</span>].set_title(<span class="ss">f'Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">: Success Rate'</span>)</span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">1</span>].set_xlabel(<span class="st">'Sequence Length'</span>)</span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a>    axes[i, <span class="dv">1</span>].set_ylabel(<span class="st">'Number of Flags'</span>)</span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze the evolution of the "2 zeros" advantage</span></span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a>two_zeros_evolution <span class="op">=</span> []</span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>other_configs_evolution <span class="op">=</span> []</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> epochs:</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>    epoch_data <span class="op">=</span> epoch_results_df[epoch_results_df[<span class="st">'epoch'</span>] <span class="op">==</span> epoch]</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>    two_zeros_data <span class="op">=</span> epoch_data[epoch_data[<span class="st">'num_zeros'</span>] <span class="op">==</span> <span class="dv">2</span>]</span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>    other_data <span class="op">=</span> epoch_data[epoch_data[<span class="st">'num_zeros'</span>] <span class="op">!=</span> <span class="dv">2</span>]</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(two_zeros_data) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>        two_zeros_evolution.append({</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>            <span class="st">'epoch'</span>: epoch,</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a>            <span class="st">'avg_error'</span>: two_zeros_data[<span class="st">'avg_error'</span>].mean(),</span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>            <span class="st">'avg_success'</span>: two_zeros_data[<span class="st">'success_rate'</span>].mean()</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(other_data) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a>        other_configs_evolution.append({</span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a>            <span class="st">'epoch'</span>: epoch,</span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a>            <span class="st">'avg_error'</span>: other_data[<span class="st">'avg_error'</span>].mean(),</span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a>            <span class="st">'avg_success'</span>: other_data[<span class="st">'success_rate'</span>].mean()</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot evolution comparison</span></span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a><span class="co"># Error evolution</span></span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> two_zeros_evolution <span class="kw">and</span> other_configs_evolution:</span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a>    epochs_list <span class="op">=</span> [d[<span class="st">'epoch'</span>] <span class="cf">for</span> d <span class="kw">in</span> two_zeros_evolution]</span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a>    two_zeros_errors <span class="op">=</span> [d[<span class="st">'avg_error'</span>] <span class="cf">for</span> d <span class="kw">in</span> two_zeros_evolution]</span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a>    other_errors <span class="op">=</span> [d[<span class="st">'avg_error'</span>] <span class="cf">for</span> d <span class="kw">in</span> other_configs_evolution]</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].plot(epochs_list, two_zeros_errors, <span class="st">'ro-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>, label<span class="op">=</span><span class="st">'2 Zeros Configs'</span>)</span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].plot(epochs_list, other_errors, <span class="st">'bo-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>, label<span class="op">=</span><span class="st">'Other Configs'</span>)</span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Average Relative Error'</span>) </span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="st">'Evolution of Performance: 2 Zeros vs Others'</span>)</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].legend()</span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Success rate evolution</span></span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>    two_zeros_success <span class="op">=</span> [d[<span class="st">'avg_success'</span>] <span class="cf">for</span> d <span class="kw">in</span> two_zeros_evolution]</span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a>    other_success <span class="op">=</span> [d[<span class="st">'avg_success'</span>] <span class="cf">for</span> d <span class="kw">in</span> other_configs_evolution]</span>
+<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].plot(epochs_list, two_zeros_success, <span class="st">'ro-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>, label<span class="op">=</span><span class="st">'2 Zeros Configs'</span>)</span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].plot(epochs_list, other_success, <span class="st">'bo-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>, label<span class="op">=</span><span class="st">'Other Configs'</span>)</span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_ylabel(<span class="st">'Average Success Rate'</span>)</span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="st">'Evolution of Success Rate: 2 Zeros vs Others'</span>)</span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].legend()</span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="strategy-evolution-analysis-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part3_files/figure-html/strategy-evolution-analysis-output-1.png" width="1428" height="565" class="figure-img"></p>
+<figcaption>Evolution of Strategy Across Training Epochs</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part3_files/figure-html/strategy-evolution-analysis-output-2.png" id="strategy-evolution-analysis-2" width="1127" height="1524" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="adding-problem-part3_files/figure-html/strategy-evolution-analysis-output-3.png" id="strategy-evolution-analysis-3" width="1428" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The epoch-by-epoch analysis reveals a fascinating transition around epoch 735, where the model shows distributed performance across many configurations rather than sharp specialization. At this critical point:</p>
+<ul>
+<li>The “2 zeros” pattern (4,2) shows 70% success rate but isn’t yet dominant</li>
+<li>Other configurations like (2,1) and (3,2) still achieve 40% success rates</li>
+<li>The model appears to be “choosing” between strategies rather than having fully committed</li>
+</ul>
+<p>This represents the exact moment where learning dynamics shift from general exploration to specialized focus. The model hasn’t yet abandoned alternative strategies but is beginning to favor the information-optimal “2 zeros” configurations. This critical transition point demonstrates that the specialization developed as an emergent property during training rather than being present from initialization.</p>
+</section>
+<section id="information-theoretic-perspective-why-2-zeros" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="information-theoretic-perspective-why-2-zeros"><span class="header-section-number">5.2</span> Information-Theoretic Perspective: Why “2 Zeros”?</h2>
+<p>The “2 zeros” pattern isn’t arbitrary - it’s deeply connected to information theory. Let’s analyze this from a Shannon entropy perspective:</p>
+<div id="cell-information-entropy-analysis" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_information_content():</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze the information content of different sequence configurations"""</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Analyze configurations with different zero patterns</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> seq_len <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>, <span class="dv">8</span>):</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> num_flags <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">min</span>(seq_len, <span class="dv">5</span>)):</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            num_zeros <span class="op">=</span> seq_len <span class="op">-</span> num_flags</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Shannon entropy of the flag pattern</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> num_flags <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> num_zeros <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                entropy <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                p_flag <span class="op">=</span> num_flags <span class="op">/</span> seq_len</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>                p_zero <span class="op">=</span> num_zeros <span class="op">/</span> seq_len</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>                entropy <span class="op">=</span> <span class="op">-</span>(p_flag <span class="op">*</span> np.log2(p_flag) <span class="op">+</span> p_zero <span class="op">*</span> np.log2(p_zero))</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Information content (surprisal) of having exactly this configuration</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Assuming uniform random placement of flags</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="im">from</span> math <span class="im">import</span> comb</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            total_arrangements <span class="op">=</span> comb(seq_len, num_flags)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            surprisal <span class="op">=</span> <span class="op">-</span>np.log2(<span class="dv">1</span><span class="op">/</span>total_arrangements) <span class="cf">if</span> total_arrangements <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Complexity metric: how "structured" vs "random" the pattern is</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Perfect balance (close to 50/50) = low complexity, extreme ratios = high complexity</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>            balance <span class="op">=</span> <span class="bu">abs</span>(<span class="fl">0.5</span> <span class="op">-</span> p_flag) <span class="op">*</span> <span class="dv">2</span>  <span class="co"># 0 = perfectly balanced, 1 = completely imbalanced</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>                <span class="st">'seq_len'</span>: seq_len,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>                <span class="st">'num_flags'</span>: num_flags,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">'num_zeros'</span>: num_zeros,</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">'entropy'</span>: entropy,</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">'surprisal'</span>: surprisal,</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'balance'</span>: balance,</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">'is_2_zeros'</span>: num_zeros <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>info_results <span class="op">=</span> analyze_information_content()</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Entropy vs sequence length, colored by zeros</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>scatter <span class="op">=</span> axes[<span class="dv">0</span>, <span class="dv">0</span>].scatter(info_results[<span class="st">'seq_len'</span>], info_results[<span class="st">'entropy'</span>], </span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>                            c<span class="op">=</span>info_results[<span class="st">'num_zeros'</span>], cmap<span class="op">=</span><span class="st">'viridis'</span>, </span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>                            s<span class="op">=</span><span class="dv">60</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].set_xlabel(<span class="st">'Sequence Length'</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].set_ylabel(<span class="st">'Shannon Entropy'</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].set_title(<span class="st">'Shannon Entropy by Configuration'</span>)</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>plt.colorbar(scatter, ax<span class="op">=</span>axes[<span class="dv">0</span>, <span class="dv">0</span>], label<span class="op">=</span><span class="st">'Number of Zeros'</span>)</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight 2-zeros configurations</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>two_zeros <span class="op">=</span> info_results[info_results[<span class="st">'is_2_zeros'</span>]]</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].scatter(two_zeros[<span class="st">'seq_len'</span>], two_zeros[<span class="st">'entropy'</span>], </span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>                  color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, marker<span class="op">=</span><span class="st">'x'</span>, linewidth<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>                  label<span class="op">=</span><span class="st">'2 Zeros (GRU Optimum)'</span>)</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].legend()</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: Information surprisal</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].scatter(info_results[<span class="st">'seq_len'</span>], info_results[<span class="st">'surprisal'</span>], </span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>                  c<span class="op">=</span>info_results[<span class="st">'num_zeros'</span>], cmap<span class="op">=</span><span class="st">'viridis'</span>, s<span class="op">=</span><span class="dv">60</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].scatter(two_zeros[<span class="st">'seq_len'</span>], two_zeros[<span class="st">'surprisal'</span>], </span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>                  color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, marker<span class="op">=</span><span class="st">'x'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].set_xlabel(<span class="st">'Sequence Length'</span>)</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].set_ylabel(<span class="st">'Information Surprisal (bits)'</span>)</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].set_title(<span class="st">'Information Surprisal by Configuration'</span>)</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3: Balance metric</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].scatter(info_results[<span class="st">'seq_len'</span>], info_results[<span class="st">'balance'</span>], </span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>                  c<span class="op">=</span>info_results[<span class="st">'num_zeros'</span>], cmap<span class="op">=</span><span class="st">'viridis'</span>, s<span class="op">=</span><span class="dv">60</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].scatter(two_zeros[<span class="st">'seq_len'</span>], two_zeros[<span class="st">'balance'</span>], </span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>                  color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, marker<span class="op">=</span><span class="st">'x'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].set_xlabel(<span class="st">'Sequence Length'</span>)</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].set_ylabel(<span class="st">'Balance Metric (0=balanced, 1=imbalanced)'</span>)</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].set_title(<span class="st">'Flag/Zero Balance by Configuration'</span>)</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 4: 2D entropy vs balance, highlighting 2-zeros</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].scatter(info_results[<span class="st">'entropy'</span>], info_results[<span class="st">'balance'</span>], </span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>                  c<span class="op">=</span>info_results[<span class="st">'num_zeros'</span>], cmap<span class="op">=</span><span class="st">'viridis'</span>, s<span class="op">=</span><span class="dv">60</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].scatter(two_zeros[<span class="st">'entropy'</span>], two_zeros[<span class="st">'balance'</span>], </span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>                  color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, marker<span class="op">=</span><span class="st">'x'</span>, linewidth<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].set_xlabel(<span class="st">'Shannon Entropy'</span>)</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].set_ylabel(<span class="st">'Balance Metric'</span>)</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].set_title(<span class="st">'Information Content vs Balance'</span>)</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze the 2-zeros pattern specifically</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Information Analysis of '2 Zeros' Pattern:"</span>)</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average entropy for 2-zeros configs: </span><span class="sc">{</span>two_zeros[<span class="st">'entropy'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss"> bits"</span>)</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average entropy for other configs: </span><span class="sc">{</span>info_results[<span class="op">~</span>info_results[<span class="st">'is_2_zeros'</span>]][<span class="st">'entropy'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss"> bits"</span>)</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average balance for 2-zeros configs: </span><span class="sc">{</span>two_zeros[<span class="st">'balance'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average balance for other configs: </span><span class="sc">{</span>info_results[<span class="op">~</span>info_results[<span class="st">'is_2_zeros'</span>]][<span class="st">'balance'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="co"># return info_results</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>info_analysis <span class="op">=</span> analyze_information_content()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="information-entropy-analysis" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part3_files/figure-html/information-entropy-analysis-output-1.png" width="1429" height="948" class="figure-img"></p>
+<figcaption>Information Content Analysis of Different Configurations</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Information Analysis of '2 Zeros' Pattern:
+Average entropy for 2-zeros configs: 0.952 bits
+Average entropy for other configs: 0.842 bits
+Average balance for 2-zeros configs: 0.217
+Average balance for other configs: 0.397</code></pre>
+</div>
+</div>
+<p><strong>The Information-Theoretic Insight</strong>: The “2 zeros” pattern represents configurations with <strong>optimal information balance</strong>. These configurations tend to have:</p>
+<ol type="1">
+<li><strong>Moderate Shannon entropy</strong> - not too predictable (all zeros/ones) but not too chaotic</li>
+<li><strong>Balanced flag/zero ratios</strong> - closer to 50/50 distributions which maximize information content</li>
+<li><strong>Consistent information load</strong> - the GRU can reliably encode this amount of structural information</li>
+</ol>
+<p>This suggests the GRU didn’t just randomly specialize - it found the <strong>information sweet spot</strong> that its single hidden unit could reliably process. The “2 zeros” pattern has just the right amount of structure vs.&nbsp;randomness for a constrained architecture to handle consistently.</p>
+</section>
 </section>
 <section id="the-mathematical-impossibility-of-general-addition-with-hidden-size-1" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> The Mathematical Impossibility of General Addition with Hidden Size 1</h1>
-<p>Let’s dive deeper into why a hidden state of size 1 fundamentally cannot solve the general adding problem. This isn’t just an empirical observation - it’s a mathematical impossibility.</p>
+<p>Let’s examine why a hidden state of size 1 fundamentally cannot solve the general adding problem. This isn’t just an empirical observation - it’s a mathematical impossibility.</p>
 <section id="information-theoretic-analysis" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="information-theoretic-analysis"><span class="header-section-number">6.1</span> Information Theoretic Analysis</h2>
 <p>Consider what information the hidden state must encode to solve the general adding problem:</p>
@@ -1066,76 +1537,85 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 <li>Position: From 0 to <span class="math inline">\(n\)</span></li>
 <li>Flag count: From 0 to <span class="math inline">\(k\)</span></li>
 </ul>
-<div id="cell-information-theory-analysis" class="cell" data-execution_count="8">
+<div id="cell-information-theory-analysis" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_information_requirements():</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze the information requirements for different problem configurations"""</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    max_value <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> max_seq_len <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>]:</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> max_flags <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>]:</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> max_flags <span class="op">&lt;=</span> max_seq_len:</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Calculate information requirements</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                max_sum <span class="op">=</span> max_flags <span class="op">*</span> max_value</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                position_states <span class="op">=</span> max_seq_len <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                flag_count_states <span class="op">=</span> max_flags <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Total possible states to represent</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                total_states <span class="op">=</span> max_sum <span class="op">*</span> position_states <span class="op">*</span> flag_count_states</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Bits required to represent this</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                bits_required <span class="op">=</span> np.log2(total_states)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                <span class="co"># What can a single float represent?</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Assuming 32-bit float, but considering activation function constraints</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> bits_required <span class="op">&gt;</span> <span class="dv">20</span>:  <span class="co"># Conservative estimate for activation function range</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                    feasible <span class="op">=</span> <span class="st">"No"</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                    feasible <span class="op">=</span> <span class="st">"Maybe"</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                results.append({</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'max_seq_len'</span>: max_seq_len,</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'max_flags'</span>: max_flags,</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'total_states'</span>: total_states,</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'bits_required'</span>: bits_required,</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'feasible'</span>: feasible</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                })</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(results)</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualization</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">6</span>))</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Bar plot of bits required</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    x_labels <span class="op">=</span> [<span class="ss">f"L</span><span class="sc">{</span>row[<span class="st">'max_seq_len'</span>]<span class="sc">}</span><span class="ss">_F</span><span class="sc">{</span>row[<span class="st">'max_flags'</span>]<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> _, row <span class="kw">in</span> df.iterrows()]</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> [<span class="st">'green'</span> <span class="cf">if</span> f <span class="op">==</span> <span class="st">'Maybe'</span> <span class="cf">else</span> <span class="st">'red'</span> <span class="cf">for</span> f <span class="kw">in</span> df[<span class="st">'feasible'</span>]]</span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].bar(<span class="bu">range</span>(<span class="bu">len</span>(df)), df[<span class="st">'bits_required'</span>], color<span class="op">=</span>colors, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axhline(y<span class="op">=</span><span class="dv">20</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Practical Limit (~20 bits)'</span>)</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(df)))</span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xticklabels(x_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Bits Required'</span>)</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="st">'Information Requirements for Different Problem Sizes'</span>)</span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].legend()</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Total states (log scale)</span></span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].bar(<span class="bu">range</span>(<span class="bu">len</span>(df)), np.log10(df[<span class="st">'total_states'</span>]), color<span class="op">=</span>colors, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(df)))</span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xticklabels(x_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_ylabel(<span class="st">'Log10(Total States)'</span>)</span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="st">'Total State Space Size (Log Scale)'</span>)</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>info_df <span class="op">=</span> analyze_information_requirements()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_information_requirements():</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze the information requirements for different problem configurations"""</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    max_value <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> max_seq_len <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>]:</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> max_flags <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>]:</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> max_flags <span class="op">&lt;=</span> max_seq_len:</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Calculate information requirements for general solution</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                <span class="co"># 1. Running sum: 0 to max_flags * max_value</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                max_running_sum <span class="op">=</span> max_flags <span class="op">*</span> max_value <span class="op">+</span> <span class="dv">1</span>  <span class="co"># +1 for zero</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                <span class="co"># 2. Number of flagged items seen so far: 0 to max_flags  </span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                flag_count_states <span class="op">=</span> max_flags <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                <span class="co"># 3. Position in sequence (to know when to stop): 0 to max_seq_len</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                position_states <span class="op">=</span> max_seq_len <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Total possible states to represent simultaneously</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>                total_states <span class="op">=</span> max_running_sum <span class="op">*</span> flag_count_states <span class="op">*</span> position_states</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Bits required to represent this</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                bits_required <span class="op">=</span> np.log2(total_states)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                <span class="co"># What can a single float represent?</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                <span class="co"># A 32-bit float can theoretically represent ~32 bits of information,</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                <span class="co"># but activation functions like tanh (range [-1,1]) and sigmoid (range [0,1])</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                <span class="co"># severely constrain the usable range. Combined with finite numerical precision</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                <span class="co"># in gradient-based training, we can realistically distinguish maybe ~2^20 states.</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                <span class="co"># This gives us a practical limit of around 20 bits for reliable encoding/retrieval.</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> bits_required <span class="op">&gt;</span> <span class="dv">20</span>:  <span class="co"># Conservative estimate for activation function constraints</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>                    feasible <span class="op">=</span> <span class="st">"No"</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>                    feasible <span class="op">=</span> <span class="st">"Maybe"</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>                results.append({</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'max_seq_len'</span>: max_seq_len,</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'max_flags'</span>: max_flags,</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'total_states'</span>: total_states,</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'bits_required'</span>: bits_required,</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'feasible'</span>: feasible</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                })</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(results)</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualization</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">6</span>))</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Bar plot of bits required</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    x_labels <span class="op">=</span> [<span class="ss">f"L</span><span class="sc">{</span>row[<span class="st">'max_seq_len'</span>]<span class="sc">}</span><span class="ss">_F</span><span class="sc">{</span>row[<span class="st">'max_flags'</span>]<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> _, row <span class="kw">in</span> df.iterrows()]</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> [<span class="st">'green'</span> <span class="cf">if</span> f <span class="op">==</span> <span class="st">'Maybe'</span> <span class="cf">else</span> <span class="st">'red'</span> <span class="cf">for</span> f <span class="kw">in</span> df[<span class="st">'feasible'</span>]]</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].bar(<span class="bu">range</span>(<span class="bu">len</span>(df)), df[<span class="st">'bits_required'</span>], color<span class="op">=</span>colors, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axhline(y<span class="op">=</span><span class="dv">20</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Practical Limit (~20 bits)'</span>)</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(df)))</span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xticklabels(x_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Bits Required'</span>)</span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="st">'Information Requirements for Different Problem Sizes'</span>)</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].legend()</span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Total states (log scale)</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].bar(<span class="bu">range</span>(<span class="bu">len</span>(df)), np.log10(df[<span class="st">'total_states'</span>]), color<span class="op">=</span>colors, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(df)))</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xticklabels(x_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_ylabel(<span class="st">'Log10(Total States)'</span>)</span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="st">'Total State Space Size (Log Scale)'</span>)</span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>info_df <span class="op">=</span> analyze_information_requirements()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="information-theory-analysis" class="quarto-figure quarto-figure-center anchored">
@@ -1146,247 +1626,78 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<div id="5825e66c" class="cell" data-execution_count="9">
+<p>The plot shows that all configurations require <strong>less than 20 bits</strong> - seemingly feasible for storage. But this misses the fundamental impossibility: <strong>the GRU’s rigid mathematical structure cannot handle arbitrary state transitions</strong>.</p>
+<p>The real problem isn’t storage capacity, it’s that we need fixed weights W and U such that the GRU equations can handle input-dependent state updates:</p>
+<ul>
+<li><strong>t=0</strong>: h₀ = 0 (initial state)</li>
+<li><strong>t=1</strong>: Input [50,1] → h₁ must encode (sum=50, flags=1, pos=1)</li>
+<li><strong>t=2</strong>: Input [30,0] → h₂ must encode (sum=50, flags=1, pos=2)</li>
+<li><strong>t=3</strong>: Input [20,1] → h₃ must encode (sum=70, flags=2, pos=3)</li>
+</ul>
+<p>The impossibility is that the GRU equations σ(Wx_t + Uh_{t-1} + b) must somehow:</p>
+<ol type="1">
+<li><strong>Decode</strong> the current state (sum, flags, position) from h_{t-1}</li>
+<li><strong>Perform arithmetic</strong>: Add new value to running sum if flagged</li>
+<li><strong>Update counters</strong>: Increment flag count and position appropriately<br>
+</li>
+<li><strong>Re-encode</strong> all information back into h_t</li>
+</ol>
+<p>This requires the weight matrices to handle <strong>arbitrary numerical updates</strong> to encoded states through fixed linear transformations and nonlinear activations. You cannot design weights that make σ(Wx + Uh + b) perform reliable arithmetic on arbitrarily encoded numbers.</p>
+</section>
+<section id="the-encoding-challenge" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="the-encoding-challenge"><span class="header-section-number">6.2</span> The Encoding Challenge</h2>
+<p>Even if we could design a perfect encoding scheme, the bit requirements grow rapidly:</p>
+<ul>
+<li><strong>Values 0-100</strong>: 7 bits (2^7 = 128 states)</li>
+<li><strong>Sequences up to 4</strong>: flagged count (3 bits) + unflagged count (3 bits) = 6 bits<br>
+</li>
+<li><strong>Total</strong>: 7 + 6 = 13 bits</li>
+</ul>
+<p>For sequences up to 10: - <strong>Values 0-100</strong>: 7 bits - <strong>Sequences up to 10</strong>: flagged count (4 bits) + unflagged count (4 bits) = 8 bits - <strong>Total</strong>: 7 + 8 = 15 bits</p>
+<p>But the real insight is why <strong>exactly 2 zeros</strong> works so well: by implicitly assuming there will always be exactly 2 unflagged elements, the GRU can <strong>eliminate one entire dimension</strong> from its encoding!</p>
+<p>It doesn’t need to track the unflagged count - it’s hardcoded to expect 2. This reduces the encoding requirement and, more importantly, simplifies the arithmetic operations the activation functions must perform. The GRU essentially learned: “If I assume exactly 2 zeros, I only need to track the running sum and flagged count, making the encode/decode operations much simpler.”</p>
+<p>This specialization trades generality for computational simplicity within the rigid GRU structure.</p>
+</section>
+<section id="can-we-handcraft-the-2-zeros-strategy" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="can-we-handcraft-the-2-zeros-strategy"><span class="header-section-number">6.3</span> Can We Handcraft the “2 Zeros” Strategy?</h2>
+<p>Let’s work backwards: if the final h_t must encode both the running sum and the number of flagged elements seen, can we design weights to make this work?</p>
+<section id="the-bit-packing-approach" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="the-bit-packing-approach"><span class="header-section-number">6.3.1</span> The Bit-Packing Approach</h3>
+<p>We have approximately 20 bits available in the hidden state. We could use: - <strong>16 bits for running sum</strong>: Encodes 0 to 65,536 (more than enough for sums up to 400) - <strong>4 bits for flagged count</strong>: Encodes 0 to 15 (sufficient for sequences up to 10)</p>
+<p>This bit-packing encoding scheme would work perfectly for storage, and the linear decoder could extract both pieces of information using bit operations.</p>
+</section>
+<section id="the-fundamental-impossibility" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="the-fundamental-impossibility"><span class="header-section-number">6.3.2</span> The Fundamental Impossibility</h3>
+<p>However, the impossibility lies in <strong>using only the mathematical structure of the GRU</strong>. The GRU equations σ(Wx + Uh + b) consist of: - Matrix multiplications (smooth linear operations) - Sigmoid and tanh activations (smooth nonlinear functions)</p>
+<p>To update the encoded state at each time step, the GRU would need to:</p>
+<ol type="1">
+<li><strong>Extract</strong> the 16-bit running sum from <span class="math inline">\(h_{t-1}\)</span></li>
+<li><strong>Extract</strong> the 4-bit flag count from <span class="math inline">\(h_{t-1}\)</span></li>
+<li><strong>Perform arithmetic</strong> on these extracted values based on the input</li>
+<li><strong>Repack</strong> the updated values back into the bit representation</li>
+</ol>
+<p>But these operations require <strong>discrete bit manipulation</strong>, which cannot be achieved through matrix multiplications and smooth activation functions. The GRU’s mathematical structure is designed for continuous transformations, not bitwise operations.</p>
+<p>The “2 zeros” specialization works because it sidesteps this entirely: instead of trying to encode multiple pieces of information and manipulate them through impossible bit operations, it learns a pattern-specific solution that avoids general state tracking altogether.</p>
+<div id="8491a0c6" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store information analysis results for display</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>info_bits_example <span class="op">=</span> info_df[(info_df[<span class="st">'max_seq_len'</span>]<span class="op">==</span><span class="dv">8</span>) <span class="op">&amp;</span> (info_df[<span class="st">'max_flags'</span>]<span class="op">==</span><span class="dv">4</span>)][<span class="st">'bits_required'</span>].iloc[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store information analysis results for display</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>info_bits_example <span class="op">=</span> info_df[(info_df[<span class="st">'max_seq_len'</span>]<span class="op">==</span><span class="dv">8</span>) <span class="op">&amp;</span> (info_df[<span class="st">'max_flags'</span>]<span class="op">==</span><span class="dv">4</span>)][<span class="st">'bits_required'</span>].iloc[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>This analysis shows that even for moderately sized problems, the information requirements exceed what can be reasonably encoded in a single floating-point number. For example, a problem with sequences of length 8 and up to 4 flags requires 14.1 bits of information, far exceeding what can be reasonably encoded in a single hidden state constrained by activation functions like tanh and sigmoid.</p>
+<p>This analysis reveals a crucial point. While the theoretical bit requirements don’t seem outrageous, the real bottleneck is the GRU’s mathematical toolkit. To solve the general problem, the network would need to pack and unpack different pieces of information—like the running sum and the flag count—into a single hidden state. This requires sharp, precise bitwise operations. But the GRU’s stuck with smooth curves, not the sharp bitwise tricks it needs! Its activation functions (tanh and sigmoid) and matrix math are all about continuous transformations, making it fundamentally unsuited for the kind of discrete information juggling required. So, even if there’s technically enough space, the GRU’s very nature prevents it from solving the problem in a general way.</p>
 </section>
 </section>
-<section id="strategy-comparison-learned-vs-optimal" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Strategy Comparison: Learned vs Optimal</h1>
-<p>Now let’s compare the strategy our GRU learned with what we might consider “optimal” strategies for the adding problem.</p>
-<section id="the-learned-strategy-count-to-4-sum-2" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="the-learned-strategy-count-to-4-sum-2"><span class="header-section-number">7.1</span> The Learned Strategy: “Count to 4, Sum 2”</h2>
-<p>Our GRU learned a very specific strategy: 1. Expect exactly 4 time steps 2. Expect exactly 2 flagged elements 3. Use the update gate to heavily weight flag=1 inputs 4. Accumulate a representation that the linear layer can decode</p>
-<div id="strategy-comparison" class="cell" data-execution_count="10">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_learned_strategy():</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze what strategy the GRU actually learned"""</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get final weights</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    final_weights <span class="op">=</span> all_weights[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    W_ih <span class="op">=</span> final_weights[<span class="st">'gru.weight_ih_l0'</span>]</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    W_hh <span class="op">=</span> final_weights[<span class="st">'gru.weight_hh_l0'</span>] </span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    b_ih <span class="op">=</span> final_weights[<span class="st">'gru.bias_ih_l0'</span>]</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    b_hh <span class="op">=</span> final_weights[<span class="st">'gru.bias_hh_l0'</span>]</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    W_linear <span class="op">=</span> final_weights[<span class="st">'linear.weight'</span>]</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    b_linear <span class="op">=</span> final_weights[<span class="st">'linear.bias'</span>]</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'update_gate_analysis'</span>: {</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">'value_weight'</span>: W_ih[<span class="dv">1</span>,<span class="dv">0</span>],</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">'flag_weight'</span>: W_ih[<span class="dv">1</span>,<span class="dv">1</span>],</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'bias'</span>: b_ih[<span class="dv">1</span>] <span class="op">+</span> b_hh[<span class="dv">1</span>]</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        },</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">'linear_analysis'</span>: {</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">'weight'</span>: W_linear[<span class="dv">0</span>,<span class="dv">0</span>],</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">'bias'</span>: b_linear[<span class="dv">0</span>]</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>strategy_analysis <span class="op">=</span> analyze_learned_strategy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
 </section>
-<section id="analysis-of-the-learned-strategy" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="analysis-of-the-learned-strategy"><span class="header-section-number">7.2</span> Analysis of the Learned Strategy</h2>
-<p>The learned strategy can be understood by examining the final weights. The key insight is how the update gate learned to respond differently to flagged vs unflagged inputs:</p>
-<p><strong>Update Gate Strategy:</strong> - Weight for input value: -0.4206 - Weight for flag: -3.0198 - Bias: 1.6166</p>
-<p>When flag=0: <span class="math inline">\(\sigma(1.617 + \text{value} \times -0.421)\)</span></p>
-<p>When flag=1: <span class="math inline">\(\sigma(-1.403 + \text{value} \times -0.421)\)</span></p>
-<p>The large negative flag weight means that when flag=1, the update gate becomes very small, allowing the new information to be accumulated rather than preserving the old hidden state.</p>
-<p><strong>Linear Layer Decoding:</strong> - Weight: -4.156 - Bias: 0.8686</p>
-<p>This means: <span class="math inline">\(\text{output} = -4.156 \times h_t + 0.8686\)</span></p>
-</section>
-<section id="handcrafted-weights-vs-learned-weights" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="handcrafted-weights-vs-learned-weights"><span class="header-section-number">7.3</span> Handcrafted Weights vs Learned Weights</h2>
-<p>Let’s try to design our own weights that implement a more general strategy and compare them with what the model learned.</p>
-<div id="cell-handcrafted-vs-learned" class="cell" data-execution_count="11">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_handcrafted_weights():</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create handcrafted weights for a more general adding strategy"""</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Design strategy: accumulate when flag=1, ignore when flag=0</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    W_ih_handcrafted <span class="op">=</span> np.array([</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">0.0</span>, <span class="fl">5.0</span>],   <span class="co"># Reset gate: high flag sensitivity </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        [<span class="op">-</span><span class="fl">5.0</span>, <span class="fl">5.0</span>],  <span class="co"># Update gate: low when flag=1 (accumulate), high when flag=0 (ignore)</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">1.0</span>, <span class="fl">0.0</span>]    <span class="co"># New gate: directly use input value</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ])</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    W_hh_handcrafted <span class="op">=</span> np.array([</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">0.0</span>],  <span class="co"># Reset gate hidden weight</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">0.0</span>],  <span class="co"># Update gate hidden weight  </span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">1.0</span>]   <span class="co"># New gate hidden weight (preserve previous sum)</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    ])</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    b_ih_handcrafted <span class="op">=</span> np.array([<span class="fl">0.0</span>, <span class="fl">5.0</span>, <span class="fl">0.0</span>])  <span class="co"># Biases</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    b_hh_handcrafted <span class="op">=</span> np.array([<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>])</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    W_linear_handcrafted <span class="op">=</span> np.array([[<span class="fl">1.0</span>]])  <span class="co"># Direct mapping</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    b_linear_handcrafted <span class="op">=</span> np.array([<span class="fl">0.0</span>])</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">'gru.weight_ih_l0'</span>: W_ih_handcrafted,</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'gru.weight_hh_l0'</span>: W_hh_handcrafted,</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">'gru.bias_ih_l0'</span>: b_ih_handcrafted,</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'gru.bias_hh_l0'</span>: b_hh_handcrafted,</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">'linear.weight'</span>: W_linear_handcrafted,</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">'linear.bias'</span>: b_linear_handcrafted</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_handcrafted_strategy():</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Test the handcrafted strategy on various inputs"""</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    handcrafted_weights <span class="op">=</span> create_handcrafted_weights()</span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    learned_weights <span class="op">=</span> all_weights[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test cases: various sequence lengths and flag counts</span></span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    test_cases <span class="op">=</span> [</span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Length 2</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>]], <span class="dv">50</span>),</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">0</span>]], <span class="dv">20</span>),</span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Length 3 </span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">10</span>, <span class="dv">1</span>], [<span class="dv">20</span>, <span class="dv">0</span>], [<span class="dv">30</span>, <span class="dv">1</span>]], <span class="dv">40</span>),</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">10</span>, <span class="dv">0</span>], [<span class="dv">20</span>, <span class="dv">0</span>], [<span class="dv">30</span>, <span class="dv">1</span>]], <span class="dv">30</span>),</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Length 4 (trained length)</span></span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">10</span>, <span class="dv">1</span>], [<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">0</span>], [<span class="dv">40</span>, <span class="dv">0</span>]], <span class="dv">30</span>),</span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Length 5</span></span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>        ([[<span class="dv">10</span>, <span class="dv">1</span>], [<span class="dv">20</span>, <span class="dv">1</span>], [<span class="dv">30</span>, <span class="dv">1</span>], [<span class="dv">40</span>, <span class="dv">0</span>], [<span class="dv">50</span>, <span class="dv">0</span>]], <span class="dv">60</span>),</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, (sequence, expected) <span class="kw">in</span> <span class="bu">enumerate</span>(test_cases):</span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>        seq_tensor <span class="op">=</span> torch.tensor(sequence).<span class="bu">float</span>().unsqueeze(<span class="dv">0</span>)</span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>        seq_tensor[:, :, <span class="dv">0</span>] <span class="op">/=</span> HIGH</span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Test learned model</span></span>
-<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>            learned_output <span class="op">=</span> model(seq_tensor)[<span class="dv">0</span>].item() <span class="op">*</span> HIGH</span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>            learned_error <span class="op">=</span> <span class="bu">abs</span>(learned_output <span class="op">-</span> expected) <span class="op">/</span> expected</span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>            learned_output <span class="op">=</span> <span class="bu">float</span>(<span class="st">'nan'</span>)</span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>            learned_error <span class="op">=</span> <span class="bu">float</span>(<span class="st">'inf'</span>)</span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Test handcrafted strategy (simulate forward pass)</span></span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> simulate_handcrafted(seq, weights):</span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>            h <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(seq.shape[<span class="dv">1</span>]):</span>
-<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>                x <span class="op">=</span> seq[<span class="dv">0</span>, t, :].numpy()</span>
-<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Update gate</span></span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>                update_gate <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>(</span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>                    x[<span class="dv">0</span>] <span class="op">*</span> weights[<span class="st">'gru.weight_ih_l0'</span>][<span class="dv">1</span>,<span class="dv">0</span>] <span class="op">+</span> </span>
-<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>                    x[<span class="dv">1</span>] <span class="op">*</span> weights[<span class="st">'gru.weight_ih_l0'</span>][<span class="dv">1</span>,<span class="dv">1</span>] <span class="op">+</span></span>
-<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>                    h <span class="op">*</span> weights[<span class="st">'gru.weight_hh_l0'</span>][<span class="dv">1</span>,<span class="dv">0</span>] <span class="op">+</span></span>
-<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>                    weights[<span class="st">'gru.bias_ih_l0'</span>][<span class="dv">1</span>] <span class="op">+</span> weights[<span class="st">'gru.bias_hh_l0'</span>][<span class="dv">1</span>]</span>
-<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>                )))</span>
-<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>                <span class="co"># New gate  </span></span>
-<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>                new_gate <span class="op">=</span> np.tanh(</span>
-<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>                    x[<span class="dv">0</span>] <span class="op">*</span> weights[<span class="st">'gru.weight_ih_l0'</span>][<span class="dv">2</span>,<span class="dv">0</span>] <span class="op">+</span></span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>                    x[<span class="dv">1</span>] <span class="op">*</span> weights[<span class="st">'gru.weight_ih_l0'</span>][<span class="dv">2</span>,<span class="dv">1</span>] <span class="op">+</span></span>
-<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>                    h <span class="op">*</span> weights[<span class="st">'gru.weight_hh_l0'</span>][<span class="dv">2</span>,<span class="dv">0</span>] <span class="op">+</span></span>
-<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>                    weights[<span class="st">'gru.bias_ih_l0'</span>][<span class="dv">2</span>] <span class="op">+</span> weights[<span class="st">'gru.bias_hh_l0'</span>][<span class="dv">2</span>]</span>
-<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>                )</span>
-<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Update hidden state</span></span>
-<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a>                h <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> update_gate) <span class="op">*</span> new_gate <span class="op">+</span> update_gate <span class="op">*</span> h</span>
-<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Linear layer</span></span>
-<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>            output <span class="op">=</span> h <span class="op">*</span> weights[<span class="st">'linear.weight'</span>][<span class="dv">0</span>,<span class="dv">0</span>] <span class="op">+</span> weights[<span class="st">'linear.bias'</span>][<span class="dv">0</span>]</span>
-<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> output <span class="op">*</span> HIGH</span>
-<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>        handcrafted_output <span class="op">=</span> simulate_handcrafted(seq_tensor, handcrafted_weights)</span>
-<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>        handcrafted_error <span class="op">=</span> <span class="bu">abs</span>(handcrafted_output <span class="op">-</span> expected) <span class="op">/</span> expected</span>
-<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>        results.append({</span>
-<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>            <span class="st">'case'</span>: i<span class="op">+</span><span class="dv">1</span>,</span>
-<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>            <span class="st">'sequence_length'</span>: <span class="bu">len</span>(sequence),</span>
-<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>            <span class="st">'expected'</span>: expected,</span>
-<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>            <span class="st">'learned_output'</span>: learned_output,</span>
-<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>            <span class="st">'learned_error'</span>: learned_error,</span>
-<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>            <span class="st">'handcrafted_output'</span>: handcrafted_output,</span>
-<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a>            <span class="st">'handcrafted_error'</span>: handcrafted_error</span>
-<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>    results_df <span class="op">=</span> pd.DataFrame(results)</span>
-<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualization</span></span>
-<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">6</span>))</span>
-<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Outputs comparison</span></span>
-<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(results))</span>
-<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> <span class="fl">0.35</span></span>
-<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].bar([i <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], results_df[<span class="st">'learned_output'</span>], width, </span>
-<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="st">'Learned Model'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
-<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].bar([i <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], results_df[<span class="st">'handcrafted_output'</span>], width,</span>
-<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="st">'Handcrafted Strategy'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
-<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].plot(x, results_df[<span class="st">'expected'</span>], <span class="st">'go-'</span>, label<span class="op">=</span><span class="st">'Expected'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_xlabel(<span class="st">'Test Case'</span>)</span>
-<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Output Value'</span>)</span>
-<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="st">'Model Outputs Comparison'</span>)</span>
-<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].legend()</span>
-<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Error comparison</span></span>
-<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].bar([i <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], results_df[<span class="st">'learned_error'</span>], width,</span>
-<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="st">'Learned Model'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
-<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].bar([i <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], results_df[<span class="st">'handcrafted_error'</span>], width,</span>
-<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="st">'Handcrafted Strategy'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
-<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_xlabel(<span class="st">'Test Case'</span>)</span>
-<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_ylabel(<span class="st">'Relative Error'</span>)</span>
-<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="st">'Error Comparison'</span>)</span>
-<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].legend()</span>
-<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_yscale(<span class="st">'log'</span>)</span>
-<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
-<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results_df</span>
-<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a>comparison_results <span class="op">=</span> test_handcrafted_strategy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display">
-<div id="handcrafted-vs-learned" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="adding-problem-part3_files/figure-html/handcrafted-vs-learned-output-1.png" width="1429" height="564" class="figure-img"></p>
-<figcaption>Handcrafted Strategy Implementation</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>This comparison reveals that while our handcrafted strategy might work better for general cases, the learned strategy is perfectly optimized for the specific training distribution. The model essentially “overfit” to the constraint of length-4 sequences with 2 flags.</p>
-</section>
-</section>
-<section id="conclusion" class="level1" data-number="8">
-<h1 data-number="8"><span class="header-section-number">8</span> Conclusion</h1>
+<section id="conclusion" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Conclusion</h1>
 <p>Holy cow! What a ride this has been. We started with a simple question—“how did these weights get this way?”—and ended up uncovering some seriously cool stuff about how neural networks actually learn.</p>
-<p>Our GRU didn’t just smoothly converge to a solution. Instead, it went through three distinct phases: chaotic exploration, dramatic discovery, and careful refinement. It’s like watching someone learn to ride a bike—wobbling around, then suddenly getting it, then fine-tuning their balance. And remember how I thought it would learn to generally sum numbers? Nope! It learned the ultra-specific “count to 4, sum exactly 2 elements” strategy. That’s not a bug—that’s the GRU being really, really good at solving the exact problem we gave it.</p>
+<p>Our GRU didn’t just smoothly converge to a solution. Instead, it went through three distinct phases: chaotic exploration, dramatic discovery, and careful refinement. It’s like watching someone learn to ride a bike—wobbling around, then suddenly getting it, then fine-tuning their balance. And remember how I thought it would learn to generally sum numbers? Nope! It learned something even more specific than I initially realized—it expects exactly 2 elements with flag=0, regardless of sequence length. That’s not a bug—that’s the GRU being really, really good at solving the exact problem we gave it.</p>
 <p>The math revealed something profound: with only one hidden unit, there’s literally not enough information capacity to solve the general adding problem. Our GRU hit a hard mathematical wall and adapted by becoming a specialist instead of a generalist. When I tried to design “optimal” weights by hand, the learned weights laughed at me—they were perfectly optimized for the training data.</p>
 <p>This whole investigation taught me that neural networks aren’t just parameter optimization machines. They’re <strong>strategy discoverers</strong>. The architecture, training data, and optimization process don’t just determine if a network can solve a problem—they determine <em>how</em> it will solve it. And that original question about predicting final weights from initial conditions? Still completely open! The learning dynamics are so complex and path-dependent that prediction seems nearly impossible. Maybe that’s where the real magic lives—in the unpredictability of discovery.</p>
-<section id="coming-next" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="coming-next"><span class="header-section-number">8.1</span> Coming Next…</h2>
-<p>While this part has provided extensive analysis of training dynamics and the mathematical constraints of our GRU, one crucial question remains: What exactly was the model doing at the very beginning versus what it learned to do at the end?</p>
-<p>In <strong>Part 4</strong>, we’ll conduct a thorough comparative analysis of the learning dynamics, contrasting the initial random strategy with the final learned strategy. We’ll examine:</p>
-<ul>
-<li>The initial strategy: What was the randomly initialized GRU actually computing?</li>
-<li>The transformation journey: How did the strategy evolve from random to specialized?</li>
-<li>Strategy comparison: A detailed side-by-side analysis of initial vs.&nbsp;final approaches</li>
-<li>Critical transitions: The exact moments when the learning strategy fundamentally changed</li>
-</ul>
-<p>This deep dive into the learning transformation will complete our understanding of how neural networks evolve from random parameter initialization to specialized problem solvers.</p>
-<p>The insights from this series extend far beyond the adding problem. They illuminate fundamental questions about neural network capacity, learning dynamics, and the relationship between architecture and behavior that are relevant for any machine learning practitioner working with sequential data and recurrent networks.</p>
+<section id="coming-next" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="coming-next"><span class="header-section-number">7.1</span> Coming Next…</h2>
+<p>Next time, I’ll analyze in detail the critical transition at epoch 735 where the GRU fundamentally shifted from exploring multiple strategies to committing to its specialized “2 zeros” approach. We’ll analyze what triggered this sudden change and whether we can identify similar transition points in other neural network training scenarios.</p>
 
 
 </section>
