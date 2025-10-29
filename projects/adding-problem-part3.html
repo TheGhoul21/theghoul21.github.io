@@ -169,6 +169,10 @@ window.Quarto = {
     <a class="nav-link" href="../projects/index.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../portfolio/index.html"> 
+<span class="menu-text">Portfolio</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Lecture notes</span>
@@ -601,7 +605,7 @@ x &amp;\approx 4.329y - 2.165
 </details>
 </div>
 <p>Let’s print the linear layer parameters we obtained from the training, and the handcrafted ones we calculated above. And see how they compare.</p>
-<div id="f8169388" class="cell" data-execution_count="2">
+<div id="14591a64" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store values for display</span></span>
@@ -928,7 +932,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 </div>
-<div id="56dceb12" class="cell" data-execution_count="5">
+<div id="abead51c" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store training dynamics results for display</span></span>
@@ -1036,7 +1040,7 @@ h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \hat{h}_t
 </div>
 </div>
 <p>The results reveal something fascinating! Looking at the performance patterns, we can see what the GRU actually learned:</p>
-<div id="8c5be3dc" class="cell" data-execution_count="7">
+<div id="876bf7b6" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store configuration results for display and analyze the pattern</span></span>
@@ -1678,7 +1682,7 @@ Average balance for other configs: 0.397</code></pre>
 </ol>
 <p>But these operations require <strong>discrete bit manipulation</strong>, which cannot be achieved through matrix multiplications and smooth activation functions. The GRU’s mathematical structure is designed for continuous transformations, not bitwise operations.</p>
 <p>The “2 zeros” specialization works because it sidesteps this entirely: instead of trying to encode multiple pieces of information and manipulate them through impossible bit operations, it learns a pattern-specific solution that avoids general state tracking altogether.</p>
-<div id="8491a0c6" class="cell" data-execution_count="11">
+<div id="e0e33eef" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store information analysis results for display</span></span>
