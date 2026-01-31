@@ -46,12 +46,12 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/pca.html",
       "/blog/t-ecdsa-three-rounds2.html",
       "/blog/dpo.html",
       "/blog/hashing.html",
       "/blog/blockchain.html",
       "/blog/group-prime-order.html",
-      "/blog/pca.html",
       "/blog/sss.html"
     ]
   }
