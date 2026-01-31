@@ -1,13 +1,31 @@
 [
   {
-    "listing": "/blog/index.html",
+    "listing": "/portfolio/index.html",
     "items": [
-      "/blog/t-ecdsa-three-rounds2.html",
-      "/blog/dpo.html",
-      "/blog/hashing.html",
+      "/portfolio/aliteia.html",
+      "/portfolio/weight-trajectories.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
       "/blog/blockchain.html",
+      "/blog/dpo.html",
       "/blog/group-prime-order.html",
-      "/blog/sss.html"
+      "/blog/hashing.html",
+      "/blog/pca.html",
+      "/blog/sss.html",
+      "/blog/t-ecdsa-three-rounds2.html",
+      "/projects/amari-network-backup.html",
+      "/projects/amari-network.html",
+      "/projects/adding-problem-part3-5.html",
+      "/projects/adding-problem-part1.html",
+      "/projects/adding-problem-part2.html",
+      "/projects/adding-problem-part3.html",
+      "/projects/connect4.html",
+      "/projects/hopfield.html",
+      "/projects/prese-rnn.html",
+      "/projects/spatial-spike-neural-networks-it.html"
     ]
   },
   {
@@ -26,24 +44,15 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/blog/index.html",
     "items": [
-      "/blog/blockchain.html",
-      "/blog/dpo.html",
-      "/blog/group-prime-order.html",
-      "/blog/hashing.html",
-      "/blog/sss.html",
       "/blog/t-ecdsa-three-rounds2.html",
-      "/projects/amari-network-backup.html",
-      "/projects/amari-network.html",
-      "/projects/adding-problem-part3-5.html",
-      "/projects/adding-problem-part1.html",
-      "/projects/adding-problem-part2.html",
-      "/projects/adding-problem-part3.html",
-      "/projects/connect4.html",
-      "/projects/hopfield.html",
-      "/projects/prese-rnn.html",
-      "/projects/spatial-spike-neural-networks-it.html"
+      "/blog/dpo.html",
+      "/blog/hashing.html",
+      "/blog/blockchain.html",
+      "/blog/group-prime-order.html",
+      "/blog/pca.html",
+      "/blog/sss.html"
     ]
   }
 ]
