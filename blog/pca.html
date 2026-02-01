@@ -358,8 +358,8 @@ window.Quarto = {
 </section>
 <section id="interpretazione-geometrica" class="level2">
 <h2 class="anchored" data-anchor-id="interpretazione-geometrica">Interpretazione Geometrica</h2>
-<p>Geometricamente, il primo vettore di loading <span class="math inline">\(\phi_1\)</span> definisce una direzione nello spazio delle variabili lungo cui i dati variano di più. La proiezione dei <span class="math inline">\(n\)</span> punti dati su questa direzione dà gli scores del primo componente principale.</p>
-<p>Il secondo vettore di loading <span class="math inline">\(\phi_2\)</span> definisce una direzione, <strong>ortogonale</strong> (perpendicolare) alla direzione <span class="math inline">\(\phi_1\)</span>, lungo cui la variabilità è massimizzata. Le proiezioni dei dati su questa ulteriore direzione danno gli scores del secondo componente principale.</p>
+<p>Geometricamente, il primo vettore di loading <span class="math inline">\(\phi_1\)</span> definisce una direzione nello spazio delle variabili lungo cui i dati variano di più. La proiezione dei <span class="math inline">\(n\)</span> punti dati su questa direzione dà gli scores del primo componente principale. Cosa vuol dire questo all’atto pratico? L’intuzione è: “Se prendo un po’ della prima variabile, un po’ della seconda, e così via, ottengo una nuova variabile che cattura la maggior parte della variabilità nei dati”. Esempio: se stai analizzando le misure di una persone (altezza, peso, circonferenza vita, ecc.), potresti scoprire che per spiegare la maggior parte della variabilità ti basta prendere una nuova variabile che è un mix di: 40% di altezza, 30% di peso, 30% di circonferenza vita. Abbiamo quindi una nuova variabile costruita ad arte, che riassume bene le informazioni delle variabili originali.</p>
+<p>Il secondo vettore di loading <span class="math inline">\(\phi_2\)</span> definisce una direzione, <strong>ortogonale</strong> (perpendicolare) alla direzione <span class="math inline">\(\phi_1\)</span>, lungo cui la variabilità è massimizzata. Le proiezioni dei dati su questa ulteriore direzione danno gli scores del secondo componente principale. Perché deve essere ortogonale? Per garantire che il secondo componente catturi una nuova fonte di variabilità, diversa da quella già catturata dal primo componente. In questo modo, ogni componente principale fornisce informazioni uniche e non ridondanti sui dati.</p>
 <p>In pratica, stiamo ruotando il sistema di coordinate per allinearlo con le direzioni di massima varianza.</p>
 </section>
 <section id="derivazione-matematica-come-funziona-realmente" class="level2">
@@ -483,12 +483,12 @@ window.Quarto = {
 </div>
 <p><strong>✓ Sì, la matrice è simmetrica</strong></p>
 <p>Matrice S:</p>
-<div id="08741d64" class="cell" data-execution_count="3">
+<div id="e36b9e80" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Mostra codice</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>S.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="701">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>array([[ 1.    , -0.1176,  0.8718,  0.8179],
        [-0.1176,  1.    , -0.4284, -0.3661],
        [ 0.8718, -0.4284,  1.    ,  0.9629],
@@ -1987,9 +1987,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretazione Geometrica</span></span>
 <span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>Geometricamente, il primo vettore di loading $\phi_1$ definisce una direzione nello spazio delle variabili lungo cui i dati variano di più. La proiezione dei $n$ punti dati su questa direzione dà gli scores del primo componente principale.</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>Geometricamente, il primo vettore di loading $\phi_1$ definisce una direzione nello spazio delle variabili lungo cui i dati variano di più. La proiezione dei $n$ punti dati su questa direzione dà gli scores del primo componente principale. Cosa vuol dire questo all'atto pratico? L'intuzione è: "Se prendo un po' della prima variabile, un po' della seconda, e così via, ottengo una nuova variabile che cattura la maggior parte della variabilità nei dati". Esempio:  se stai analizzando le misure di una persone (altezza, peso, circonferenza vita, ecc.), potresti scoprire che per spiegare la maggior parte della variabilità ti basta prendere una nuova variabile che è un mix di: 40% di altezza, 30% di peso, 30% di circonferenza vita. Abbiamo quindi una nuova variabile costruita ad arte, che riassume bene le informazioni delle variabili originali. </span>
 <span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>Il secondo vettore di loading $\phi_2$ definisce una direzione, **ortogonale** (perpendicolare) alla direzione $\phi_1$, lungo cui la variabilità è massimizzata. Le proiezioni dei dati su questa ulteriore direzione danno gli scores del secondo componente principale.</span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>Il secondo vettore di loading $\phi_2$ definisce una direzione, **ortogonale** (perpendicolare) alla direzione $\phi_1$, lungo cui la variabilità è massimizzata. Le proiezioni dei dati su questa ulteriore direzione danno gli scores del secondo componente principale. Perché deve essere ortogonale? Per garantire che il secondo componente catturi una nuova fonte di variabilità, diversa da quella già catturata dal primo componente. In questo modo, ogni componente principale fornisce informazioni uniche e non ridondanti sui dati.</span>
 <span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>In pratica, stiamo ruotando il sistema di coordinate per allinearlo con le direzioni di massima varianza.</span>
 <span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a></span>
