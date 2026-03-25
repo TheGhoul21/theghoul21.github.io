@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luca Simonetti">
+<meta name="dcterms.date" content="2025-07-28">
+
+<title>Analyzing GRU Training Dynamics on the Adding Problem - Part 4: When you’re wrong (and that’s better) – L.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9a528ce568208207557d4826b9a112ab.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="When research proves you wrong - the real GRU training story">
+<meta property="og:description" content="Personal website of Luca Simonetti - Research Projects, Blog Posts, and sh*t like that.">
+<meta property="og:image" content="https://theghoul21.github.io//images/dalle-gru.webp">
+<meta property="og:site_name" content="L.">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">L.</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../portfolio/index.html"> 
+<span class="menu-text">Portfolio</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-lecture-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Lecture notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-lecture-notes">    
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/CIT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Complexity and Information Theory 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/DL-2024-2025/" target="_blank">
+ <span class="dropdown-text">Deep Learning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/RO-2024-2025/" target="_blank">
+ <span class="dropdown-text">Ricerca Operativa 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/FNN-2024-2025/" target="_blank">
+ <span class="dropdown-text">Foundations of Neural Networks 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/QC-2023-2024/" target="_blank">
+ <span class="dropdown-text">Quantum Computing 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/MB-2024-2025/" target="_blank">
+ <span class="dropdown-text">Biologia Molecolare 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/VVT-2024-2025/" target="_blank">
+ <span class="dropdown-text">Verification and Validation Techniques 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AR-2024-2025/" target="_blank">
+ <span class="dropdown-text">Automated Reasoning 2024/2025</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AA-2023-2024/" target="_blank">
+ <span class="dropdown-text">Advanced Algorithms 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/AI-2023-2024/" target="_blank">
+ <span class="dropdown-text">Artificial Intelligence 2023/2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://theghoul21.github.io/SA-2024-2025/" target="_blank">
+ <span class="dropdown-text">Applied Statistics 2024/2025</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Analyzing GRU Training Dynamics on the Adding Problem - Part 4: When you’re wrong (and that’s better)</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">programming</div>
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">diary</div>
+                <div class="quarto-category">R&amp;D</div>
+                <div class="quarto-category">deep-learning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca Simonetti </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 28, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-i-was-wrong-about-epoch-735" id="toc-introduction-i-was-wrong-about-epoch-735" class="nav-link active" data-scroll-target="#introduction-i-was-wrong-about-epoch-735"><span class="header-section-number">1</span> Introduction: I was wrong about epoch 735</a></li>
+  <li><a href="#the-analysis-i-should-have-done-first" id="toc-the-analysis-i-should-have-done-first" class="nav-link" data-scroll-target="#the-analysis-i-should-have-done-first"><span class="header-section-number">2</span> The analysis I should have done first</a>
+  <ul class="collapse">
+  <li><a href="#finding-the-real-phase-transitions" id="toc-finding-the-real-phase-transitions" class="nav-link" data-scroll-target="#finding-the-real-phase-transitions"><span class="header-section-number">2.1</span> Finding the real phase transitions</a></li>
+  <li><a href="#visualizing-the-reality" id="toc-visualizing-the-reality" class="nav-link" data-scroll-target="#visualizing-the-reality"><span class="header-section-number">2.2</span> Visualizing the reality</a></li>
+  </ul></li>
+  <li><a href="#the-real-story-gradual-commitment-not-phase-transition" id="toc-the-real-story-gradual-commitment-not-phase-transition" class="nav-link" data-scroll-target="#the-real-story-gradual-commitment-not-phase-transition"><span class="header-section-number">3</span> The real story: gradual commitment, not phase transition</a>
+  <ul class="collapse">
+  <li><a href="#the-flag-weights-journey" id="toc-the-flag-weights-journey" class="nav-link" data-scroll-target="#the-flag-weights-journey"><span class="header-section-number">3.1</span> The flag weight’s journey</a></li>
+  <li><a href="#quantifying-the-gradual-process" id="toc-quantifying-the-gradual-process" class="nav-link" data-scroll-target="#quantifying-the-gradual-process"><span class="header-section-number">3.2</span> Quantifying the gradual process</a></li>
+  <li><a href="#visualizing-the-full-picture" id="toc-visualizing-the-full-picture" class="nav-link" data-scroll-target="#visualizing-the-full-picture"><span class="header-section-number">3.3</span> Visualizing the full picture</a></li>
+  </ul></li>
+  <li><a href="#what-actually-happens-a-new-understanding-of-learning" id="toc-what-actually-happens-a-new-understanding-of-learning" class="nav-link" data-scroll-target="#what-actually-happens-a-new-understanding-of-learning"><span class="header-section-number">4</span> What actually happens: a new understanding of learning</a>
+  <ul class="collapse">
+  <li><a href="#phase-1-rapid-initial-learning-epochs-0-20" id="toc-phase-1-rapid-initial-learning-epochs-0-20" class="nav-link" data-scroll-target="#phase-1-rapid-initial-learning-epochs-0-20"><span class="header-section-number">4.1</span> Phase 1: rapid initial learning (epochs 0-20)</a></li>
+  <li><a href="#phase-2-steady-improvement-epochs-20-490" id="toc-phase-2-steady-improvement-epochs-20-490" class="nav-link" data-scroll-target="#phase-2-steady-improvement-epochs-20-490"><span class="header-section-number">4.2</span> Phase 2: steady improvement (epochs 20-490)</a></li>
+  <li><a href="#phase-3-gradual-commitment-epochs-490-750" id="toc-phase-3-gradual-commitment-epochs-490-750" class="nav-link" data-scroll-target="#phase-3-gradual-commitment-epochs-490-750"><span class="header-section-number">4.3</span> Phase 3: gradual commitment (epochs 490-750)</a></li>
+  <li><a href="#phase-4-refinement-epochs-750" id="toc-phase-4-refinement-epochs-750" class="nav-link" data-scroll-target="#phase-4-refinement-epochs-750"><span class="header-section-number">4.4</span> Phase 4: refinement (epochs 750+)</a></li>
+  </ul></li>
+  <li><a href="#why-this-is-actually-more-interesting" id="toc-why-this-is-actually-more-interesting" class="nav-link" data-scroll-target="#why-this-is-actually-more-interesting"><span class="header-section-number">5</span> Why this is actually more interesting</a>
+  <ul class="collapse">
+  <li><a href="#neural-networks-learn-like-humans-not-like-light-switches" id="toc-neural-networks-learn-like-humans-not-like-light-switches" class="nav-link" data-scroll-target="#neural-networks-learn-like-humans-not-like-light-switches"><span class="header-section-number">5.1</span> Neural networks learn like humans, not like light switches</a></li>
+  <li><a href="#specialization-is-a-process-not-an-event" id="toc-specialization-is-a-process-not-an-event" class="nav-link" data-scroll-target="#specialization-is-a-process-not-an-event"><span class="header-section-number">5.2</span> Specialization is a process, not an event</a></li>
+  <li><a href="#why-i-was-wrong-about-epoch-735" id="toc-why-i-was-wrong-about-epoch-735" class="nav-link" data-scroll-target="#why-i-was-wrong-about-epoch-735"><span class="header-section-number">5.3</span> Why I was wrong about epoch 735</a></li>
+  </ul></li>
+  <li><a href="#the-bigger-picture-what-this-means-for-understanding-neural-networks" id="toc-the-bigger-picture-what-this-means-for-understanding-neural-networks" class="nav-link" data-scroll-target="#the-bigger-picture-what-this-means-for-understanding-neural-networks"><span class="header-section-number">6</span> The bigger picture: what this means for understanding neural networks</a>
+  <ul class="collapse">
+  <li><a href="#hypothesis-vs.-reality" id="toc-hypothesis-vs.-reality" class="nav-link" data-scroll-target="#hypothesis-vs.-reality"><span class="header-section-number">6.1</span> Hypothesis vs.&nbsp;reality</a></li>
+  </ul></li>
+  <li><a href="#conclusions-being-wrong-is-how-you-learn" id="toc-conclusions-being-wrong-is-how-you-learn" class="nav-link" data-scroll-target="#conclusions-being-wrong-is-how-you-learn"><span class="header-section-number">7</span> Conclusions: being wrong is how you learn</a>
+  <ul class="collapse">
+  <li><a href="#whats-next" id="toc-whats-next" class="nav-link" data-scroll-target="#whats-next"><span class="header-section-number">7.1</span> What’s next?</a></li>
+  <li><a href="#final-thoughts" id="toc-final-thoughts" class="nav-link" data-scroll-target="#final-thoughts"><span class="header-section-number">7.2</span> Final thoughts</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction-i-was-wrong-about-epoch-735" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction: I was wrong about epoch 735</h1>
+<p>In <a href="../projects/adding-problem-part3.html">Part 3</a>, I ended with this confident claim:</p>
+<blockquote class="blockquote">
+<p>“Next time, I’ll analyze in detail the critical transition at epoch 735 where the GRU fundamentally shifted from exploring multiple strategies to committing to its specialized ‘2 zeros’ approach.”</p>
+</blockquote>
+<p>Well… I was wrong. Completely, embarrassingly wrong.</p>
+<p>And you know what? <strong>That’s way more interesting.</strong></p>
+<p>When I actually sat down to analyze the data—really crunch the numbers, compute the derivatives, examine the weight trajectories—I discovered that epoch 735 isn’t special at all. There’s no dramatic phase transition there. No sudden shift. Nothing remarkable whatsoever.</p>
+<p>But here’s the thing: what I DID find is far more fascinating than what I expected. The real story of how neural networks learn isn’t about dramatic “aha!” moments at all. It’s about something much more subtle and profound: gradual commitment.</p>
+<p>Let me show you what actually happens when you follow the data instead of your assumptions.</p>
+</section>
+<section id="the-analysis-i-should-have-done-first" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> The analysis I should have done first</h1>
+<p>Before making grand claims about epoch 735, I should have actually looked at the training dynamics systematically. The scientific method exists for a reason: hypotheses need to be tested with actual evidence, not just asserted based on intuition. So let’s do the proper analysis now—loading the training data, computing the relevant metrics, and seeing what the numbers actually say.</p>
+<div id="load-and-analyze" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.ndimage <span class="im">import</span> gaussian_filter1d</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.signal <span class="im">import</span> find_peaks</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load training data</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'train_losses.json'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    train_losses <span class="op">=</span> np.array(json.load(f))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'all_weights.json'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    all_weights_loaded <span class="op">=</span> json.load(f)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the key weight: Update gate flag input</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the weight that became strongly negative, enabling the "2 zeros" specialization</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>flag_weights <span class="op">=</span> []</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>snapshot_epochs <span class="op">=</span> []</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, weights <span class="kw">in</span> <span class="bu">enumerate</span>(all_weights_loaded):</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    W_ih <span class="op">=</span> np.array(weights[<span class="st">'gru.weight_ih_l0'</span>])</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update gate weights are in positions 2:4 of the weight matrix</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Index [1, 1] corresponds to: update gate, flag input</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    flag_weights.append(W_ih[<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    snapshot_epochs.append(i <span class="op">*</span> <span class="dv">49</span>)  <span class="co"># Snapshots saved every 49 epochs</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>flag_weights <span class="op">=</span> np.array(flag_weights)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>snapshot_epochs <span class="op">=</span> np.array(snapshot_epochs)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute loss derivatives to find acceleration points</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># First derivative tells us the learning rate (how fast loss is decreasing)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Second derivative tells us acceleration (where learning speeds up or slows down)</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> np.arange(<span class="bu">len</span>(train_losses))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>smoothed_loss <span class="op">=</span> gaussian_filter1d(train_losses, sigma<span class="op">=</span><span class="dv">20</span>)  <span class="co"># Smooth to reduce noise</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>loss_deriv <span class="op">=</span> np.gradient(smoothed_loss)      <span class="co"># First derivative: dL/dt</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>loss_deriv2 <span class="op">=</span> np.gradient(loss_deriv)        <span class="co"># Second derivative: d²L/dt²</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Store key statistics</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>num_epochs <span class="op">=</span> <span class="bu">len</span>(train_losses)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>num_snapshots <span class="op">=</span> <span class="bu">len</span>(all_weights_loaded)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>initial_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">0</span>])</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>final_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>total_improvement <span class="op">=</span> <span class="bu">float</span>((initial_loss <span class="op">-</span> final_loss) <span class="op">/</span> initial_loss <span class="op">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We have 3000 training epochs and 62 weight snapshots saved during training. The loss improved from 1.078135 to 0.000100, which is a 99.99% improvement overall. Now let’s find where the real learning acceleration happens.</p>
+<section id="finding-the-real-phase-transitions" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="finding-the-real-phase-transitions"><span class="header-section-number">2.1</span> Finding the real phase transitions</h2>
+<p>To identify genuine phase transitions, we need to look at learning acceleration—that is, where the rate of loss decrease suddenly increases. Mathematically, this corresponds to finding the most negative values of the second derivative of the loss function. Think of it like this: if the first derivative tells you how fast you’re going, the second derivative tells you how quickly you’re speeding up or slowing down.</p>
+<div id="find-real-transitions" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the epochs with strongest acceleration (most negative second derivative)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># These are the true "phase transition" candidates</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>top_20_accel_epochs <span class="op">=</span> np.argsort(loss_deriv2)[:<span class="dv">20</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate statistics for each top acceleration epoch</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>transition_data <span class="op">=</span> []</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rank, epoch <span class="kw">in</span> <span class="bu">enumerate</span>(top_20_accel_epochs, <span class="dv">1</span>):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    before_idx <span class="op">=</span> <span class="bu">max</span>(<span class="dv">0</span>, epoch <span class="op">-</span> <span class="dv">50</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    after_idx <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(train_losses) <span class="op">-</span> <span class="dv">1</span>, epoch <span class="op">+</span> <span class="dv">50</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    improvement <span class="op">=</span> ((smoothed_loss[before_idx] <span class="op">-</span> smoothed_loss[after_idx]) <span class="op">/</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                   smoothed_loss[before_idx] <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    transition_data.append({</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'rank'</span>: rank,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'epoch'</span>: <span class="bu">int</span>(epoch),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'acceleration'</span>: <span class="bu">float</span>(loss_deriv2[epoch]),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">'improvement_pct'</span>: <span class="bu">float</span>(improvement)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Where does epoch 735 rank?</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>epoch_735_rank <span class="op">=</span> <span class="bu">int</span>(np.where(np.argsort(loss_deriv2) <span class="op">==</span> <span class="dv">735</span>)[<span class="dv">0</span>][<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>epoch_735_accel <span class="op">=</span> <span class="bu">float</span>(loss_deriv2[<span class="dv">735</span>])</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Get stats for the top accelerations</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>top_5_epochs <span class="op">=</span> [d[<span class="st">'epoch'</span>] <span class="cf">for</span> d <span class="kw">in</span> transition_data[:<span class="dv">5</span>]]</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>top_5_improvements <span class="op">=</span> [d[<span class="st">'improvement_pct'</span>] <span class="cf">for</span> d <span class="kw">in</span> transition_data[:<span class="dv">5</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Here’s what the data reveals: the top 20 learning acceleration events <strong>all occur in the first 20 epochs of training</strong>. Let me spell that out clearly:</p>
+<ul>
+<li>Rank 1: Epoch 2 with 43.6% improvement</li>
+<li>Rank 2: Epoch 3 with 44.5% improvement</li>
+<li>Rank 3: Epoch 4 with 45.4% improvement</li>
+<li>Rank 4: Epoch 5 with 46.3% improvement</li>
+<li>Rank 5: Epoch 6 with 47.1% improvement</li>
+</ul>
+<p>And where does my supposedly “critical” epoch 735 rank? <strong>Position 2601 out of 3000</strong>. That’s in the bottom 15% of all epochs. It’s utterly unremarkable.</p>
+<p>This completely demolishes my hypothesis from Part 3. There is no phase transition at epoch 735. The real phase transitions—if we’re going to use that term at all—happened in the first 20 epochs, when the network was figuring out the basic structure of the problem.</p>
+</section>
+<section id="visualizing-the-reality" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="visualizing-the-reality"><span class="header-section-number">2.2</span> Visualizing the reality</h2>
+<p>Let me create a comprehensive visualization that shows where the learning dynamics are actually interesting, and where epoch 735 sits in this landscape.</p>
+<div id="cell-visualize-reality" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">4</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">16</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Loss curve with real vs. claimed transitions marked</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].plot(epochs, train_losses, alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">'gray'</span>, label<span class="op">=</span><span class="st">'Raw loss'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].plot(epochs, smoothed_loss, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Smoothed loss'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark epoch 735 (the false claim)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="st">'Epoch 735 (falsely claimed as critical)'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark the actual top transitions (first 5)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> top_5_epochs:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axvline(x<span class="op">=</span>epoch, color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].axvline(x<span class="op">=</span>top_5_epochs[<span class="dv">0</span>], color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>               linewidth<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">'Real transitions (epochs 1-20)'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">'Loss'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">'Training loss: reality check'</span>, fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: Learning rate (first derivative)</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(epochs, loss_deriv, linewidth<span class="op">=</span><span class="fl">1.5</span>, color<span class="op">=</span><span class="st">'orange'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> top_5_epochs:</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].axvline(x<span class="op">=</span>epoch, color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">'dLoss/dEpoch'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">'Learning rate (first derivative): how fast is loss decreasing?'</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                 fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3: Learning acceleration (second derivative) - this is what matters!</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].plot(epochs, loss_deriv2, linewidth<span class="op">=</span><span class="fl">1.5</span>, color<span class="op">=</span><span class="st">'purple'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="ss">f'Epoch 735 (rank </span><span class="sc">{</span>epoch_735_rank<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>num_epochs<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight the real accelerations with scatter points</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> top_5_epochs:</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].scatter(epoch, loss_deriv2[epoch], color<span class="op">=</span><span class="st">'green'</span>, s<span class="op">=</span><span class="dv">100</span>, zorder<span class="op">=</span><span class="dv">5</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].axvline(x<span class="op">=</span>epoch, color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].scatter(top_5_epochs[<span class="dv">0</span>], loss_deriv2[top_5_epochs[<span class="dv">0</span>]], color<span class="op">=</span><span class="st">'green'</span>,</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>               s<span class="op">=</span><span class="dv">100</span>, zorder<span class="op">=</span><span class="dv">5</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, label<span class="op">=</span><span class="st">'Real transitions (ranked 1-5)'</span>)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_ylabel(<span class="st">'d²Loss/dEpoch²'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].set_title(<span class="st">'Learning acceleration (second derivative): where phase transitions ACTUALLY happen'</span>,</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>                 fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 4: The update gate flag weight trajectory</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].plot(snapshot_epochs, flag_weights, linewidth<span class="op">=</span><span class="fl">2.5</span>, color<span class="op">=</span><span class="st">'darkgreen'</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="st">'o'</span>, markersize<span class="op">=</span><span class="dv">5</span>, label<span class="op">=</span><span class="st">'Update gate flag weight'</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Epoch 735'</span>)</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark when it crosses zero - this is actually important!</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>zero_crossing_idx <span class="op">=</span> np.where(np.diff(np.sign(flag_weights)))[<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>zero_crossing_epoch <span class="op">=</span> snapshot_epochs[zero_crossing_idx]</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].scatter(zero_crossing_epoch, flag_weights[zero_crossing_idx],</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>               color<span class="op">=</span><span class="st">'orange'</span>, s<span class="op">=</span><span class="dv">200</span>, zorder<span class="op">=</span><span class="dv">5</span>, marker<span class="op">=</span><span class="st">'*'</span>,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>               label<span class="op">=</span><span class="ss">f'Crosses zero (epoch ~</span><span class="sc">{</span>zero_crossing_epoch<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].set_ylabel(<span class="st">'Weight value'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].set_title(<span class="st">'Update gate flag weight: gradual decline, not sudden jump'</span>,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>                 fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">3</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="visualize-reality" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part4_files/figure-html/visualize-reality-output-1.png" class="img-fluid figure-img"></p>
+<figcaption>The real training dynamics</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Look at that fourth plot carefully. The flag weight doesn’t jump at epoch 735—it’s been declining steadily since around epoch 490. Epoch 735 is just one unremarkable point on a smooth, continuous trajectory. There’s nothing special happening there at all.</p>
+<p>The real action is in those first 20 epochs (plot 3), where we see massive spikes in learning acceleration. That’s where the network is making fundamental discoveries about the problem structure.</p>
+</section>
+</section>
+<section id="the-real-story-gradual-commitment-not-phase-transition" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> The real story: gradual commitment, not phase transition</h1>
+<p>So if there’s no phase transition at epoch 735, what actually happens during training? The answer is more subtle and, I think, more interesting: the network undergoes a process of <strong>gradual commitment</strong> to its specialized strategy.</p>
+<p>Let me walk you through what the data shows, piece by piece.</p>
+<section id="the-flag-weights-journey" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-flag-weights-journey"><span class="header-section-number">3.1</span> The flag weight’s journey</h2>
+<p>The update gate flag weight is the key parameter that determines how the network responds to flagged elements in the input sequence. When this weight is positive, the gate opens more for flagged elements. When it’s negative, the gate closes more for flagged elements. And when it’s strongly negative (like -3), the gate essentially learns to “count” unflagged elements—leading to the “2 zeros” specialization we discovered in Part 3.</p>
+<p>Let’s trace this weight’s complete trajectory through training:</p>
+<div id="flag-weight-journey" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract key moments in the flag weight's evolution</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>key_moments <span class="op">=</span> [</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="dv">0</span>, <span class="st">'label'</span>: <span class="st">'Initial'</span>},</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="dv">10</span>, <span class="st">'label'</span>: <span class="st">'Approaching zero'</span>},</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="dv">13</span>, <span class="st">'label'</span>: <span class="st">'Post-crossing'</span>},</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="dv">15</span>, <span class="st">'label'</span>: <span class="st">'Epoch 735 vicinity'</span>},</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="dv">20</span>, <span class="st">'label'</span>: <span class="st">'Mid-training'</span>},</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'idx'</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">'label'</span>: <span class="st">'Final'</span>}</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>journey_data <span class="op">=</span> []</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> moment <span class="kw">in</span> key_moments:</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> moment[<span class="st">'idx'</span>]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    journey_data.append({</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'label'</span>: moment[<span class="st">'label'</span>],</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'epoch'</span>: <span class="bu">int</span>(snapshot_epochs[idx]),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">'weight'</span>: <span class="bu">float</span>(flag_weights[idx])</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the zero crossing details</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>zero_cross_before <span class="op">=</span> <span class="bu">float</span>(flag_weights[zero_crossing_idx])</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>zero_cross_after <span class="op">=</span> <span class="bu">float</span>(flag_weights[zero_crossing_idx <span class="op">+</span> <span class="dv">1</span>])</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>zero_cross_epoch_before <span class="op">=</span> <span class="bu">int</span>(snapshot_epochs[zero_crossing_idx])</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>zero_cross_epoch_after <span class="op">=</span> <span class="bu">int</span>(snapshot_epochs[zero_crossing_idx <span class="op">+</span> <span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Here’s the complete journey of the flag weight:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Phase</th>
+<th>Epoch</th>
+<th>Weight value</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Initial</td>
+<td>0</td>
+<td>0.550</td>
+<td>Positive, no specialization</td>
+</tr>
+<tr class="even">
+<td>Approaching zero</td>
+<td>490</td>
+<td>0.064</td>
+<td>Nearly zero, decision point</td>
+</tr>
+<tr class="odd">
+<td>Post-crossing</td>
+<td>637</td>
+<td>-0.381</td>
+<td>Gone negative, committing</td>
+</tr>
+<tr class="even">
+<td>Epoch 735 vicinity</td>
+<td>735</td>
+<td>-0.682</td>
+<td>Continuing decline</td>
+</tr>
+<tr class="odd">
+<td>Mid-training</td>
+<td>980</td>
+<td>-1.119</td>
+<td>Strong specialization</td>
+</tr>
+<tr class="even">
+<td>Final</td>
+<td>2989</td>
+<td>-3.020</td>
+<td>Full commitment</td>
+</tr>
+</tbody>
+</table>
+<p>The critical observation here is that the weight crosses zero around epoch 490-539, goes from 0.064 to -0.067. This zero-crossing is the point of commitment—where the network starts specializing to the “2 zeros” pattern. But even this isn’t sudden! The weight has been declining toward zero for hundreds of epochs before, and continues declining for hundreds of epochs after.</p>
+<p>Epoch 735, with its weight of -0.682, is just sitting in the middle of this long, smooth decline. It’s unremarkable.</p>
+</section>
+<section id="quantifying-the-gradual-process" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="quantifying-the-gradual-process"><span class="header-section-number">3.2</span> Quantifying the gradual process</h2>
+<p>Let me be more precise about what “gradual” means here. I’ll analyze the rate of change across different periods of training to show that the changes are remarkably consistent—no spikes, no jumps, just steady evolution.</p>
+<div id="quantify-gradual" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define training periods</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>periods <span class="op">=</span> [</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'Early training'</span>, <span class="st">'start_idx'</span>: <span class="dv">0</span>, <span class="st">'end_idx'</span>: <span class="dv">5</span>},</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'Approaching zero'</span>, <span class="st">'start_idx'</span>: <span class="dv">5</span>, <span class="st">'end_idx'</span>: <span class="dv">10</span>},</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'Crossing &amp; commitment'</span>, <span class="st">'start_idx'</span>: <span class="dv">10</span>, <span class="st">'end_idx'</span>: <span class="dv">15</span>},</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'Post-735 continuation'</span>, <span class="st">'start_idx'</span>: <span class="dv">15</span>, <span class="st">'end_idx'</span>: <span class="dv">20</span>},</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'name'</span>: <span class="st">'Late refinement'</span>, <span class="st">'start_idx'</span>: <span class="dv">20</span>, <span class="st">'end_idx'</span>: <span class="op">-</span><span class="dv">1</span>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>period_stats <span class="op">=</span> []</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> period <span class="kw">in</span> periods:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    start_idx <span class="op">=</span> period[<span class="st">'start_idx'</span>]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    end_idx <span class="op">=</span> period[<span class="st">'end_idx'</span>] <span class="cf">if</span> period[<span class="st">'end_idx'</span>] <span class="op">!=</span> <span class="op">-</span><span class="dv">1</span> <span class="cf">else</span> <span class="bu">len</span>(flag_weights) <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    start_epoch <span class="op">=</span> <span class="bu">int</span>(snapshot_epochs[start_idx])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    end_epoch <span class="op">=</span> <span class="bu">int</span>(snapshot_epochs[end_idx])</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    start_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[start_idx])</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    end_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[end_idx])</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    total_change <span class="op">=</span> end_weight <span class="op">-</span> start_weight</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    epoch_span <span class="op">=</span> end_epoch <span class="op">-</span> start_epoch</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    rate <span class="op">=</span> total_change <span class="op">/</span> epoch_span <span class="cf">if</span> epoch_span <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    period_stats.append({</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'name'</span>: period[<span class="st">'name'</span>],</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">'start_epoch'</span>: start_epoch,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'end_epoch'</span>: end_epoch,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">'start_weight'</span>: start_weight,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">'end_weight'</span>: end_weight,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">'total_change'</span>: total_change,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">'epoch_span'</span>: epoch_span,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">'rate'</span>: rate</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate mean and std of rates for the commitment period</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>commitment_rates <span class="op">=</span> [period_stats[<span class="dv">2</span>][<span class="st">'rate'</span>], period_stats[<span class="dv">3</span>][<span class="st">'rate'</span>]]</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>mean_commitment_rate <span class="op">=</span> np.mean(commitment_rates)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>std_commitment_rate <span class="op">=</span> np.std(commitment_rates)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate coefficient of variation for the changes during commitment</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>weight_changes_commitment <span class="op">=</span> np.diff(flag_weights[<span class="dv">10</span>:<span class="dv">20</span>])</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>mean_change_commitment <span class="op">=</span> np.mean(np.<span class="bu">abs</span>(weight_changes_commitment))</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>std_change_commitment <span class="op">=</span> np.std(weight_changes_commitment)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>cv_commitment <span class="op">=</span> std_change_commitment <span class="op">/</span> mean_change_commitment <span class="cf">if</span> mean_change_commitment <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let me break down the numbers period by period:</p>
+<p><strong>Early training (epochs 0-245)</strong></p>
+<p>The weight changes from 0.550 to 0.333, a total shift of -0.217. This happens over 245 epochs, giving a rate of -0.000886 per epoch. The network is already starting to move toward specialization from the very beginning.</p>
+<p><strong>Approaching zero (epochs 245-490)</strong></p>
+<p>The weight continues its decline from 0.333 to 0.064, changing by -0.270 over 245 epochs. Rate: -0.001100 per epoch. Notice this rate is very similar to the previous period—no sudden acceleration.</p>
+<p><strong>Crossing &amp; commitment (epochs 490-735)</strong></p>
+<p>This is where the weight crosses zero and starts going negative. It moves from 0.064 to -0.682, a change of -0.746. The rate is -0.003044 per epoch—still very consistent with earlier periods. Epoch 735 falls right in the middle of this period.</p>
+<p><strong>Post-735 continuation (epochs 735-980)</strong></p>
+<p>After epoch 735, the weight continues declining from -0.682 to -1.119, changing by -0.437. Rate: -0.001782 per epoch. See the pattern? The rate before epoch 735 and after epoch 735 are almost identical.</p>
+<p><strong>Late refinement (epochs 980-2989)</strong></p>
+<p>The final stretch sees the weight settling at its ultimate value, moving from -1.119 to -3.020. The rate slows to -0.000946 per epoch as the network fine-tunes its strategy.</p>
+<p>The key statistical insight: during the commitment period (epochs 490-980), the coefficient of variation in weight changes is only 0.273. That’s incredibly low! It means the changes are remarkably uniform—there are no spikes, no jumps, no special moments. Just consistent, gradual evolution.</p>
+</section>
+<section id="visualizing-the-full-picture" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="visualizing-the-full-picture"><span class="header-section-number">3.3</span> Visualizing the full picture</h2>
+<p>Let me create a comprehensive visualization that shows all four phases of learning together, making it crystal clear that this is a story of gradual commitment, not sudden transition.</p>
+<div id="cell-comprehensive-view" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">12</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>gs <span class="op">=</span> fig.add_gridspec(<span class="dv">3</span>, <span class="dv">2</span>, hspace<span class="op">=</span><span class="fl">0.35</span>, wspace<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the four phases clearly</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>phases <span class="op">=</span> [</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">0</span>, <span class="dv">20</span>, <span class="st">"Phase 1: Rapid initial learning"</span>, <span class="st">"green"</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">20</span>, <span class="dv">490</span>, <span class="st">"Phase 2: Steady improvement"</span>, <span class="st">"blue"</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">490</span>, <span class="dv">750</span>, <span class="st">"Phase 3: Gradual specialization"</span>, <span class="st">"orange"</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">750</span>, <span class="dv">3000</span>, <span class="st">"Phase 4: Refinement"</span>, <span class="st">"purple"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Loss evolution with phases color-coded</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> fig.add_subplot(gs[<span class="dv">0</span>, :])</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>ax1.plot(epochs, smoothed_loss, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'black'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> start, end, label, color <span class="kw">in</span> phases:</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> (epochs <span class="op">&gt;=</span> start) <span class="op">&amp;</span> (epochs <span class="op">&lt;</span> end)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    ax1.plot(epochs[mask], smoothed_loss[mask], linewidth<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span>label, color<span class="op">=</span>color)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>ax1.axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="st">'Epoch 735 (nothing special)'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>ax1.set_ylabel(<span class="st">'Loss'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">'Four phases of learning (not three!)'</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>ax1.legend(loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>ax1.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>ax1.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Add text annotations explaining each phase</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>ax1.text(<span class="dv">10</span>, train_losses[<span class="dv">10</span>], <span class="st">'Real phase</span><span class="ch">\n</span><span class="st">transitions here!'</span>, fontsize<span class="op">=</span><span class="dv">9</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>         ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'top'</span>, bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'green'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>))</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: Flag weight evolution with commitment period highlighted</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> fig.add_subplot(gs[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>ax2.plot(snapshot_epochs, flag_weights, linewidth<span class="op">=</span><span class="fl">2.5</span>, color<span class="op">=</span><span class="st">'darkgreen'</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="st">'o'</span>, markersize<span class="op">=</span><span class="dv">5</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>ax2.axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, linewidth<span class="op">=</span><span class="dv">1</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight the gradual commitment period (490-750)</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>commitment_mask <span class="op">=</span> (snapshot_epochs <span class="op">&gt;=</span> <span class="dv">490</span>) <span class="op">&amp;</span> (snapshot_epochs <span class="op">&lt;=</span> <span class="dv">750</span>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>ax2.fill_between(snapshot_epochs[commitment_mask], <span class="op">-</span><span class="dv">4</span>, <span class="dv">1</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, color<span class="op">=</span><span class="st">'orange'</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                label<span class="op">=</span><span class="st">'Gradual commitment period'</span>)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark key moments</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>ax2.scatter(zero_cross_epoch_before, flag_weights[zero_crossing_idx],</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>           color<span class="op">=</span><span class="st">'blue'</span>, s<span class="op">=</span><span class="dv">150</span>, zorder<span class="op">=</span><span class="dv">5</span>, marker<span class="op">=</span><span class="st">'D'</span>,</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="ss">f'Crosses zero (~</span><span class="sc">{</span>zero_cross_epoch_before<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>ax2.scatter(<span class="dv">735</span>, flag_weights[<span class="dv">15</span>], color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">150</span>, zorder<span class="op">=</span><span class="dv">5</span>, marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="st">'Epoch 735 (unremarkable)'</span>)</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>ax2.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">'Flag weight value'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">'Flag weight: gradual decline, no sudden jumps'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>ax2.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>ax2.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>ax2.set_ylim(<span class="op">-</span><span class="fl">3.5</span>, <span class="dv">1</span>)</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3: Rate of weight change (showing consistency)</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>ax3 <span class="op">=</span> fig.add_subplot(gs[<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>weight_changes <span class="op">=</span> np.diff(flag_weights)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>change_epochs <span class="op">=</span> snapshot_epochs[:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>ax3.bar(change_epochs, weight_changes, width<span class="op">=</span><span class="dv">45</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'teal'</span>,</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>       label<span class="op">=</span><span class="st">'Weight change per 49 epochs'</span>)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>ax3.axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>ax3.axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="st">'Epoch 735'</span>)</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight the commitment period changes</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>commitment_change_mask <span class="op">=</span> (change_epochs <span class="op">&gt;=</span> <span class="dv">490</span>) <span class="op">&amp;</span> (change_epochs <span class="op">&lt;=</span> <span class="dv">750</span>)</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>ax3.bar(change_epochs[commitment_change_mask], weight_changes[commitment_change_mask],</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>       width<span class="op">=</span><span class="dv">45</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, color<span class="op">=</span><span class="st">'orange'</span>, label<span class="op">=</span><span class="st">'Commitment period'</span>)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>ax3.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>ax3.set_ylabel(<span class="st">'Weight change per 49 epochs'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>ax3.set_title(<span class="st">'Consistent changes throughout commitment'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>ax3.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>ax3.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 4: Loss and weight co-evolution on same plot</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>ax4 <span class="op">=</span> fig.add_subplot(gs[<span class="dv">2</span>, :])</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>snapshot_losses <span class="op">=</span> smoothed_loss[snapshot_epochs]</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>ax4_twin <span class="op">=</span> ax4.twinx()</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>line1 <span class="op">=</span> ax4.plot(snapshot_epochs, snapshot_losses, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'blue'</span>,</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'s'</span>, markersize<span class="op">=</span><span class="dv">4</span>, label<span class="op">=</span><span class="st">'Loss'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>line2 <span class="op">=</span> ax4_twin.plot(snapshot_epochs, flag_weights, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'darkgreen'</span>,</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>                     marker<span class="op">=</span><span class="st">'o'</span>, markersize<span class="op">=</span><span class="dv">4</span>, label<span class="op">=</span><span class="st">'Flag weight'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>ax4.axvline(x<span class="op">=</span>zero_cross_epoch_before, color<span class="op">=</span><span class="st">'orange'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>           alpha<span class="op">=</span><span class="fl">0.7</span>, label<span class="op">=</span><span class="st">'Zero crossing (the real turning point)'</span>)</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>ax4.axvline(x<span class="op">=</span><span class="dv">735</span>, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="st">'Epoch 735 (unremarkable)'</span>)</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>ax4.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>ax4.set_ylabel(<span class="st">'Loss'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>ax4_twin.set_ylabel(<span class="st">'Flag weight'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, color<span class="op">=</span><span class="st">'darkgreen'</span>)</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>ax4.set_title(<span class="st">'Loss and weight co-evolution: smooth and coordinated throughout'</span>,</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>ax4.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>ax4_twin.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'darkgreen'</span>)</span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine legends</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>lines <span class="op">=</span> line1 <span class="op">+</span> line2</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [l.get_label() <span class="cf">for</span> l <span class="kw">in</span> lines]</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>ax4.legend(lines, labels, loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>ax4.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>ax4.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'The real story: gradual specialization, not phase transition'</span>,</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>            fontsize<span class="op">=</span><span class="dv">16</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>, y<span class="op">=</span><span class="fl">0.998</span>)</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="comprehensive-view" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part4_files/figure-html/comprehensive-view-output-1.png" class="img-fluid figure-img"></p>
+<figcaption>The complete picture of gradual specialization</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This is the complete picture. Notice how smooth everything is during the “gradual specialization” phase (orange, epochs 490-750). The weight changes consistently, the loss decreases steadily, and there are no discontinuities anywhere. Epoch 735 sits right in the middle of this smooth process, completely unremarkable.</p>
+</section>
+</section>
+<section id="what-actually-happens-a-new-understanding-of-learning" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> What actually happens: a new understanding of learning</h1>
+<p>Based on rigorous analysis of the actual data, here’s the real story of how this GRU learns to solve the adding problem. I’ll walk through each phase in detail, explaining what the network is doing and why it matters.</p>
+<section id="phase-1-rapid-initial-learning-epochs-0-20" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="phase-1-rapid-initial-learning-epochs-0-20"><span class="header-section-number">4.1</span> Phase 1: rapid initial learning (epochs 0-20)</h2>
+<div id="phase1-analysis" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Phase 1 statistics</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>phase1_start_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">0</span>])</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>phase1_end_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">20</span>])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>phase1_improvement <span class="op">=</span> <span class="bu">float</span>((phase1_start_loss <span class="op">-</span> phase1_end_loss) <span class="op">/</span> phase1_start_loss <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>phase1_start_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">0</span>])</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>phase1_end_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">1</span>])  <span class="co"># Snapshot at epoch 49</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>phase1_weight_change <span class="op">=</span> <span class="bu">float</span>(phase1_end_weight <span class="op">-</span> phase1_start_weight)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Count how many of the top accelerations are in this phase</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>phase1_accelerations <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> e <span class="kw">in</span> top_5_epochs <span class="cf">if</span> e <span class="op">&lt;=</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This is where the <strong>real</strong> phase transitions happen. The network experiences dramatic, rapid changes as it figures out the basic structure of the problem. Think of this as the network’s “bootstrapping” phase—it’s discovering fundamental patterns like “inputs come in sequences,” “flags mark special positions,” and “we need to aggregate information somehow.”</p>
+<p>The numbers tell the story: the loss drops from 1.078135 to 0.803723, which is a 25.5% improvement in just 20 epochs. That’s massive. And remember, 5 of the top 5 learning acceleration events happen in this phase. This is where the network is making fundamental discoveries.</p>
+<p>Even the flag weight starts moving immediately, changing from 0.550 to 0.397 (a shift of -0.153) in the first 49 epochs. The network doesn’t wait—it starts exploring strategies from the very beginning.</p>
+<p>What’s happening internally? The network is learning basic associations: when the flag is 1, that input element matters. When it’s 0, maybe it doesn’t. The weights are being pulled in various directions as the optimizer explores the loss landscape, finding a rough direction toward lower loss.</p>
+</section>
+<section id="phase-2-steady-improvement-epochs-20-490" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="phase-2-steady-improvement-epochs-20-490"><span class="header-section-number">4.2</span> Phase 2: steady improvement (epochs 20-490)</h2>
+<div id="phase2-analysis" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Phase 2 statistics</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>phase2_start_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">20</span>])</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>phase2_end_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">490</span>])</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>phase2_improvement <span class="op">=</span> <span class="bu">float</span>((phase2_start_loss <span class="op">-</span> phase2_end_loss) <span class="op">/</span> phase2_start_loss <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>phase2_start_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">1</span>])  <span class="co"># Epoch 49</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>phase2_end_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">10</span>])   <span class="co"># Epoch 490</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>phase2_weight_change <span class="op">=</span> <span class="bu">float</span>(phase2_end_weight <span class="op">-</span> phase2_start_weight)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>phase2_epochs <span class="op">=</span> <span class="dv">490</span> <span class="op">-</span> <span class="dv">20</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>phase2_rate <span class="op">=</span> phase2_weight_change <span class="op">/</span> phase2_epochs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>After the initial burst of learning, the network settles into a more steady rhythm. The loss continues to improve from 0.803723 to 0.131291, a 83.7% improvement over 470 epochs. This isn’t as dramatic as Phase 1, but it’s consistent and sustained progress.</p>
+<p>During this phase, the flag weight declines steadily from 0.397 to 0.064, a total change of -0.334. That’s an average rate of -0.000710 per epoch—small but relentless.</p>
+<p>What’s the network doing here? It’s refining the strategies it discovered in Phase 1. The weights are being fine-tuned, the loss is being pushed down gradually, and the network is slowly building up the capacity to handle the specific patterns in the training data. There are no breakthroughs here, just steady optimization work. This is the “grinding” phase of learning—necessary but not exciting.</p>
+</section>
+<section id="phase-3-gradual-commitment-epochs-490-750" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="phase-3-gradual-commitment-epochs-490-750"><span class="header-section-number">4.3</span> Phase 3: gradual commitment (epochs 490-750)</h2>
+<div id="phase3-analysis" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Phase 3 statistics (the commitment period)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>phase3_start_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">490</span>])</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>phase3_735_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">735</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>phase3_end_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">750</span>])</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>phase3_improvement <span class="op">=</span> <span class="bu">float</span>((phase3_start_loss <span class="op">-</span> phase3_end_loss) <span class="op">/</span> phase3_start_loss <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>phase3_start_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">10</span>])  <span class="co"># Epoch 490</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>phase3_637_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">13</span>])    <span class="co"># Epoch 637</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>phase3_735_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">15</span>])    <span class="co"># Epoch 735</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>phase3_784_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">16</span>])    <span class="co"># Epoch 784</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate consistency of changes in this period</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>phase3_changes <span class="op">=</span> weight_changes[<span class="dv">10</span>:<span class="dv">16</span>]  <span class="co"># Snapshots covering 490-784</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>phase3_mean_change <span class="op">=</span> <span class="bu">float</span>(np.mean(np.<span class="bu">abs</span>(phase3_changes)))</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>phase3_std_change <span class="op">=</span> <span class="bu">float</span>(np.std(phase3_changes))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>phase3_consistency <span class="op">=</span> <span class="bu">float</span>(<span class="fl">1.0</span> <span class="op">-</span> (phase3_std_change <span class="op">/</span> phase3_mean_change)) <span class="cf">if</span> phase3_mean_change <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>THIS is the interesting period—not because anything dramatic happens, but because this is where the network commits to its specialized strategy through a long, gradual process. The flag weight crosses zero around epoch 490 and continues declining steadily throughout this entire period.</p>
+<p>The loss improves from 0.131291 at epoch 490 to 0.025182 at epoch 750, a 80.8% improvement. During this time, the flag weight travels from 0.064 to -0.808, crossing zero and becoming increasingly negative.</p>
+<p>Here’s the crucial point: <strong>the changes are remarkably consistent throughout this period</strong>. At epoch 637, the weight is -0.381. At epoch 735 (my falsely claimed “critical transition”), it’s -0.682. At epoch 784, it’s -0.808. See the pattern? Each ~49-epoch interval shows a change of roughly 0.1452 with a standard deviation of only 0.0138. The consistency metric is 90.5%—meaning the changes are nearly uniform.</p>
+<p>What’s the network doing? It’s slowly, steadily committing to a strategy: respond negatively to flags. As the weight becomes more negative, the update gate closes more strongly when it sees a flagged element. This gradually builds up the “2 zeros” specialization—the network learns that sequences with exactly 2 unflagged elements are the easiest to handle with its limited (size-1) hidden state.</p>
+<p>But this commitment isn’t a decision made at a single point. It’s a process that unfolds over 250+ epochs. The network is continuously testing, refining, and reinforcing this strategy. Epoch 735 is just one moment in this long journey—utterly unremarkable.</p>
+</section>
+<section id="phase-4-refinement-epochs-750" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="phase-4-refinement-epochs-750"><span class="header-section-number">4.4</span> Phase 4: refinement (epochs 750+)</h2>
+<div id="phase4-analysis" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Phase 4 statistics</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>phase4_start_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="dv">750</span>])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>phase4_end_loss <span class="op">=</span> <span class="bu">float</span>(train_losses[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>phase4_improvement <span class="op">=</span> <span class="bu">float</span>((phase4_start_loss <span class="op">-</span> phase4_end_loss) <span class="op">/</span> phase4_start_loss <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>phase4_start_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="dv">16</span>])  <span class="co"># Epoch 784</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>phase4_end_weight <span class="op">=</span> <span class="bu">float</span>(flag_weights[<span class="op">-</span><span class="dv">1</span>])    <span class="co"># Final epoch</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>phase4_total_change <span class="op">=</span> <span class="bu">float</span>(phase4_end_weight <span class="op">-</span> phase4_start_weight)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>phase4_epochs <span class="op">=</span> <span class="bu">int</span>(snapshot_epochs[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> snapshot_epochs[<span class="dv">16</span>])</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>phase4_rate <span class="op">=</span> <span class="bu">float</span>(phase4_total_change <span class="op">/</span> phase4_epochs) <span class="cf">if</span> phase4_epochs <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the final phase, the network continues refining its now-established strategy. The loss improves from 0.025182 to 0.000100, a further 99.6% improvement. This is slower than earlier phases, but the network is polishing details, not discovering fundamentals.</p>
+<p>The flag weight continues its decline from -0.808 to -3.020, a total change of -2.212 over 2205 epochs. The rate slows to -0.001003 per epoch—about half the rate during the commitment period. The specialization is now firmly established, and the network is just fine-tuning the details.</p>
+<p>What’s happening? The network is squeezing out the last bits of performance from its strategy. The weights are being adjusted to minimize error on edge cases, handle numerical precision issues, and optimize the final output mapping. There are no fundamental changes here, just refinement and polish.</p>
+</section>
+</section>
+<section id="why-this-is-actually-more-interesting" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Why this is actually more interesting</h1>
+<p>I know what you’re thinking: “But you promised dramatic phase transitions! This sounds like a story about paint drying!”</p>
+<p>But here’s why I think this gradual commitment process is actually <strong>more</strong> interesting than a dramatic phase transition would be:</p>
+<section id="neural-networks-learn-like-humans-not-like-light-switches" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="neural-networks-learn-like-humans-not-like-light-switches"><span class="header-section-number">5.1</span> Neural networks learn like humans, not like light switches</h2>
+<p>The popular narrative about neural networks—the one I bought into when I wrote Part 3—is that they have “aha!” moments. There’s a critical epoch where everything suddenly clicks into place. The network “gets it” and performance jumps.</p>
+<p>But that’s not what happened here. Instead, the network showed a pattern much more similar to how humans learn complex skills:</p>
+<ul>
+<li><strong>Initial rapid learning</strong> as basic patterns are discovered (like when you first learn that pressing piano keys makes sound)</li>
+<li><strong>Steady improvement</strong> through practice (like building finger strength and coordination)</li>
+<li><strong>Gradual commitment</strong> to a specific approach (like settling on a particular fingering technique)</li>
+<li><strong>Refinement and polish</strong> to perfect the skill (like smoothing out timing and dynamics)</li>
+</ul>
+<p>Think about learning to play a musical instrument, or speak a foreign language, or drive a car. You don’t suddenly “get it” at a single moment. Instead, you gradually build up skills, commit to certain techniques, and refine your approach over extended periods. Neural networks, at least in this case, learn the same way.</p>
+<p>This has profound implications for how we think about training. If learning is gradual, then:</p>
+<ul>
+<li><strong>Training schedules matter</strong> - We can’t expect instant results after a few epochs</li>
+<li><strong>Early stopping might be premature</strong> - Gradual processes need time to unfold</li>
+<li><strong>Hyperparameter choices</strong> (like learning rate) need to support sustained, long-term learning</li>
+</ul>
+</section>
+<section id="specialization-is-a-process-not-an-event" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="specialization-is-a-process-not-an-event"><span class="header-section-number">5.2</span> Specialization is a process, not an event</h2>
+<p>The “2 zeros” specialization doesn’t appear at a specific epoch. It emerges gradually as the flag weight crosses zero and continues declining over hundreds of epochs. The network doesn’t “decide” to specialize at one moment—it slowly, continuously commits to this strategy.</p>
+<p>This distinction matters because it changes how we think about the explore-exploit tradeoff in learning. Traditional reinforcement learning theory talks about exploration (trying new strategies) and exploitation (using the best known strategy) as distinct phases. But here, we see something different: <strong>gradual commitment</strong> where exploration and exploitation blur together.</p>
+<p>The network is simultaneously: - Continuing to explore (making small weight adjustments) - Increasingly exploiting (reinforcing the specialization that’s working)</p>
+<p>There’s no clear boundary between these modes. The network doesn’t “switch” from exploration to exploitation—it gradually shifts the balance over time.</p>
+<p>This has implications for understanding things like: - <strong>Why neural networks generalize</strong> - Gradual commitment allows testing strategies on diverse examples - <strong>How to prevent overfitting</strong> - Forcing rapid commitment (high learning rate) might be worse than allowing gradual adaptation - <strong>When to stop training</strong> - If commitment is gradual, there’s no single “optimal” stopping point</p>
+</section>
+<section id="why-i-was-wrong-about-epoch-735" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="why-i-was-wrong-about-epoch-735"><span class="header-section-number">5.3</span> Why I was wrong about epoch 735</h2>
+<p>Let me be honest about what led me astray. Looking back at Part 3, I can identify three specific cognitive errors I made:</p>
+<p><strong>1. Confirmation bias</strong> - I looked at the weight at epoch 735 (-0.682) and saw it was quite negative, so I assumed this must be “the” critical moment. I didn’t check whether changes before or after this epoch were similar in magnitude. I saw what I expected to see.</p>
+<p><strong>2. Narrative fallacy</strong> - I wanted a clean story with a dramatic turning point. “Phase transition at epoch 735” makes for better storytelling than “gradual commitment over 250+ epochs.” My brain constructed a narrative that felt satisfying, even though it wasn’t supported by data.</p>
+<p><strong>3. Insufficient analysis</strong> - Most critically, I didn’t actually compute the learning acceleration (second derivative) to find where rapid changes occurred. I made a claim about phase transitions without measuring what “transition” actually means mathematically. This is the kind of sloppiness that makes bad science.</p>
+<p>The real lesson here is methodological: <strong>always check your hypotheses against quantitative evidence</strong> before claiming you’ve found something important. Intuition and observation are useful for forming hypotheses, but only rigorous analysis can tell you if those hypotheses are correct.</p>
+</section>
+</section>
+<section id="the-bigger-picture-what-this-means-for-understanding-neural-networks" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> The bigger picture: what this means for understanding neural networks</h1>
+<div id="synthesis" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate some final summary statistics</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>total_training_time <span class="op">=</span> num_epochs</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>real_transitions_period <span class="op">=</span> <span class="dv">20</span>  <span class="co"># First 20 epochs</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>commitment_period <span class="op">=</span> <span class="dv">750</span> <span class="op">-</span> <span class="dv">490</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>commitment_pct <span class="op">=</span> <span class="bu">float</span>(commitment_period <span class="op">/</span> total_training_time <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify all our major claims one more time</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>claim_1_verified <span class="op">=</span> <span class="bu">all</span>(e <span class="op">&lt;=</span> <span class="dv">20</span> <span class="cf">for</span> e <span class="kw">in</span> top_5_epochs)  <span class="co"># All top transitions in first 20 epochs</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>claim_2_verified <span class="op">=</span> epoch_735_rank <span class="op">&gt;</span> <span class="dv">2500</span>  <span class="co"># Epoch 735 ranks below 2500</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>claim_3_verified <span class="op">=</span> phase3_consistency <span class="op">&gt;</span> <span class="fl">0.7</span>  <span class="co"># Changes are &gt;70% consistent</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let me synthesize what we’ve learned into concrete takeaways for understanding how neural networks learn:</p>
+<p><strong>1. Phase transitions are rare and early</strong></p>
+<p>Real phase transitions—moments where learning suddenly accelerates—happen very early in training (verified: True). In this case, all top 5 acceleration events occurred in the first 20 epochs. After that, learning is mostly gradual refinement.</p>
+<p>This suggests that the most important decisions about problem structure happen quickly, while strategy refinement takes much longer. If you’re debugging a neural network that isn’t learning, focus on those first few epochs—that’s where fundamental mistakes usually reveal themselves.</p>
+<p><strong>2. Specialization takes time</strong></p>
+<p>The “2 zeros” pattern doesn’t appear suddenly. It emerges over 260 epochs of gradual commitment (that’s 8.7% of total training time!). The changes are remarkably consistent (consistency metric: 90.5%, verified: True), with no sudden jumps or discontinuities.</p>
+<p>This means that when we talk about networks “learning” a strategy, we need to be careful. They don’t learn strategies the way you might consciously decide “I’ll use strategy X.” Instead, they gradually accumulate evidence that strategy X works, and the weights slowly shift to implement that strategy more strongly.</p>
+<p><strong>3. Smooth optimization doesn’t mean no learning</strong></p>
+<p>Even though the weight changes look smooth and continuous, the network is making important strategic commitments. The absence of discontinuities doesn’t mean nothing interesting is happening—it means the interesting stuff is happening gradually.</p>
+<p>This challenges the way we visualize and think about training. We often look for spikes, jumps, or sudden changes as signs of “important learning.” But gradual, sustained change can be just as important—maybe more so.</p>
+<p><strong>4. Architecture constrains strategy</strong></p>
+<p>With hidden_size=1, the network can’t store multiple strategies simultaneously. It must commit to one approach. This architectural constraint drives the gradual commitment process we observed. A larger network might show different dynamics—perhaps maintaining multiple strategies in parallel before eventually selecting one.</p>
+<p>This suggests that network capacity isn’t just about “can it fit the data,” but about “what kind of learning process will it follow.” Smaller networks might show more gradual commitment, larger networks might show more exploration. That’s an empirical question worth investigating.</p>
+<p><strong>5. Always verify your hypotheses</strong></p>
+<p>I claimed epoch 735 was critical without checking (verified false: True, rank = 2601). The data completely contradicted my claim. This is how science is supposed to work—you form hypotheses, test them rigorously, and accept the results even when they prove you wrong.</p>
+<p>The temptation to skip the “testing” step is huge, especially when you have an intuition that feels right. But intuition without evidence is just storytelling. Science requires both.</p>
+<section id="hypothesis-vs.-reality" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="hypothesis-vs.-reality"><span class="header-section-number">6.1</span> Hypothesis vs.&nbsp;reality</h2>
+<p>Let me make the contrast crystal clear with a final visualization:</p>
+<div id="cell-hypothesis-vs-reality" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">7</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Left side: My wrong hypothesis</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.95</span>, <span class="st">'MY HYPOTHESIS (WRONG)'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>            fontweight<span class="op">=</span><span class="st">'bold'</span>, transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="st">'Phase transitions occur at</span><span class="ch">\n</span><span class="st">specific critical epochs'</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">13</span>, transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>            bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'lightblue'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.55</span>, <span class="st">'↓'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">24</span>, transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.40</span>, <span class="st">'Epoch 735 is a critical</span><span class="ch">\n</span><span class="st">phase transition where the</span><span class="ch">\n</span><span class="st">network suddenly commits</span><span class="ch">\n</span><span class="st">to "2 zeros" specialization'</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'red'</span>, alpha<span class="op">=</span><span class="fl">0.4</span>))</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.15</span>, <span class="st">'✗ CONTRADICTED BY DATA'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            fontweight<span class="op">=</span><span class="st">'bold'</span>, color<span class="op">=</span><span class="st">'red'</span>, transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].text(<span class="fl">0.5</span>, <span class="fl">0.05</span>, <span class="ss">f'Epoch 735 ranks </span><span class="sc">{</span>epoch_735_rank<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>num_epochs<span class="sc">}</span><span class="ss">'</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, style<span class="op">=</span><span class="st">'italic'</span>, color<span class="op">=</span><span class="st">'darkred'</span>,</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>            transform<span class="op">=</span>axes[<span class="dv">0</span>].transAxes)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Right side: The reality</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.95</span>, <span class="st">'REALITY (FROM DATA)'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>            fontweight<span class="op">=</span><span class="st">'bold'</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.80</span>, <span class="ss">f'Real phase transitions:</span><span class="ch">\n</span><span class="ss">Epochs 1-</span><span class="sc">{</span>real_transitions_period<span class="sc">}</span><span class="ss"> only'</span>,</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>            bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'green'</span>, alpha<span class="op">=</span><span class="fl">0.4</span>))</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.62</span>, <span class="ss">f'↓</span><span class="ch">\n</span><span class="ss">Then gradual commitment:</span><span class="ch">\n</span><span class="ss">Epochs 490-750 (</span><span class="sc">{</span>commitment_period<span class="sc">}</span><span class="ss"> epochs)'</span>,</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes,</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>            bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'orange'</span>, alpha<span class="op">=</span><span class="fl">0.4</span>))</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.42</span>, <span class="st">'↓</span><span class="ch">\n</span><span class="st">Epoch 735 happens to fall</span><span class="ch">\n</span><span class="st">in the middle of this</span><span class="ch">\n</span><span class="st">gradual process'</span>,</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes,</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>            bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">'round'</span>, facecolor<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.4</span>))</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.25</span>, <span class="ss">f'Weight at 735: </span><span class="sc">{</span>phase3_735_weight<span class="sc">:.3f}</span><span class="ch">\n</span><span class="ss">(nothing remarkable)'</span>,</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">10</span>, style<span class="op">=</span><span class="st">'italic'</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].text(<span class="fl">0.5</span>, <span class="fl">0.10</span>, <span class="st">'✓ SUPPORTED BY EVIDENCE'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>            fontweight<span class="op">=</span><span class="st">'bold'</span>, color<span class="op">=</span><span class="st">'green'</span>, transform<span class="op">=</span>axes[<span class="dv">1</span>].transAxes)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Hypothesis vs. reality: the importance of checking your claims'</span>,</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>            fontsize<span class="op">=</span><span class="dv">18</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>, y<span class="op">=</span><span class="fl">0.98</span>)</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="hypothesis-vs-reality" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="adding-problem-part4_files/figure-html/hypothesis-vs-reality-output-1.png" class="img-fluid figure-img"></p>
+<figcaption>What I claimed vs.&nbsp;what the data shows</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusions-being-wrong-is-how-you-learn" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Conclusions: being wrong is how you learn</h1>
+<p>This journey taught me something that every scientist knows intellectually but has to learn experientially: <strong>being wrong is how you learn</strong>.</p>
+<p>I started Part 4 with a clear hypothesis: epoch 735 is a critical phase transition. I expected to spend this post analyzing why that transition happened, what triggered it, and what it means for neural network learning in general.</p>
+<p>Instead, I discovered that my hypothesis was completely wrong. Epoch 735 ranks 2601 out of 3000 in terms of learning acceleration—firmly in the bottom 13% of all epochs. There is no phase transition there. The real phase transitions happened in epochs 1-20. The “2 zeros” specialization emerged through a gradual commitment process spanning 250+ epochs, with epoch 735 sitting unremarkably in the middle.</p>
+<p>And you know what? This is <strong>better</strong> than confirming my hypothesis would have been. Here’s what I actually learned:</p>
+<ol type="1">
+<li><p><strong>Real phase transitions happen early</strong> (epochs 1-20), not in the middle of training. The network makes fundamental discoveries about problem structure quickly, then spends most of its time refining strategies.</p></li>
+<li><p><strong>Specialization is gradual</strong> (epochs 490-750), not sudden. The network doesn’t “decide” to specialize at a single moment—it slowly accumulates evidence and continuously adjusts weights over hundreds of epochs.</p></li>
+<li><p><strong>Epoch 735 is nothing special</strong>—it’s just one snapshot in a long, smooth process. Weight: -0.682, loss: 0.030028, acceleration rank: 2601/3000. Utterly unremarkable.</p></li>
+<li><p><strong>Gradual commitment is more interesting</strong> than dramatic transitions. It reveals that neural networks learn like humans do—through sustained practice, continuous refinement, and gradual mastery. Not through sudden “aha!” moments.</p></li>
+<li><p><strong>Always verify your hypotheses</strong> with quantitative analysis. Intuition and observation are useful for forming hypotheses, but only rigorous testing reveals truth. I claimed something was important without measuring whether it actually was. That’s the kind of sloppiness that makes bad science.</p></li>
+</ol>
+<section id="whats-next" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="whats-next"><span class="header-section-number">7.1</span> What’s next?</h2>
+<p>Now that I understand the real story—gradual commitment rather than phase transitions—I’m curious about several follow-up questions:</p>
+<ul>
+<li><p><strong>Does hidden size change the dynamics?</strong> With hidden_size=2 or 4, does the network still show gradual commitment, or does more capacity enable different learning patterns? Maybe larger networks can maintain multiple strategies simultaneously before selecting one?</p></li>
+<li><p><strong>Can we predict the zero-crossing?</strong> Since that’s the key moment where commitment begins, can we use early training dynamics (epochs 1-100) to predict when it will happen? That would be useful for estimating total training time.</p></li>
+<li><p><strong>Is gradual commitment universal?</strong> Does this pattern show up in other architectures (LSTMs, Transformers) and other problems, or is it specific to this combination of GRU + adding problem + hidden_size=1?</p></li>
+<li><p><strong>Can we accelerate commitment?</strong> If gradual commitment takes 250 epochs, can we design training schedules or architectural changes that achieve the same outcome faster? Or would that cause overfitting?</p></li>
+</ul>
+<p>But those are questions for another day. For now, I’m satisfied with the meta-lesson: following the data, even when it proves you wrong, leads to better understanding than clinging to intuition.</p>
+</section>
+<section id="final-thoughts" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="final-thoughts"><span class="header-section-number">7.2</span> Final thoughts</h2>
+<p>This series has been a journey from “why are these weights weird?” to “everything I thought about phase transitions was wrong” to “gradual commitment is actually more profound than sudden transitions.”</p>
+<p>That’s how research should work. You start with curiosity, form hypotheses, test them rigorously, and accept the results—especially when they contradict your expectations. Being wrong isn’t failure; it’s progress.</p>
+<p>If you’ve stuck with me through all four parts of this series, thank you. I hope you’ve enjoyed watching the process of discovery, including the mistakes and corrections. That’s the real story of research—not the polished final result, but the messy journey of figuring things out.</p>
+<hr>
+<p><em>If you enjoyed this series, let me know what you’d like me to explore next. I’m thinking about diving into LSTMs to see if they show similar gradual commitment patterns, or maybe investigating why Adam optimizer works so much better than vanilla SGD. Suggestions welcome!</em></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/theghoul21\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Luca Simonetti</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

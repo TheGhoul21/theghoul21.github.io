@@ -1,0 +1,10 @@
+---
+title: "L'Underfitting (YouTube)"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [teaching, video, machine learning, outreach]
+---
+
+YouTube channel covering machine learning, quantum computing, and AI topics — with a focus on making complex ideas accessible.
+
+[Watch on YouTube →](https://www.youtube.com/@LUnderfitting){.btn .btn-primary target="_blank"}

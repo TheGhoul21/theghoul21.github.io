@@ -3,7 +3,42 @@
     "listing": "/portfolio/index.html",
     "items": [
       "/portfolio/aliteia.html",
-      "/portfolio/weight-trajectories.html"
+      "/portfolio/dtmb.html",
+      "/portfolio/lunderfitting-youtube.html",
+      "/portfolio/phase-kickback.html",
+      "/portfolio/qc-notebooks.html",
+      "/portfolio/uniud-advanced-algorithms.html",
+      "/portfolio/uniud-operations-research.html",
+      "/portfolio/weight-trajectories.html",
+      "/portfolio/whiteboard.html"
+    ]
+  },
+  {
+    "listing": "/blog/index.html",
+    "items": [
+      "/blog/pca.html",
+      "/blog/t-ecdsa-three-rounds2.html",
+      "/blog/dpo.html",
+      "/blog/hashing.html",
+      "/blog/blockchain.html",
+      "/blog/group-prime-order.html",
+      "/blog/sss.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/amari-network-backup.html",
+      "/projects/amari-network.html",
+      "/projects/adding-problem-part3-5.html",
+      "/projects/adding-problem-part1.html",
+      "/projects/adding-problem-part2.html",
+      "/projects/adding-problem-part3.html",
+      "/projects/adding-problem-part4.html",
+      "/projects/connect4.html",
+      "/projects/hopfield.html",
+      "/projects/prese-rnn.html",
+      "/projects/spatial-spike-neural-networks-it.html"
     ]
   },
   {
@@ -22,37 +57,11 @@
       "/projects/adding-problem-part1.html",
       "/projects/adding-problem-part2.html",
       "/projects/adding-problem-part3.html",
+      "/projects/adding-problem-part4.html",
       "/projects/connect4.html",
       "/projects/hopfield.html",
       "/projects/prese-rnn.html",
       "/projects/spatial-spike-neural-networks-it.html"
-    ]
-  },
-  {
-    "listing": "/projects/index.html",
-    "items": [
-      "/projects/amari-network-backup.html",
-      "/projects/amari-network.html",
-      "/projects/adding-problem-part3-5.html",
-      "/projects/adding-problem-part1.html",
-      "/projects/adding-problem-part2.html",
-      "/projects/adding-problem-part3.html",
-      "/projects/connect4.html",
-      "/projects/hopfield.html",
-      "/projects/prese-rnn.html",
-      "/projects/spatial-spike-neural-networks-it.html"
-    ]
-  },
-  {
-    "listing": "/blog/index.html",
-    "items": [
-      "/blog/pca.html",
-      "/blog/t-ecdsa-three-rounds2.html",
-      "/blog/dpo.html",
-      "/blog/hashing.html",
-      "/blog/blockchain.html",
-      "/blog/group-prime-order.html",
-      "/blog/sss.html"
     ]
   }
 ]

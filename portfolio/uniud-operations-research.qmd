@@ -1,0 +1,11 @@
+---
+title: "UniUD Operations Research"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [optimization, university, teaching]
+---
+
+Course materials and notes for **Operations Research** at the University of Udine. Covers linear programming, combinatorial optimization, and decision-making under constraints.
+
+[Course Website →](https://theghoul21.github.io/uniud-operations-research/){.btn .btn-primary target="_blank"}
+[GitHub →](https://github.com/TheGhoul21/uniud-operations-research){.btn .btn-outline-secondary target="_blank"}

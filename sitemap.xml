@@ -1,100 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://theghoul21.github.io/portfolio/uniud-advanced-algorithms.html</loc>
+    <lastmod>2026-03-25T04:52:05.669Z</lastmod>
+  </url>
+  <url>
     <loc>https://theghoul21.github.io/portfolio/index.html</loc>
     <lastmod>2025-11-04T05:55:41.409Z</lastmod>
   </url>
   <url>
-    <loc>https://theghoul21.github.io/about.html</loc>
-    <lastmod>2025-01-31T09:17:22.453Z</lastmod>
+    <loc>https://theghoul21.github.io/portfolio/phase-kickback.html</loc>
+    <lastmod>2026-03-25T04:52:04.620Z</lastmod>
   </url>
   <url>
-    <loc>https://theghoul21.github.io/blog/pca.html</loc>
-    <lastmod>2026-02-01T06:53:59.851Z</lastmod>
+    <loc>https://theghoul21.github.io/portfolio/dtmb.html</loc>
+    <lastmod>2026-03-25T04:52:03.489Z</lastmod>
   </url>
   <url>
-    <loc>https://theghoul21.github.io/blog/group-prime-order.html</loc>
-    <lastmod>2025-02-01T06:53:46.219Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/index.html</loc>
-    <lastmod>2025-01-31T09:14:17.473Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/adding-problem-part3-5.html</loc>
-    <lastmod>2025-07-22T17:54:37.536Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/connect4.html</loc>
-    <lastmod>2025-03-01T11:04:45.827Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/spatial-spike-neural-networks-it.html</loc>
-    <lastmod>2025-02-01T06:39:09.733Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/adding-problem-part1.html</loc>
-    <lastmod>2025-11-04T05:55:42.359Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/adding-problem-part2.html</loc>
-    <lastmod>2025-11-04T05:55:42.262Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/model-training.html</loc>
-    <lastmod>2025-02-24T08:02:06.669Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/amari-network-backup.html</loc>
-    <lastmod>2025-03-04T04:56:25.389Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/adding-problem-part3.html</loc>
-    <lastmod>2025-11-04T05:55:42.582Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/amari-network.html</loc>
-    <lastmod>2025-03-04T05:29:16.244Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/index.html</loc>
-    <lastmod>2025-01-31T05:52:40.894Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/hopfield.html</loc>
-    <lastmod>2025-02-07T19:05:51.473Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/projects/prese-rnn.html</loc>
-    <lastmod>2025-02-07T19:08:19.826Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/blog/sss.html</loc>
-    <lastmod>2025-02-07T19:04:59.505Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/blog/hashing.html</loc>
-    <lastmod>2025-02-08T04:37:00.601Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/blog/index.html</loc>
-    <lastmod>2025-01-31T05:58:05.987Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/blog/blockchain.html</loc>
-    <lastmod>2025-02-02T08:49:14.962Z</lastmod>
-  </url>
-  <url>
-    <loc>https://theghoul21.github.io/blog/t-ecdsa-three-rounds2.html</loc>
-    <lastmod>2025-03-18T06:04:21.968Z</lastmod>
+    <loc>https://theghoul21.github.io/portfolio/whiteboard.html</loc>
+    <lastmod>2026-03-25T04:52:09.695Z</lastmod>
   </url>
   <url>
     <loc>https://theghoul21.github.io/blog/dpo.html</loc>
     <lastmod>2025-02-25T05:43:58.906Z</lastmod>
   </url>
   <url>
+    <loc>https://theghoul21.github.io/blog/t-ecdsa-three-rounds2.html</loc>
+    <lastmod>2025-03-18T06:04:21.968Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/blockchain.html</loc>
+    <lastmod>2025-02-02T08:49:14.962Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/index.html</loc>
+    <lastmod>2025-01-31T05:58:05.987Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/hashing.html</loc>
+    <lastmod>2025-02-08T04:37:00.601Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/sss.html</loc>
+    <lastmod>2025-02-07T19:04:59.505Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/prese-rnn.html</loc>
+    <lastmod>2025-02-07T19:08:19.826Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/hopfield.html</loc>
+    <lastmod>2025-02-07T19:05:51.473Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/index.html</loc>
+    <lastmod>2025-01-31T05:52:40.894Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/amari-network.html</loc>
+    <lastmod>2025-03-04T05:29:16.244Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/adding-problem-part3.html</loc>
+    <lastmod>2025-11-04T05:55:42.582Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/amari-network-backup.html</loc>
+    <lastmod>2025-03-04T04:56:25.389Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/model-training.html</loc>
+    <lastmod>2025-02-24T08:02:06.669Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/adding-problem-part4.html</loc>
+    <lastmod>2026-02-02T07:15:37.615Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/adding-problem-part2.html</loc>
+    <lastmod>2025-11-04T05:55:42.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/adding-problem-part1.html</loc>
+    <lastmod>2025-11-04T05:55:42.359Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/spatial-spike-neural-networks-it.html</loc>
+    <lastmod>2025-02-01T06:39:09.733Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/connect4.html</loc>
+    <lastmod>2025-03-01T11:04:45.827Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/projects/adding-problem-part3-5.html</loc>
+    <lastmod>2025-07-22T17:54:37.536Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/index.html</loc>
+    <lastmod>2025-01-31T09:14:17.473Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/group-prime-order.html</loc>
+    <lastmod>2025-02-01T06:53:46.219Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/blog/pca.html</loc>
+    <lastmod>2026-02-01T06:53:59.851Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/about.html</loc>
+    <lastmod>2025-01-31T09:17:22.453Z</lastmod>
+  </url>
+  <url>
     <loc>https://theghoul21.github.io/portfolio/weight-trajectories.html</loc>
     <lastmod>2025-11-04T05:55:41.753Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/portfolio/qc-notebooks.html</loc>
+    <lastmod>2026-03-25T04:52:07.798Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/portfolio/uniud-operations-research.html</loc>
+    <lastmod>2026-03-25T04:52:06.662Z</lastmod>
+  </url>
+  <url>
+    <loc>https://theghoul21.github.io/portfolio/lunderfitting-youtube.html</loc>
+    <lastmod>2026-03-25T04:52:08.881Z</lastmod>
   </url>
   <url>
     <loc>https://theghoul21.github.io/portfolio/aliteia.html</loc>

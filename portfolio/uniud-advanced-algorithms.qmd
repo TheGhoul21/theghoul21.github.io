@@ -1,0 +1,11 @@
+---
+title: "UniUD Advanced Algorithms"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [algorithms, university, teaching]
+---
+
+Course materials and notes for **Advanced Algorithms** at the University of Udine. Covers topics in algorithm design, complexity, and analysis.
+
+[Course Website →](https://theghoul21.github.io/uniud-advanced-algorithms/){.btn .btn-primary target="_blank"}
+[GitHub →](https://github.com/TheGhoul21/uniud-advanced-algorithms){.btn .btn-outline-secondary target="_blank"}

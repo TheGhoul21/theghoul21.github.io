@@ -1,0 +1,12 @@
+---
+title: "Don't Trust Me Bro"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [mathematics, education, interactive]
+---
+
+Formulas derived from scratch. No magic, just logic.
+
+Because understanding *why* is better than memorizing *what*.
+
+[Open DTMB →](https://theghoul21.github.io/dtmb){.btn .btn-primary target="_blank"}

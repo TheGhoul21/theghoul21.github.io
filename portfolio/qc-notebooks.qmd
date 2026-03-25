@@ -1,0 +1,10 @@
+---
+title: "QC Notebooks"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [quantum computing, notebooks, research]
+---
+
+A collection of Jupyter notebooks exploring quantum computing concepts, algorithms, and simulations using Qiskit and related frameworks.
+
+[GitHub →](https://github.com/TheGhoul21/QC-notebooks){.btn .btn-primary target="_blank"}

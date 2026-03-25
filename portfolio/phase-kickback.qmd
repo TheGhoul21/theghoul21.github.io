@@ -1,0 +1,10 @@
+---
+title: "Phase Kickback"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [quantum computing, interactive, visualization]
+---
+
+Self-contained walkthroughs of quantum computing papers — with intuitive explanations, concrete examples, and interactive notebooks.
+
+[Open Phase Kickback →](https://theghoul21.github.io/phase-kickback/){.btn .btn-primary target="_blank"}

@@ -1,0 +1,10 @@
+---
+title: "Whiteboard"
+author: "Luca Simonetti"
+date: "2026-01-01"
+categories: [programming, tools, interactive]
+---
+
+An interactive whiteboard tool for sketching ideas, diagrams, and collaborative brainstorming.
+
+[GitHub →](https://github.com/TheGhoul21/whiteboard){.btn .btn-primary target="_blank"}
